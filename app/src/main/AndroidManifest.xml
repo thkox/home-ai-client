@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HomeAI" >
         <activity
-            android:name=".activities.main.MainActivity"
+            android:name=".ui.activities.main.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.HomeAI">
@@ -22,8 +22,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.welcome.WelcomeActivity" />
-        <activity android:name=".activities.settings.SettingsActivity" />
+        <activity android:name=".ui.activities.welcome.WelcomeActivity" />
+        <activity android:name=".ui.activities.settings.SettingsActivity" />
     </application>
 
 </manifest>

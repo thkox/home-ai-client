@@ -1,4 +1,4 @@
-package com.thkox.homeai.activities.settings
+package com.thkox.homeai.ui.activities.settings
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

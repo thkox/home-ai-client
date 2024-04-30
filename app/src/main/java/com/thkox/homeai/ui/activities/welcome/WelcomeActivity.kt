@@ -1,4 +1,4 @@
-package com.thkox.homeai.activities.welcome
+package com.thkox.homeai.ui.activities.welcome
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
