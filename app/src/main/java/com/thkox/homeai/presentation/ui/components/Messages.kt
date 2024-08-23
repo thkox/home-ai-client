@@ -3,9 +3,11 @@ package com.thkox.homeai.presentation.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFrom
@@ -35,11 +37,18 @@ import com.thkox.homeai.presentation.model.Message
 
 @Composable
 fun AuthorNameAndTimestamp(
+    isAuthorMe: Boolean,
     authorName: String,
     timestamp: String
 ) {
     Row (
-        modifier = Modifier.semantics(mergeDescendants = true) {},
+        modifier = Modifier.fillMaxWidth()
+            .semantics(mergeDescendants = true) {},
+        horizontalArrangement = if (isAuthorMe) {
+            Arrangement.End
+        } else {
+            Arrangement.Start
+        }
     ) {
         Text(
             text = authorName,
@@ -96,7 +105,16 @@ fun MessageBubble(
         RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp)
     }
 
-    Column {
+
+
+    Row (
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = if (isAuthorMe) {
+            Arrangement.End
+        } else {
+            Arrangement.Start
+        }
+    ) {
         Surface(
             color = backgroundBubbleColor,
             shape = shape
@@ -133,24 +151,34 @@ fun AuthorAndTextMessage(
     isLastMessageByAuthor: Boolean, // for visual purposes to separate authors
     authorClicked: (String) -> Unit, // for navigation
 ) {
-    Column (
-        modifier = modifier
-    ) {
-        if (isLastMessageByAuthor) {
-            AuthorNameAndTimestamp(
-                authorName = message.author,
-                timestamp = message.timestamp
-            )
-        }
-        MessageBubble(
-            message = message,
-            isAuthorMe = isAuthorMe,
-            authorClicked = authorClicked
-        )
-        if (isFirstMessageByAuthor) {
-            Spacer(modifier = Modifier.height(8.dp)) // Space between authors
+
+    Row(
+        modifier = modifier,
+        horizontalArrangement = if (isAuthorMe) {
+            Arrangement.End
         } else {
-            Spacer(modifier = Modifier.height(4.dp)) // Space between messages
+            Arrangement.Start
+        }
+    ) {
+        Column(
+        ) {
+            if (isLastMessageByAuthor) {
+                AuthorNameAndTimestamp(
+                    isAuthorMe = isAuthorMe,
+                    authorName = message.author,
+                    timestamp = message.timestamp
+                )
+            }
+            MessageBubble(
+                message = message,
+                isAuthorMe = isAuthorMe,
+                authorClicked = authorClicked
+            )
+            if (isFirstMessageByAuthor) {
+                Spacer(modifier = Modifier.height(8.dp)) // Space between authors
+            } else {
+                Spacer(modifier = Modifier.height(4.dp)) // Space between messages
+            }
         }
     }
 }
@@ -170,9 +198,10 @@ fun Message(
     }
 
     val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(top = 8.dp) else Modifier
+
     Row(modifier = spaceBetweenAuthors) {
-        if (isLastMessageByAuthor && !isAuthorMe) {
-            // Avatar
+        if (!isAuthorMe && isLastMessageByAuthor) {
+            // Avatar for non-author users only when they are the last author
             Image(
                 modifier = Modifier
                     .clickable(onClick = { onAuthorClick(message.author) })
@@ -187,7 +216,7 @@ fun Message(
                 contentDescription = null,
             )
         } else {
-            // Space under avatar
+            // Space under avatar for author or non-last non-author messages
             Spacer(modifier = Modifier.width(74.dp))
         }
         AuthorAndTextMessage(
@@ -197,7 +226,7 @@ fun Message(
             isLastMessageByAuthor = isLastMessageByAuthor,
             authorClicked = onAuthorClick,
             modifier = Modifier
-                .padding(end = 16.dp)
+                .padding(end = 16.dp) // Maintain end padding
                 .weight(1f)
         )
     }
@@ -210,6 +239,7 @@ fun Message(
 @Composable
 private fun AuthorNameAndTimestampPreview() {
     AuthorNameAndTimestamp(
+        isAuthorMe = true,
         authorName = "Author Name",
         timestamp = "15:02 PM"
     )
