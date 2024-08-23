@@ -24,7 +24,7 @@ fun MainScreen() {
 
     val firstMessage = Message(
         author = "User",
-        text = "Hello! How can I help you today?",
+        text = "Hello there!",
         timestamp = "12:00",
         image = null,
         authorImage = null

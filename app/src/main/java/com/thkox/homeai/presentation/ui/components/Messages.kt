@@ -41,14 +41,17 @@ fun AuthorNameAndTimestamp(
     authorName: String,
     timestamp: String
 ) {
+
+    val horizontalArrangement = if (isAuthorMe) {
+        Arrangement.End
+    } else {
+        Arrangement.Start
+    }
+
     Row (
         modifier = Modifier.fillMaxWidth()
             .semantics(mergeDescendants = true) {},
-        horizontalArrangement = if (isAuthorMe) {
-            Arrangement.End
-        } else {
-            Arrangement.Start
-        }
+        horizontalArrangement = horizontalArrangement
     ) {
         Text(
             text = authorName,
@@ -105,15 +108,15 @@ fun MessageBubble(
         RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp)
     }
 
-
+    val horizontalArrangement = if (isAuthorMe) {
+        Arrangement.End
+    } else {
+        Arrangement.Start
+    }
 
     Row (
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = if (isAuthorMe) {
-            Arrangement.End
-        } else {
-            Arrangement.Start
-        }
+        horizontalArrangement = horizontalArrangement
     ) {
         Surface(
             color = backgroundBubbleColor,
@@ -152,13 +155,15 @@ fun AuthorAndTextMessage(
     authorClicked: (String) -> Unit, // for navigation
 ) {
 
+    val horizontalArrangement = if (isAuthorMe) {
+        Arrangement.End
+    } else {
+        Arrangement.Start
+    }
+
     Row(
         modifier = modifier,
-        horizontalArrangement = if (isAuthorMe) {
-            Arrangement.End
-        } else {
-            Arrangement.Start
-        }
+        horizontalArrangement = horizontalArrangement
     ) {
         Column(
         ) {
