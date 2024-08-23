@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Home AI</string>
+    <string name="menu">Menu</string>
+    <string name="profile">Profile</string>
 </resources>
