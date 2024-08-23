@@ -26,7 +26,9 @@ import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 @Composable
 fun MainTopAppBar(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
+    onClickNavigationIcon: () -> Unit = {},
+    onClickProfileIcon: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         modifier = modifier.clip(shape = RoundedCornerShape(
@@ -39,7 +41,7 @@ fun MainTopAppBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = { }) {
+            IconButton(onClick = onClickNavigationIcon) {
                 Icon(
                     imageVector = Icons.Default.Menu,
                     contentDescription = stringResource(R.string.menu)
@@ -47,7 +49,7 @@ fun MainTopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = { }) {
+            IconButton(onClick = onClickProfileIcon) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = stringResource(R.string.profile)
