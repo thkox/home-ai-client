@@ -67,5 +67,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha13")
+    implementation("androidx.compose.material:material-icons-extended")
 }
