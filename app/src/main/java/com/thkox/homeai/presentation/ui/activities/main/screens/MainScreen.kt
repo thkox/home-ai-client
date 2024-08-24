@@ -1,7 +1,6 @@
 package com.thkox.homeai.presentation.ui.activities.main.screens
 
 import android.content.res.Configuration
-import android.media.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,10 +8,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import com.thkox.homeai.presentation.model.Message
+import com.thkox.homeai.presentation.ui.components.ChatInputBar
 import com.thkox.homeai.presentation.ui.components.MainTopAppBar
 import com.thkox.homeai.presentation.ui.components.Message
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
@@ -21,6 +25,7 @@ import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 @Composable
 fun MainScreen() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    var text by remember { mutableStateOf("") }
 
     val firstMessage = Message(
         author = "User",
@@ -49,8 +54,8 @@ fun MainScreen() {
                 onClickProfileIcon = { /*TODO*/ }
             )
         }
-    ) {values ->
-        Column (
+    ) { values ->
+        Column(
             modifier = Modifier.padding(values)
         ) {
             Message(
@@ -68,10 +73,15 @@ fun MainScreen() {
                 isFirstMessageByAuthor = true,
                 isLastMessageByAuthor = true
             )
+            ChatInputBar(
+                onSendClick = { /*TODO*/ },
+                onMicClick = { /*TODO*/ },
+                text = text,
+                onTextChange = { newText -> text = newText }
+            )
         }
     }
 }
-
 
 @Preview(
     showBackground = true,
