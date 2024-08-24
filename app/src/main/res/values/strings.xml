@@ -2,4 +2,5 @@
     <string name="app_name">Home AI</string>
     <string name="menu">Menu</string>
     <string name="profile">Profile</string>
+    <string name="type_a_message">Type a message...</string>
 </resources>
