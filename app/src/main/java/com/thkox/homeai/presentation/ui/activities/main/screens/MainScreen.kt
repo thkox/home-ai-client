@@ -53,6 +53,14 @@ fun MainScreen() {
                 onClickNavigationIcon = { /*TODO*/ },
                 onClickProfileIcon = { /*TODO*/ }
             )
+        },
+        bottomBar = {
+            ChatInputBar(
+                onSendClick = { /*TODO*/ },
+                onMicClick = { /*TODO*/ },
+                text = text,
+                onTextChange = { newText -> text = newText }
+            )
         }
     ) { values ->
         Column(
@@ -72,12 +80,6 @@ fun MainScreen() {
                 isAuthorMe = false,
                 isFirstMessageByAuthor = true,
                 isLastMessageByAuthor = true
-            )
-            ChatInputBar(
-                onSendClick = { /*TODO*/ },
-                onMicClick = { /*TODO*/ },
-                text = text,
-                onTextChange = { newText -> text = newText }
             )
         }
     }
