@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".HomeAIApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,18 +13,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HomeAI" >
         <activity
-            android:name=".presentation.ui.activities.main.MainActivity"
+            android:name=".presentation.ui.activities.welcome.WelcomeActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.HomeAI">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".presentation.ui.activities.welcome.WelcomeActivity" />
-        <activity android:name=".presentation.ui.activities.settings.SettingsActivity" />
+        <activity
+            android:name=".presentation.ui.activities.main.MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.HomeAI">
+        </activity>
     </application>
 
 </manifest>
