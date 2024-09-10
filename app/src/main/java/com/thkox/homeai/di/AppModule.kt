@@ -1,6 +1,7 @@
 package com.thkox.homeai.di
 
 import com.thkox.homeai.domain.usecase.user.LoginUseCase
+import com.thkox.homeai.domain.usecase.user.SignUpUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,5 +16,11 @@ object AppModule {
     @Singleton
     fun provideLoginUseCase(): LoginUseCase {
         return LoginUseCase()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSignUpUseCase(): SignUpUseCase {
+        return SignUpUseCase()
     }
 }
