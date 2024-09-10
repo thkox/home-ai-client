@@ -1,7 +1,6 @@
 package com.thkox.homeai.presentation.ui.activities.welcome.screens.auth
 
 import android.content.res.Configuration
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,6 +13,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.thkox.homeai.presentation.viewModel.welcome.auth.LoginViewModel
 import com.thkox.homeai.presentation.viewModel.welcome.auth.LoginState
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoginScreen(
@@ -25,6 +30,29 @@ fun LoginScreen(
     val password by viewModel.password.observeAsState("")
     val loginState by viewModel.loginState.observeAsState()
 
+    LoginContent(
+        username = username,
+        password = password,
+        onUsernameChanged = { viewModel.onUsernameChanged(it) },
+        onPasswordChanged = { viewModel.onPasswordChanged(it) },
+        onLoginClicked = { viewModel.login() },
+        loginState = loginState,
+        context = context,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun LoginContent(
+    username: String,
+    password: String,
+    onUsernameChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    onLoginClicked: () -> Unit,
+    loginState: LoginState?,
+    context: Context,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -33,20 +61,20 @@ fun LoginScreen(
     ) {
         TextField(
             value = username,
-            onValueChange = { viewModel.onUsernameChanged(it) },
+            onValueChange = onUsernameChanged,
             label = { Text("Username") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
             value = password,
-            onValueChange = { viewModel.onPasswordChanged(it) },
+            onValueChange = onPasswordChanged,
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { viewModel.login() },
+            onClick = onLoginClicked,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Login")
@@ -68,15 +96,24 @@ fun LoginScreen(
     }
 }
 
+
 @Preview(
     showBackground = true,
     showSystemUi = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
-private fun MainScreenDarkPreview() {
+private fun LoginScreenDarkPreview() {
     HomeAITheme {
-        LoginScreen()
+        LoginContent(
+            username = "",
+            password = "",
+            onUsernameChanged = {},
+            onPasswordChanged = {},
+            onLoginClicked = {},
+            loginState = null,
+            context = LocalContext.current
+        )
     }
 }
 
@@ -86,8 +123,17 @@ private fun MainScreenDarkPreview() {
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
-private fun MainScreenLightPreview() {
+private fun LoginScreenLightPreview() {
     HomeAITheme {
-        LoginScreen()
+        LoginContent(
+            username = "",
+            password = "",
+            onUsernameChanged = {},
+            onPasswordChanged = {},
+            onLoginClicked = {},
+            loginState = null,
+            context = LocalContext.current
+        )
     }
 }
+

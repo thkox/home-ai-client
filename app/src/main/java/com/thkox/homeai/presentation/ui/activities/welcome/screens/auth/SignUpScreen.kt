@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import android.content.Context
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.thkox.homeai.presentation.viewModel.welcome.auth.SignUpViewModel
 import com.thkox.homeai.presentation.viewModel.welcome.auth.SignUpState
@@ -25,6 +26,29 @@ fun SignUpScreen(
     val password by viewModel.password.observeAsState("")
     val signUpState by viewModel.signUpState.observeAsState()
 
+    SignUpContent(
+        username = username,
+        password = password,
+        onUsernameChanged = { viewModel.onUsernameChanged(it) },
+        onPasswordChanged = { viewModel.onPasswordChanged(it) },
+        onSignUpClicked = { viewModel.signUp() },
+        signUpState = signUpState,
+        context = context,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun SignUpContent(
+    username: String,
+    password: String,
+    onUsernameChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    onSignUpClicked: () -> Unit,
+    signUpState: SignUpState?,
+    context: Context,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -33,20 +57,20 @@ fun SignUpScreen(
     ) {
         TextField(
             value = username,
-            onValueChange = { viewModel.onUsernameChanged(it) },
+            onValueChange = onUsernameChanged,
             label = { Text("Username") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
         TextField(
             value = password,
-            onValueChange = { viewModel.onPasswordChanged(it) },
+            onValueChange = onPasswordChanged,
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { viewModel.signUp() },
+            onClick = onSignUpClicked,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Sign Up")
@@ -76,7 +100,15 @@ fun SignUpScreen(
 @Composable
 private fun SignUpScreenDarkPreview() {
     HomeAITheme {
-        SignUpScreen()
+        SignUpContent(
+            username = "",
+            password = "",
+            onUsernameChanged = {},
+            onPasswordChanged = {},
+            onSignUpClicked = {},
+            signUpState = null,
+            context = LocalContext.current
+        )
     }
 }
 
@@ -88,6 +120,15 @@ private fun SignUpScreenDarkPreview() {
 @Composable
 private fun SignUpScreenLightPreview() {
     HomeAITheme {
-        SignUpScreen()
+        SignUpContent(
+            username = "",
+            password = "",
+            onUsernameChanged = {},
+            onPasswordChanged = {},
+            onSignUpClicked = {},
+            signUpState = null,
+            context = LocalContext.current
+        )
     }
 }
+
