@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.thkox.homeai.presentation.ui.activities.welcome.screens.auth.LoginScreen
+import com.thkox.homeai.presentation.ui.activities.welcome.screens.auth.SignUpScreen
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,7 +22,7 @@ class WelcomeActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LoginScreen()
+                    SignUpScreen()
                 }
             }
         }

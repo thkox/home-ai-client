@@ -11,7 +11,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import android.content.Context
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.thkox.homeai.R
+import com.thkox.homeai.presentation.ui.components.ModernTextField
 import com.thkox.homeai.presentation.viewModel.welcome.auth.SignUpViewModel
 import com.thkox.homeai.presentation.viewModel.welcome.auth.SignUpState
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
@@ -22,15 +26,27 @@ fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val firstName by viewModel.firstName.observeAsState("")
+    val lastName by viewModel.lastName.observeAsState("")
+    val email by viewModel.email.observeAsState("")
     val username by viewModel.username.observeAsState("")
     val password by viewModel.password.observeAsState("")
+    val verifyPassword by viewModel.verifyPassword.observeAsState("")
     val signUpState by viewModel.signUpState.observeAsState()
 
     SignUpContent(
+        firstName = firstName,
+        lastName = lastName,
+        email = email,
         username = username,
         password = password,
+        verifyPassword = verifyPassword,
+        onFirstNameChanged = { viewModel.onFirstNameChanged(it) },
+        onLastNameChanged = { viewModel.onLastNameChanged(it) },
+        onEmailChanged = { viewModel.onEmailChanged(it) },
         onUsernameChanged = { viewModel.onUsernameChanged(it) },
         onPasswordChanged = { viewModel.onPasswordChanged(it) },
+        onVerifyPasswordChanged = { viewModel.onVerifyPasswordChanged(it) },
         onSignUpClicked = { viewModel.signUp() },
         signUpState = signUpState,
         context = context,
@@ -40,57 +56,103 @@ fun SignUpScreen(
 
 @Composable
 fun SignUpContent(
+    firstName: String,
+    lastName: String,
+    email: String,
     username: String,
     password: String,
+    verifyPassword: String,
+    onFirstNameChanged: (String) -> Unit,
+    onLastNameChanged: (String) -> Unit,
+    onEmailChanged: (String) -> Unit,
     onUsernameChanged: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
+    onVerifyPasswordChanged: (String) -> Unit,
     onSignUpClicked: () -> Unit,
     signUpState: SignUpState?,
     context: Context,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-        TextField(
-            value = username,
-            onValueChange = onUsernameChanged,
-            label = { Text("Username") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        TextField(
-            value = password,
-            onValueChange = onPasswordChanged,
-            label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = onSignUpClicked,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Sign Up")
+    Scaffold(
+        bottomBar = {
+            BottomAppBar {
+                Button(
+                    onClick = onSignUpClicked,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Sign Up")
+                }
+            }
         }
+    ) { paddingValues ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = null,
+                modifier = Modifier.size(64.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            ModernTextField(
+                value = firstName,
+                onValueChange = onFirstNameChanged,
+                label = "First Name"
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            ModernTextField(
+                value = lastName,
+                onValueChange = onLastNameChanged,
+                label = "Last Name"
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            ModernTextField(
+                value = email,
+                onValueChange = onEmailChanged,
+                label = "Email"
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            ModernTextField(
+                value = username,
+                onValueChange = onUsernameChanged,
+                label = "Username"
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            ModernTextField(
+                value = password,
+                onValueChange = onPasswordChanged,
+                label = "Password"
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            ModernTextField(
+                value = verifyPassword,
+                onValueChange = onVerifyPasswordChanged,
+                label = "Verify Password"
+            )
+            Spacer(modifier = Modifier.height(16.dp))
 
-        when (signUpState) {
-            is SignUpState.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
+            when (signUpState) {
+                is SignUpState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
+                }
+                is SignUpState.Success -> {
+                    Toast.makeText(context, "Sign Up Successful", Toast.LENGTH_SHORT).show()
+                }
+                is SignUpState.Error -> {
+                    val errorMessage = (signUpState as SignUpState.Error).message
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+                else -> {}
             }
-            is SignUpState.Success -> {
-                Toast.makeText(context, "Sign Up Successful", Toast.LENGTH_SHORT).show()
-            }
-            is SignUpState.Error -> {
-                val errorMessage = (signUpState as SignUpState.Error).message
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            }
-            else -> {}
         }
     }
 }
+
 
 @Preview(
     showBackground = true,
@@ -101,10 +163,18 @@ fun SignUpContent(
 private fun SignUpScreenDarkPreview() {
     HomeAITheme {
         SignUpContent(
+            firstName = "",
+            lastName = "",
+            email = "",
             username = "",
             password = "",
+            verifyPassword = "",
+            onFirstNameChanged = {},
+            onLastNameChanged = {},
+            onEmailChanged = {},
             onUsernameChanged = {},
             onPasswordChanged = {},
+            onVerifyPasswordChanged = {},
             onSignUpClicked = {},
             signUpState = null,
             context = LocalContext.current
@@ -121,10 +191,18 @@ private fun SignUpScreenDarkPreview() {
 private fun SignUpScreenLightPreview() {
     HomeAITheme {
         SignUpContent(
+            firstName = "",
+            lastName = "",
+            email = "",
             username = "",
             password = "",
+            verifyPassword = "",
+            onFirstNameChanged = {},
+            onLastNameChanged = {},
+            onEmailChanged = {},
             onUsernameChanged = {},
             onPasswordChanged = {},
+            onVerifyPasswordChanged = {},
             onSignUpClicked = {},
             signUpState = null,
             context = LocalContext.current

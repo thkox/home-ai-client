@@ -15,10 +15,11 @@ import com.thkox.homeai.presentation.viewModel.welcome.auth.LoginState
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
+import com.thkox.homeai.R
+import com.thkox.homeai.presentation.ui.components.ModernTextField
 
 @Composable
 fun LoginScreen(
@@ -53,49 +54,61 @@ fun LoginContent(
     context: Context,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-        TextField(
-            value = username,
-            onValueChange = onUsernameChanged,
-            label = { Text("Username") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        TextField(
-            value = password,
-            onValueChange = onPasswordChanged,
-            label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = onLoginClicked,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Login")
+    Scaffold(
+        bottomBar = {
+            BottomAppBar {
+                Button(
+                    onClick = onLoginClicked,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Login")
+                }
+            }
         }
+    ) { paddingValues ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = null,
+                modifier = Modifier.size(64.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            ModernTextField(
+                value = username,
+                onValueChange = onUsernameChanged,
+                label = "Username"
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            ModernTextField(
+                value = password,
+                onValueChange = onPasswordChanged,
+                label = "Password"
+            )
+            Spacer(modifier = Modifier.height(16.dp))
 
-        when (loginState) {
-            is LoginState.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
+            when (loginState) {
+                is LoginState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
+                }
+                is LoginState.Success -> {
+                    Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                }
+                is LoginState.Error -> {
+                    val errorMessage = (loginState as LoginState.Error).message
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+                else -> {}
             }
-            is LoginState.Success -> {
-                Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-            }
-            is LoginState.Error -> {
-                val errorMessage = (loginState as LoginState.Error).message
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            }
-            else -> {}
         }
     }
 }
-
 
 @Preview(
     showBackground = true,
