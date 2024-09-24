@@ -80,6 +80,15 @@ dependencies {
 
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha13")
     implementation(libs.androidx.material.icons.extended)
+
+    // OkHttp and Retrofit
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // another gson library
+    implementation("com.google.code.gson:gson:2.10.1")
+
 }
 
 // Allow references to generated code
