@@ -43,46 +43,75 @@ fun EnterServerAddressContent(
     context: android.content.Context,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-        TextField(
-            value = serverAddress,
-            onValueChange = onServerAddressChanged,
-            label = { Text("Server Address") },
-            modifier = Modifier.fillMaxWidth(),
-            isError = enterServerAddressState is EnterServerAddressState.Error || serverAddress.isEmpty(),
-            singleLine = true
-        )
-        if (serverAddress.isEmpty()) {
-            Text("Server address cannot be empty", color = MaterialTheme.colorScheme.error)
-        }
+    var isError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = onValidateServerAddress,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = serverAddress.isNotEmpty()
+    Scaffold(
+        bottomBar = {
+            BottomAppBar {
+                Button(
+                    onClick = {
+                        isError = serverAddress.isEmpty()
+                        if (isError) {
+                            errorMessage = "Server address cannot be empty"
+                        } else {
+                            onValidateServerAddress()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = serverAddress.isNotEmpty()
+                ) {
+                    Text("Next")
+                }
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center
         ) {
-            Text("Next")
-        }
+            TextField(
+                value = serverAddress,
+                onValueChange = {
+                    onServerAddressChanged(it)
+                    isError = false
+                    errorMessage = ""
+                },
+                label = { Text("Server Address") },
+                modifier = Modifier.fillMaxWidth(),
+                isError = isError || enterServerAddressState is EnterServerAddressState.Error,
+                singleLine = true
+            )
+            if (isError || enterServerAddressState is EnterServerAddressState.Error) {
+                val displayMessage = if (isError) {
+                    errorMessage
+                } else {
+                    (enterServerAddressState as? EnterServerAddressState.Error)?.message ?: ""
+                }
+                Text(
+                    text = displayMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
 
-        when (enterServerAddressState) {
-            is EnterServerAddressState.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            when (enterServerAddressState) {
+                is EnterServerAddressState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
+                }
+
+                is EnterServerAddressState.Success -> {
+                    // Navigate to the next screen
+                }
+
+                else -> {}
             }
-            is EnterServerAddressState.Success -> {
-                Toast.makeText(context, "Server Address Valid", Toast.LENGTH_SHORT).show()
-                // Navigate to the next screen
-            }
-            is EnterServerAddressState.Error -> {
-                val errorMessage = (enterServerAddressState).message
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            }
-            else -> {}
         }
     }
 }
