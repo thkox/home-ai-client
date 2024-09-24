@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,51 +72,76 @@ fun EnterServerAddressContent(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            TextField(
-                value = serverAddress,
-                onValueChange = {
-                    onServerAddressChanged(it)
-                    isError = false
-                    errorMessage = ""
-                },
-                label = { Text("Server Address") },
-                modifier = Modifier.fillMaxWidth(),
-                isError = isError || enterServerAddressState is EnterServerAddressState.Error,
-                singleLine = true
-            )
-            if (isError || enterServerAddressState is EnterServerAddressState.Error) {
-                val displayMessage = if (isError) {
-                    errorMessage
-                } else {
-                    (enterServerAddressState as? EnterServerAddressState.Error)?.message ?: ""
-                }
+            // Up Section
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
-                    text = displayMessage,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(top = 4.dp)
+                    text = "Welcome to Home AI",
+                    style = MaterialTheme.typography.displayLarge
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            when (enterServerAddressState) {
-                is EnterServerAddressState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
+            // Middle Section
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Please enter the address of the app to continue.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                TextField(
+                    value = serverAddress,
+                    onValueChange = {
+                        onServerAddressChanged(it)
+                        isError = false
+                        errorMessage = ""
+                    },
+                    label = { Text("Server Address") },
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = isError || enterServerAddressState is EnterServerAddressState.Error,
+                    singleLine = true
+                )
+                if (isError || enterServerAddressState is EnterServerAddressState.Error) {
+                    val displayMessage = if (isError) {
+                        errorMessage
+                    } else {
+                        (enterServerAddressState as? EnterServerAddressState.Error)?.message ?: ""
+                    }
+                    Text(
+                        text = displayMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
                 }
+            }
 
-                is EnterServerAddressState.Success -> {
-                    // Navigate to the next screen
+            // Down Section
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                if (enterServerAddressState is EnterServerAddressState.Loading) {
+                    CircularProgressIndicator()
                 }
-
-                else -> {}
             }
         }
     }
 }
-
 @Preview(
     showBackground = true,
     showSystemUi = true,
