@@ -1,16 +1,15 @@
 package com.thkox.homeai.domain.usecase.user
 
-import com.thkox.homeai.presentation.viewModel.welcome.auth.LoginState
-import javax.inject.Inject
+import com.thkox.homeai.domain.repository.AuthRepository
+import com.thkox.homeai.domain.util.Resource
 
-class LoginUseCase @Inject constructor() {
-
-    suspend fun execute(username: String, password: String): LoginState {
-        // Simulate login logic
-        return if (username == "user" && password == "password") {
-            LoginState.Success
+class LoginUseCase(private val authRepository: AuthRepository) {
+    suspend operator fun invoke(email: String, password: String): Resource<Unit> {
+        val result = authRepository.login(email, password)
+        return if (result is Resource.Success) {
+            Resource.Success(Unit)
         } else {
-            LoginState.Error("Invalid credentials")
+            Resource.Error(result.message ?: "Unknown error")
         }
     }
 }
