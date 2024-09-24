@@ -16,14 +16,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.thkox.homeai.R
 import com.thkox.homeai.presentation.ui.components.ModernTextField
-import com.thkox.homeai.presentation.viewModel.welcome.auth.SignUpViewModel
+import com.thkox.homeai.presentation.viewModel.welcome.auth.RegisterViewModel
 import com.thkox.homeai.presentation.viewModel.welcome.auth.SignUpState
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 
 @Composable
-fun SignUpScreen(
+fun RegisterScreen(
     modifier: Modifier = Modifier,
-    viewModel: SignUpViewModel = hiltViewModel()
+    viewModel: RegisterViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val firstName by viewModel.firstName.observeAsState("")
@@ -153,7 +153,6 @@ fun SignUpContent(
     }
 }
 
-
 @Preview(
     showBackground = true,
     showSystemUi = true,
@@ -209,4 +208,3 @@ private fun SignUpScreenLightPreview() {
         )
     }
 }
-

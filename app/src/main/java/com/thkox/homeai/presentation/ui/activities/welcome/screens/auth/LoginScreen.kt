@@ -149,4 +149,3 @@ private fun LoginScreenLightPreview() {
         )
     }
 }
-

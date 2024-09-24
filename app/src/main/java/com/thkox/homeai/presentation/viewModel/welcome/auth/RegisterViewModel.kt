@@ -4,14 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thkox.homeai.domain.usecase.user.SignUpUseCase
+import com.thkox.homeai.domain.models.UserRegistration
+import com.thkox.homeai.domain.usecase.user.RegisterUseCase
+import com.thkox.homeai.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor(
-    private val signUpUseCase: SignUpUseCase
+class RegisterViewModel @Inject constructor(
+    private val registerUseCase: RegisterUseCase
 ) : ViewModel() {
 
     private val _firstName = MutableLiveData<String>()
@@ -67,12 +69,26 @@ class SignUpViewModel @Inject constructor(
         val currentPassword = _password.value ?: ""
         val currentVerifyPassword = _verifyPassword.value ?: ""
 
-        // Add your sign-up logic here, including password verification
+        if (currentPassword != currentVerifyPassword) {
+            _signUpState.value = SignUpState.Error("Passwords do not match")
+            return
+        }
+
+        val userRegistration = UserRegistration(
+            firstName = currentFirstName,
+            lastName = currentLastName,
+            email = currentEmail,
+            password = currentPassword
+        )
 
         viewModelScope.launch {
             _signUpState.value = SignUpState.Loading
-            val result = signUpUseCase.execute(currentUsername, currentPassword)
-            _signUpState.value = result
+            val result = registerUseCase(userRegistration)
+            _signUpState.value = if (result is Resource.Success) {
+                SignUpState.Success
+            } else {
+                SignUpState.Error(result.message ?: "Unknown error")
+            }
         }
     }
 }
