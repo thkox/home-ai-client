@@ -2,10 +2,14 @@ package com.thkox.homeai.data.api
 
 import com.thkox.homeai.data.models.*
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
+
+    @GET
+    suspend fun isFastApiApp(@Url address: String): Response<ResponseBody>
 
     @POST("/token")
     @FormUrlEncoded

@@ -96,9 +96,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideEnterServerAddressUseCase(
-        sharedPreferencesManager: SharedPreferencesManager
+        sharedPreferencesManager: SharedPreferencesManager,
+        apiService: ApiService
     ): EnterServerAddressUseCase {
-        return EnterServerAddressUseCase(sharedPreferencesManager)
+        return EnterServerAddressUseCase(sharedPreferencesManager, apiService)
     }
 
     @Provides

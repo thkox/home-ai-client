@@ -53,12 +53,19 @@ fun EnterServerAddressContent(
             value = serverAddress,
             onValueChange = onServerAddressChanged,
             label = { Text("Server Address") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            isError = enterServerAddressState is EnterServerAddressState.Error || serverAddress.isEmpty(),
+            singleLine = true
         )
+        if (serverAddress.isEmpty()) {
+            Text("Server address cannot be empty", color = MaterialTheme.colorScheme.error)
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = onValidateServerAddress,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = serverAddress.isNotEmpty()
         ) {
             Text("Next")
         }
