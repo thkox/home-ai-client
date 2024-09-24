@@ -29,7 +29,7 @@ class EnterServerAddressViewModel @Inject constructor(
 
         viewModelScope.launch {
             _enterServerAddressState.value = EnterServerAddressState.Loading
-            val result = enterServerAddressUseCase.execute(currentAddress)
+            val result = enterServerAddressUseCase.invoke(currentAddress)
             _enterServerAddressState.value = result
         }
     }

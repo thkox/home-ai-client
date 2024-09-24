@@ -72,7 +72,7 @@ fun EnterServerAddressContent(
                 // Navigate to the next screen
             }
             is EnterServerAddressState.Error -> {
-                val errorMessage = (enterServerAddressState as EnterServerAddressState.Error).message
+                val errorMessage = (enterServerAddressState).message
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             }
             else -> {}
