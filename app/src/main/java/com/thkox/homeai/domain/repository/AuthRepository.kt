@@ -1,4 +1,11 @@
 package com.thkox.homeai.domain.repository
 
-class AuthRepository {
+import com.thkox.homeai.domain.models.Token
+import com.thkox.homeai.domain.models.User
+import com.thkox.homeai.domain.models.UserRegistration
+import com.thkox.homeai.domain.util.Resource
+
+interface AuthRepository {
+    suspend fun login(email: String, password: String): Resource<Token>
+    suspend fun register(userRegistration: UserRegistration): Resource<User>
 }
