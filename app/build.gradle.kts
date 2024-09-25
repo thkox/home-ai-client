@@ -92,6 +92,11 @@ dependencies {
     // navigation
     implementation("androidx.navigation:navigation-compose:2.8.1")
 
+    // Pager
+    implementation("com.google.accompanist:accompanist-pager:0.19.0")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.19.0")
+
+
 }
 
 // Allow references to generated code

@@ -100,6 +100,7 @@ private fun MainTopAppBarDarkPreview() {
 fun WelcomeTopAppBar(
     modifier: Modifier = Modifier,
     text: String,
+    showBackButton: Boolean = true,
     onClickBackIcon: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
@@ -113,11 +114,13 @@ fun WelcomeTopAppBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = onClickBackIcon) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
-                    contentDescription = stringResource(R.string.back)
-                )
+            if (showBackButton) {
+                IconButton(onClick = onClickBackIcon) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
+                        contentDescription = stringResource(R.string.back)
+                    )
+                }
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
