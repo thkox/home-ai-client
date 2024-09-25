@@ -70,7 +70,12 @@ object AppModule {
         okHttpClient: OkHttpClient,
         sharedPreferencesManager: SharedPreferencesManager
     ): Retrofit {
-        val baseUrl = sharedPreferencesManager.getBaseUrl()
+        var baseUrl = sharedPreferencesManager.getBaseUrl()
+        if (baseUrl.isNullOrEmpty()) {
+            baseUrl = "http://default_base_url"
+        } else if (!baseUrl.startsWith("http://") && !baseUrl.startsWith("https://")) {
+            baseUrl = "http://$baseUrl"
+        }
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(baseUrl)
