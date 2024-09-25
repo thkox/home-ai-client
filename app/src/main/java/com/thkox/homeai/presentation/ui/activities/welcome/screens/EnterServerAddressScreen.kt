@@ -1,7 +1,6 @@
 package com.thkox.homeai.presentation.ui.activities.welcome.screens
 
 import android.content.res.Configuration
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,11 +18,18 @@ import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 @Composable
 fun EnterServerAddressScreen(
     modifier: Modifier = Modifier,
-    viewModel: EnterServerAddressViewModel = hiltViewModel()
+    viewModel: EnterServerAddressViewModel = hiltViewModel(),
+    navigateTo: () -> Unit
 ) {
     val context = LocalContext.current
     val serverAddress by viewModel.serverAddress.observeAsState("")
     val enterServerAddressState by viewModel.enterServerAddressState.observeAsState()
+
+    LaunchedEffect(enterServerAddressState) {
+        if (enterServerAddressState is EnterServerAddressState.Success) {
+            navigateTo()
+        }
+    }
 
     EnterServerAddressContent(
         serverAddress = serverAddress,
