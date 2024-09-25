@@ -4,6 +4,10 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
+import androidx.compose.material.icons.automirrored.filled.Backspace
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -90,4 +94,64 @@ private fun MainTopAppBarDarkPreview() {
         )
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WelcomeTopAppBar(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClickBackIcon: () -> Unit = {}
+) {
+    CenterAlignedTopAppBar(
+        modifier = modifier.clip(shape = RoundedCornerShape(
+            bottomStart = 16.dp,
+            bottomEnd = 16.dp)
+        ),
+        title = {
+            Text(
+                text = text
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onClickBackIcon) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
+                    contentDescription = stringResource(R.string.back)
+                )
+            }
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,  // Background color
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary, // Color for navigation icon
+            titleContentColor = MaterialTheme.colorScheme.onPrimary  // Color for title text
+        )
+    )
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Composable
+private fun WelcomeTopAppBarLightPreview() {
+    HomeAITheme {
+        WelcomeTopAppBar(
+            text = "Light Theme"
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun WelcomeTopAppBarDarkPreview() {
+    HomeAITheme {
+        WelcomeTopAppBar(
+            text = "Night Theme"
+        )
+    }
+}
+
 
