@@ -25,17 +25,17 @@ class RegisterViewModel @Inject constructor(
     private val _email = MutableLiveData<String>()
     val email: LiveData<String> = _email
 
-    private val _username = MutableLiveData<String>()
-    val username: LiveData<String> = _username
-
     private val _password = MutableLiveData<String>()
     val password: LiveData<String> = _password
 
     private val _verifyPassword = MutableLiveData<String>()
     val verifyPassword: LiveData<String> = _verifyPassword
 
-    private val _signUpState = MutableLiveData<SignUpState>()
-    val signUpState: LiveData<SignUpState> = _signUpState
+    private val _registerState = MutableLiveData<RegisterState>()
+    val registerState: LiveData<RegisterState> = _registerState
+
+    private val _fieldErrors = MutableLiveData<Map<String, String>>()
+    val fieldErrors: LiveData<Map<String, String>> = _fieldErrors
 
     fun onFirstNameChanged(newFirstName: String) {
         _firstName.value = newFirstName
@@ -49,10 +49,6 @@ class RegisterViewModel @Inject constructor(
         _email.value = newEmail
     }
 
-    fun onUsernameChanged(newUsername: String) {
-        _username.value = newUsername
-    }
-
     fun onPasswordChanged(newPassword: String) {
         _password.value = newPassword
     }
@@ -61,40 +57,44 @@ class RegisterViewModel @Inject constructor(
         _verifyPassword.value = newVerifyPassword
     }
 
-    fun signUp() {
+    fun register() {
         val currentFirstName = _firstName.value ?: ""
         val currentLastName = _lastName.value ?: ""
         val currentEmail = _email.value ?: ""
-        val currentUsername = _username.value ?: ""
         val currentPassword = _password.value ?: ""
         val currentVerifyPassword = _verifyPassword.value ?: ""
 
         if (currentPassword != currentVerifyPassword) {
-            _signUpState.value = SignUpState.Error("Passwords do not match")
+            _fieldErrors.value = mapOf("verifyPassword" to "Passwords do not match")
             return
         }
 
         val userRegistration = UserRegistration(
             firstName = currentFirstName,
             lastName = currentLastName,
-            email = currentEmail,
+            username = currentEmail,
             password = currentPassword
         )
 
         viewModelScope.launch {
-            _signUpState.value = SignUpState.Loading
+            _registerState.value = RegisterState.Loading
             val result = registerUseCase(userRegistration)
-            _signUpState.value = if (result is Resource.Success) {
-                SignUpState.Success
+            if (result is Resource.Success) {
+                _registerState.value = RegisterState.Success
             } else {
-                SignUpState.Error(result.message ?: "Unknown error")
+                _registerState.value = RegisterState.Error(result.message ?: "Unknown error")
+                _fieldErrors.value = if (result.field != null && result.message != null) {
+                    mapOf(result.field to result.message)
+                } else {
+                    emptyMap()
+                }
             }
         }
     }
 }
 
-sealed class SignUpState {
-    object Loading : SignUpState()
-    object Success : SignUpState()
-    data class Error(val message: String) : SignUpState()
+sealed class RegisterState {
+    object Loading : RegisterState()
+    object Success : RegisterState()
+    data class Error(val message: String) : RegisterState()
 }

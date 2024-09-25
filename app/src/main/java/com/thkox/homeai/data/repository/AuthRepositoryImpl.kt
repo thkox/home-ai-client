@@ -41,7 +41,7 @@ class AuthRepositoryImpl(
                 val request = UserCreateRequest(
                     firstName = userRegistration.firstName,
                     lastName = userRegistration.lastName,
-                    email = userRegistration.email,
+                    username = userRegistration.username,
                     password = userRegistration.password
                 )
                 val response = apiService.registerUser(request)

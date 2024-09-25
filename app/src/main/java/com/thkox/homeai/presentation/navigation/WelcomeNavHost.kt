@@ -33,7 +33,11 @@ fun WelcomeNavHost(
             )
         }
         composable("register") {
-            RegisterScreen()
+            RegisterScreen(
+                navigateToLogin = { navController.navigate("login") },
+                navigateToTutorial = { navController.navigate("tutorial") },
+                sharedPreferencesManager = sharedPreferencesManager
+            )
         }
         composable("tutorial") {
             TutorialScreen()
