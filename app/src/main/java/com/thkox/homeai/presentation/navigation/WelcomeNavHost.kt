@@ -6,9 +6,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.thkox.homeai.presentation.ui.activities.welcome.screens.EnterServerAddressScreen
 import com.thkox.homeai.presentation.ui.activities.welcome.screens.auth.LoginScreen
+import com.thkox.homeai.data.sources.local.SharedPreferencesManager
+import com.thkox.homeai.presentation.ui.activities.welcome.screens.TutorialScreen
+import com.thkox.homeai.presentation.ui.activities.welcome.screens.auth.RegisterScreen
 
 @Composable
-fun WelcomeNavHost(navController: NavHostController, startDestination: String) {
+fun WelcomeNavHost(
+    navController: NavHostController,
+    startDestination: String,
+    sharedPreferencesManager: SharedPreferencesManager
+) {
     NavHost(navController = navController, startDestination = startDestination) {
         composable("enterServerAddress") {
             EnterServerAddressScreen(
@@ -16,7 +23,20 @@ fun WelcomeNavHost(navController: NavHostController, startDestination: String) {
             )
         }
         composable("login") {
-            LoginScreen()
+            LoginScreen(
+                navigateToTutorial = { navController.navigate("tutorial") },
+                navigateToRegister = { navController.navigate("register") },
+                navigateToEnterServerAddress = {
+                    navController.navigate("enterServerAddress")
+                },
+                sharedPreferencesManager = sharedPreferencesManager
+            )
+        }
+        composable("register") {
+            RegisterScreen()
+        }
+        composable("tutorial") {
+            TutorialScreen()
         }
     }
 }
