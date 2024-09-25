@@ -1,5 +1,7 @@
 package com.thkox.homeai.presentation.navigation
 
+import android.app.Activity
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -7,6 +9,7 @@ import androidx.navigation.compose.composable
 import com.thkox.homeai.presentation.ui.activities.welcome.screens.EnterServerAddressScreen
 import com.thkox.homeai.presentation.ui.activities.welcome.screens.auth.LoginScreen
 import com.thkox.homeai.data.sources.local.SharedPreferencesManager
+import com.thkox.homeai.presentation.ui.activities.main.MainActivity
 import com.thkox.homeai.presentation.ui.activities.welcome.screens.TutorialScreen
 import com.thkox.homeai.presentation.ui.activities.welcome.screens.auth.RegisterScreen
 
@@ -28,6 +31,11 @@ fun WelcomeNavHost(
                 navigateToRegister = { navController.navigate("register") },
                 navigateToEnterServerAddress = {
                     navController.navigate("enterServerAddress")
+                },
+                navigateToMain = {
+                    val context = navController.context
+                    context.startActivity(Intent(context, MainActivity::class.java))
+                    (context as? Activity)?.finish()
                 },
                 sharedPreferencesManager = sharedPreferencesManager
             )

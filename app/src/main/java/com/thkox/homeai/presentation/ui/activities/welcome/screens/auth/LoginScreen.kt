@@ -27,6 +27,7 @@ fun LoginScreen(
     navigateToTutorial: () -> Unit,
     navigateToRegister: () -> Unit,
     navigateToEnterServerAddress: () -> Unit,
+    navigateToMain: () -> Unit,
     sharedPreferencesManager: SharedPreferencesManager,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel()
@@ -44,15 +45,14 @@ fun LoginScreen(
         onLoginClicked = { viewModel.login() },
         loginState = loginState,
         context = context,
-        navigateToTutorial = navigateToTutorial,
         navigateToRegister = navigateToRegister,
         navigateToEnterServerAddress = navigateToEnterServerAddress,
+        navigateToMain = navigateToMain,
         sharedPreferencesManager = sharedPreferencesManager,
         modifier = modifier
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginContent(
     email: String,
@@ -62,9 +62,9 @@ fun LoginContent(
     onLoginClicked: () -> Unit,
     loginState: LoginState?,
     context: android.content.Context,
-    navigateToTutorial: () -> Unit,
     navigateToRegister: () -> Unit,
     navigateToEnterServerAddress: () -> Unit,
+    navigateToMain: () -> Unit,
     sharedPreferencesManager: SharedPreferencesManager,
     modifier: Modifier = Modifier
 ) {
@@ -132,7 +132,7 @@ fun LoginContent(
                 }
                 is LoginState.Success -> {
                     LaunchedEffect(Unit) {
-                        navigateToTutorial()
+                        navigateToMain()
                     }
                 }
                 is LoginState.Error -> {
@@ -161,8 +161,8 @@ private fun LoginScreenDarkPreview() {
             loginState = null,
             context = LocalContext.current,
             navigateToRegister = {},
-            navigateToTutorial = {},
             navigateToEnterServerAddress = {},
+            navigateToMain = {},
             sharedPreferencesManager = SharedPreferencesManager(LocalContext.current.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE))
         )
     }
@@ -185,8 +185,8 @@ private fun LoginScreenLightPreview() {
             loginState = null,
             context = LocalContext.current,
             navigateToRegister = {},
-            navigateToTutorial = {},
             navigateToEnterServerAddress = {},
+            navigateToMain = {},
             sharedPreferencesManager = SharedPreferencesManager(LocalContext.current.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE))
         )
     }
