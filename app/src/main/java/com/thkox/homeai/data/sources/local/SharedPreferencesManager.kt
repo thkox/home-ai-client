@@ -19,7 +19,7 @@ class SharedPreferencesManager @Inject constructor(
     }
 
     fun getBaseUrl(): String? {
-        return sharedPreferences.getString("base_url", "http://localhost:8000/")
+        return sharedPreferences.getString("base_url", null)
     }
 
     fun saveBaseUrl(baseUrl: String) {
