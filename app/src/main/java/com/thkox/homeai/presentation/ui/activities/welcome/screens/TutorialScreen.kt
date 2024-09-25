@@ -21,14 +21,9 @@ import com.thkox.homeai.presentation.ui.components.WelcomeTopAppBar
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 
 @Composable
-fun TutorialScreen() {
-    val context = LocalContext.current
-
+fun TutorialScreen(navigateToMain: () -> Unit) {
     TutorialContent(
-        onLastPageAction = {
-            context.startActivity(Intent(context, MainActivity::class.java))
-            (context as? ComponentActivity)?.finish()
-        }
+        onLastPageAction = navigateToMain
     )
 }
 

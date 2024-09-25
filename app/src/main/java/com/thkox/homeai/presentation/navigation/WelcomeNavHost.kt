@@ -33,9 +33,7 @@ fun WelcomeNavHost(
                     navController.navigate("enterServerAddress")
                 },
                 navigateToMain = {
-                    val context = navController.context
-                    context.startActivity(Intent(context, MainActivity::class.java))
-                    (context as? Activity)?.finish()
+                    navigateToMain(navController)
                 },
                 sharedPreferencesManager = sharedPreferencesManager
             )
@@ -48,7 +46,17 @@ fun WelcomeNavHost(
             )
         }
         composable("tutorial") {
-            TutorialScreen()
+            TutorialScreen(
+                navigateToMain = {
+                    navigateToMain(navController)
+                }
+            )
         }
     }
+}
+
+fun navigateToMain(navController: NavHostController) {
+    val context = navController.context
+    context.startActivity(Intent(context, MainActivity::class.java))
+    (context as? Activity)?.finish()
 }
