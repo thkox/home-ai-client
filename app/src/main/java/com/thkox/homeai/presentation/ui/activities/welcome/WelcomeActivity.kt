@@ -35,7 +35,11 @@ class WelcomeActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    WelcomeNavHost(navController = navController, startDestination = startDestination)
+                    WelcomeNavHost(
+                        navController = navController,
+                        sharedPreferencesManager = sharedPreferencesManager,
+                        startDestination = startDestination
+                    )
                 }
             }
         }
