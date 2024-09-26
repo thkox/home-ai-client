@@ -69,8 +69,6 @@ fun SenderNameAndTimestamp(
     }
 }
 
-
-
 @Composable
 fun MessageDisplay(
     message: Message,

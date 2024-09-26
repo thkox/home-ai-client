@@ -1,12 +1,18 @@
 package com.thkox.homeai.presentation.ui.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Send
@@ -44,11 +50,34 @@ fun SubmitButton(
             .padding(4.dp)
     ) {
         Icon(
-            imageVector = if (text.isEmpty()) Icons.Default.Mic else Icons.Default.Send,
+            imageVector = if (text.isEmpty()) Icons.Default.Mic else Icons.AutoMirrored.Filled.Send,
             contentDescription = if (text.isEmpty()) "Record Audio" else "Send Message",
             tint = Color.White
         )
     }
+}
+
+@Composable
+fun AttachFileButton(
+    onClick: () -> Unit
+) {
+    IconButton(
+        onClick = { onClick() },
+        modifier = Modifier
+            .size(48.dp)
+            .background(
+                color = MaterialTheme.colorScheme.primary,
+                shape = CircleShape
+            )
+            .padding(4.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.AttachFile,
+            contentDescription = "Attach File",
+            tint = Color.White
+        )
+    }
+    
 }
 
 @Composable
@@ -88,6 +117,8 @@ fun ChatInputBar(
     text: String,
     onTextChange: (String) -> Unit
 ) {
+    var isTextFieldFocused by remember { mutableStateOf(false) }
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -99,6 +130,11 @@ fun ChatInputBar(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
+            AttachFileButton(
+                onClick = {
+
+                }
+            )
             Surface(
                 shape = RoundedCornerShape(20.dp),
                 modifier = Modifier
@@ -115,9 +151,9 @@ fun ChatInputBar(
                     onTextChange = onTextChange,
                     modifier = Modifier
                         .weight(1f)
+                        .clickable { isTextFieldFocused = true }
                 )
             }
-
 
             SubmitButton(
                 text = text,
