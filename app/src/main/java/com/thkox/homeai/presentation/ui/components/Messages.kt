@@ -2,7 +2,6 @@ package com.thkox.homeai.presentation.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,10 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,20 +24,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
-import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.thkox.homeai.R
 import com.thkox.homeai.presentation.model.Message
 
 @Composable
-fun AuthorNameAndTimestamp(
-    isAuthorMe: Boolean,
-    authorName: String,
+fun SenderNameAndTimestamp(
+    isSenderMe: Boolean,
+    senderName: String,
     timestamp: String
 ) {
 
-    val horizontalArrangement = if (isAuthorMe) {
+    val horizontalArrangement = if (isSenderMe) {
         Arrangement.End
     } else {
         Arrangement.Start
@@ -53,14 +49,16 @@ fun AuthorNameAndTimestamp(
             .semantics(mergeDescendants = true) {},
         horizontalArrangement = horizontalArrangement
     ) {
-        Text(
-            text = authorName,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
-                .alignBy(LastBaseline)
-                .paddingFrom(LastBaseline, after = 8.dp)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
+        if (!isSenderMe) {
+            Text(
+                text = senderName,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .alignBy(LastBaseline)
+                    .paddingFrom(LastBaseline, after = 8.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+        }
         Text(
             text = timestamp,
             style = MaterialTheme.typography.bodySmall,
@@ -73,19 +71,14 @@ fun AuthorNameAndTimestamp(
 
 
 @Composable
-fun ClickableMessage(
-    modifier: Modifier = Modifier,
+fun MessageDisplay(
     message: Message,
-    isAuthorMe: Boolean,
-    authorClicked: (String) -> Unit
 ) {
-    val uriHandler = LocalUriHandler.current
 
     Text(
         text = message.text,
         style = MaterialTheme.typography.bodyLarge.copy(color = LocalContentColor.current),
         modifier = Modifier.padding(16.dp),
-        // on click
     )
 }
 
@@ -93,22 +86,21 @@ fun ClickableMessage(
 @Composable
 fun MessageBubble(
     message: Message,
-    isAuthorMe: Boolean,
-    authorClicked: (String) -> Unit
+    isSenderMe: Boolean,
 ) {
-    val backgroundBubbleColor = if (isAuthorMe) {
+    val backgroundBubbleColor = if (isSenderMe) {
         MaterialTheme.colorScheme.primary
     } else {
         MaterialTheme.colorScheme.surfaceVariant
     }
 
-    val shape = if(isAuthorMe) {
+    val shape = if(isSenderMe) {
         RoundedCornerShape(20.dp, 4.dp, 20.dp, 20.dp)
     } else {
         RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp)
     }
 
-    val horizontalArrangement = if (isAuthorMe) {
+    val horizontalArrangement = if (isSenderMe) {
         Arrangement.End
     } else {
         Arrangement.Start
@@ -122,40 +114,23 @@ fun MessageBubble(
             color = backgroundBubbleColor,
             shape = shape
         ) {
-            ClickableMessage(
-                message = message,
-                isAuthorMe = isAuthorMe,
-                authorClicked = authorClicked
+            MessageDisplay(
+                message = message
             )
-        }
-
-        // If there is an image, show it
-        message.image?.let {
-            Spacer(modifier = Modifier.height(4.dp))
-            Surface(
-                color = backgroundBubbleColor,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Person,  //painterResource(it),
-                    modifier = Modifier.size(160.dp),
-                    contentDescription = null
-                )
-            }
         }
     }
 }
 
 @Composable
-fun AuthorAndTextMessage(
+fun SenderAndTextMessage(
     modifier: Modifier = Modifier,
     message: Message,
-    isAuthorMe: Boolean,
-    isFirstMessageByAuthor: Boolean, // for visual purposes to separate authors
-    isLastMessageByAuthor: Boolean, // for visual purposes to separate authors
-    authorClicked: (String) -> Unit, // for navigation
+    isSenderMe: Boolean,
+    isFirstMessageBySender: Boolean,
+    isLastMessageBySender: Boolean
 ) {
 
-    val horizontalArrangement = if (isAuthorMe) {
+    val horizontalArrangement = if (isSenderMe) {
         Arrangement.End
     } else {
         Arrangement.Start
@@ -167,20 +142,19 @@ fun AuthorAndTextMessage(
     ) {
         Column(
         ) {
-            if (isLastMessageByAuthor) {
-                AuthorNameAndTimestamp(
-                    isAuthorMe = isAuthorMe,
-                    authorName = message.author,
+            if (isLastMessageBySender) {
+                SenderNameAndTimestamp(
+                    isSenderMe = isSenderMe,
+                    senderName = message.sender,
                     timestamp = message.timestamp
                 )
             }
             MessageBubble(
                 message = message,
-                isAuthorMe = isAuthorMe,
-                authorClicked = authorClicked
+                isSenderMe = isSenderMe,
             )
-            if (isFirstMessageByAuthor) {
-                Spacer(modifier = Modifier.height(8.dp)) // Space between authors
+            if (isFirstMessageBySender) {
+                Spacer(modifier = Modifier.height(8.dp)) // Space between senders
             } else {
                 Spacer(modifier = Modifier.height(4.dp)) // Space between messages
             }
@@ -190,93 +164,47 @@ fun AuthorAndTextMessage(
 
 @Composable
 fun Message(
-    onAuthorClick: (String) -> Unit,
     message: Message,
-    isAuthorMe: Boolean,
-    isFirstMessageByAuthor: Boolean,
-    isLastMessageByAuthor: Boolean,
+    isSenderMe: Boolean,
+    isFirstMessageBySender: Boolean,
+    isLastMessageBySender: Boolean,
 ) {
-    val borderColor = if (isAuthorMe) {
+    val borderColor = if (isSenderMe) {
         MaterialTheme.colorScheme.primary
     } else {
         MaterialTheme.colorScheme.tertiary
     }
 
-    val spaceBetweenAuthors = if (isLastMessageByAuthor) Modifier.padding(top = 8.dp) else Modifier
+    val spaceBetweenSenders = if (isLastMessageBySender) Modifier.padding(top = 8.dp) else Modifier
 
-    Row(modifier = spaceBetweenAuthors) {
-        if (!isAuthorMe && isLastMessageByAuthor) {
-            // Avatar for non-author users only when they are the last author
+    Row(modifier = spaceBetweenSenders) {
+        if (!isSenderMe && isLastMessageBySender) {
             Image(
                 modifier = Modifier
-                    .clickable(onClick = { onAuthorClick(message.author) })
                     .padding(horizontal = 16.dp)
                     .size(42.dp)
                     .border(1.5.dp, borderColor, CircleShape)
                     .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
                     .clip(CircleShape)
                     .align(Alignment.Top),
-                imageVector = Icons.Default.Build,//painterResource(id = message.authorImage),
+                painter = painterResource(id = R.drawable.ai_icon),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
             )
         } else {
-            // Space under avatar for author or non-last non-author messages
+            // Space under avatar for sender or non-last non-sender messages
             Spacer(modifier = Modifier.width(74.dp))
         }
-        AuthorAndTextMessage(
+        SenderAndTextMessage(
             message = message,
-            isAuthorMe = isAuthorMe,
-            isFirstMessageByAuthor = isFirstMessageByAuthor,
-            isLastMessageByAuthor = isLastMessageByAuthor,
-            authorClicked = onAuthorClick,
+            isSenderMe = isSenderMe,
+            isFirstMessageBySender = isFirstMessageBySender,
+            isLastMessageBySender = isLastMessageBySender,
             modifier = Modifier
                 .padding(end = 16.dp) // Maintain end padding
                 .weight(1f)
         )
     }
-}
-
-
-@Preview(
-    showBackground = true
-)
-@Composable
-private fun AuthorNameAndTimestampPreview() {
-    AuthorNameAndTimestamp(
-        isAuthorMe = true,
-        authorName = "Author Name",
-        timestamp = "15:02 PM"
-    )
-}
-
-
-@Preview
-@Composable
-private fun ClickableMessagePreview() {
-    ClickableMessage(
-        message = Message(
-            author = "Author Name",
-            text = "This is a message",
-            timestamp = "15:02 PM"
-        ),
-        isAuthorMe = false,
-        authorClicked = {}
-    )
-}
-
-@Preview
-@Composable
-private fun MessageBubblePreview() {
-    MessageBubble(
-        message = Message(
-            author = "Author Name",
-            text = "This is a message",
-            timestamp = "15:02 PM"
-        ),
-        isAuthorMe = true,
-        authorClicked = {}
-    )
 }
 
 @Preview (
@@ -286,14 +214,13 @@ private fun MessageBubblePreview() {
 private fun MessageFromUserPreview() {
     Message(
         message = Message(
-            author = "Author Name",
+            sender = "Home AI",
             text = "This is a message.",
             timestamp = "15:02 PM"
         ),
-        isAuthorMe = false,
-        isFirstMessageByAuthor = false,
-        isLastMessageByAuthor = true,
-        onAuthorClick = {}
+        isSenderMe = false,
+        isFirstMessageBySender = false,
+        isLastMessageBySender = true,
     )
 }
 
@@ -304,14 +231,13 @@ private fun MessageFromUserPreview() {
 private fun MessageFromMePreview() {
     Message(
         message = Message(
-            author = "Author Name",
+            sender = "First Last",
             text = "This is another message.",
             timestamp = "16:52 PM"
         ),
-        isAuthorMe = true,
-        isFirstMessageByAuthor = false,
-        isLastMessageByAuthor = true,
-        onAuthorClick = {}
+        isSenderMe = true,
+        isFirstMessageBySender = false,
+        isLastMessageBySender = true,
     )
 }
 

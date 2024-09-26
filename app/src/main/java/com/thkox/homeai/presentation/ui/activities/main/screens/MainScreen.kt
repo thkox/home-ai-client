@@ -28,19 +28,17 @@ fun MainScreen() {
     var text by remember { mutableStateOf("") }
 
     val firstMessage = Message(
-        author = "User",
+        sender = "User",
         text = "Hello there!",
         timestamp = "12:00",
-        image = null,
-        authorImage = null
+        senderImage = null
     )
 
     val secondMessage = Message(
-        author = "Home AI",
+        sender = "Home AI",
         text = "Hello! How can I help you today?",
         timestamp = "15:00",
-        image = null,
-        authorImage = null
+        senderImage = null
     )
 
     Scaffold(
@@ -67,19 +65,17 @@ fun MainScreen() {
             modifier = Modifier.padding(values)
         ) {
             Message(
-                onAuthorClick = { /*TODO*/ },
                 message = firstMessage,
-                isAuthorMe = true,
-                isFirstMessageByAuthor = true,
-                isLastMessageByAuthor = true
+                isSenderMe = true,
+                isFirstMessageBySender = true,
+                isLastMessageBySender = true
             )
 
             Message(
-                onAuthorClick = { /*TODO*/ },
                 message = secondMessage,
-                isAuthorMe = false,
-                isFirstMessageByAuthor = true,
-                isLastMessageByAuthor = true
+                isSenderMe = false,
+                isFirstMessageBySender = true,
+                isLastMessageBySender = true
             )
         }
     }
