@@ -25,6 +25,7 @@ fun ModernTextField(
         isError = isError,
         modifier = modifier.fillMaxWidth(),
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+        singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
             unfocusedBorderColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.disabled),
