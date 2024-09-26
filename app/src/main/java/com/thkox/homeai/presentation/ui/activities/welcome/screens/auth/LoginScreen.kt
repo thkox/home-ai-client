@@ -114,7 +114,8 @@ fun LoginContent(
             ModernTextField(
                 value = password,
                 onValueChange = onPasswordChanged,
-                label = "Password"
+                label = "Password",
+                isPassword = true
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(

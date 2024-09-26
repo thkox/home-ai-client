@@ -161,7 +161,8 @@ fun RegisterContent(
                 value = password,
                 onValueChange = onPasswordChanged,
                 label = "Password",
-                isError = fieldErrors.containsKey("password")
+                isError = fieldErrors.containsKey("password"),
+                isPassword = true
             )
             if (fieldErrors.containsKey("password")) {
                 Text(
@@ -175,7 +176,8 @@ fun RegisterContent(
                 value = verifyPassword,
                 onValueChange = onVerifyPasswordChanged,
                 label = "Verify Password",
-                isError = fieldErrors.containsKey("verifyPassword")
+                isError = fieldErrors.containsKey("verifyPassword"),
+                isPassword = true
             )
             if (fieldErrors.containsKey("verifyPassword")) {
                 Text(
