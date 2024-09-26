@@ -1,9 +1,9 @@
 package com.thkox.homeai.data.models
 
+import com.google.gson.annotations.SerializedName
+
 data class MessageDto(
-    val senderId: String?,
+    @SerializedName("sender_id") val senderId: String?,
     val content: String,
     val timestamp: String,
-    val tokensGenerated: Int,
-    val responseTime: Float
 )
