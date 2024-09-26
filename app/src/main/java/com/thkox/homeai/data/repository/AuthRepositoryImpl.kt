@@ -1,6 +1,7 @@
 package com.thkox.homeai.data.repository
 
 import com.thkox.homeai.data.api.ApiService
+import com.thkox.homeai.data.api.RetrofitHolder
 import com.thkox.homeai.data.api.TokenProvider
 import com.thkox.homeai.data.models.UserCreateRequest
 import com.thkox.homeai.domain.models.Token
@@ -12,9 +13,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class AuthRepositoryImpl(
-    private val apiService: ApiService,
+    private val retrofitHolder: RetrofitHolder,
     private val tokenProvider: TokenProvider
 ) : AuthRepository {
+
+    private val apiService: ApiService
+        get() = retrofitHolder.getRetrofit().create(ApiService::class.java)
 
     override suspend fun login(email: String, password: String): Resource<Token> {
         return withContext(Dispatchers.IO) {

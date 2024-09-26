@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.thkox.homeai.data.api.ApiService
 import com.thkox.homeai.data.api.AuthInterceptor
+import com.thkox.homeai.data.api.RetrofitHolder
 import com.thkox.homeai.data.api.TokenProvider
 import com.thkox.homeai.data.repository.AuthRepositoryImpl
 import com.thkox.homeai.data.repository.TokenProviderImpl
@@ -66,45 +67,35 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(
+    fun provideRetrofitHolder(
         okHttpClient: OkHttpClient,
         sharedPreferencesManager: SharedPreferencesManager
-    ): Retrofit {
-        var baseUrl = sharedPreferencesManager.getBaseUrl()
-        if (baseUrl.isNullOrEmpty()) {
-            baseUrl = "http://default_base_url"
-        } else if (!baseUrl.startsWith("http://") && !baseUrl.startsWith("https://")) {
-            baseUrl = "http://$baseUrl"
-        }
-        return Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(baseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+    ): RetrofitHolder {
+        return RetrofitHolder(okHttpClient, sharedPreferencesManager)
     }
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): ApiService {
-        return retrofit.create(ApiService::class.java)
+    fun provideApiService(retrofitHolder: RetrofitHolder): ApiService {
+        return retrofitHolder.getRetrofit().create(ApiService::class.java)
     }
 
     @Provides
     @Singleton
     fun provideAuthRepository(
-        apiService: ApiService,
+        retrofitHolder: RetrofitHolder,
         tokenProvider: TokenProvider
     ): AuthRepository {
-        return AuthRepositoryImpl(apiService, tokenProvider)
+        return AuthRepositoryImpl(retrofitHolder, tokenProvider)
     }
 
     @Provides
     @Singleton
     fun provideEnterServerAddressUseCase(
         sharedPreferencesManager: SharedPreferencesManager,
-        apiService: ApiService
+        retrofitHolder: RetrofitHolder
     ): EnterServerAddressUseCase {
-        return EnterServerAddressUseCase(sharedPreferencesManager, apiService)
+        return EnterServerAddressUseCase(sharedPreferencesManager, retrofitHolder)
     }
 
     @Provides
