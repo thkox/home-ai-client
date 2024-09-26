@@ -1,6 +1,7 @@
 package com.thkox.homeai.presentation.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -169,12 +170,6 @@ fun Message(
     isFirstMessageBySender: Boolean,
     isLastMessageBySender: Boolean,
 ) {
-    val borderColor = if (isSenderMe) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.tertiary
-    }
-
     val spaceBetweenSenders = if (isLastMessageBySender) Modifier.padding(top = 8.dp) else Modifier
 
     Row(modifier = spaceBetweenSenders) {
@@ -183,9 +178,10 @@ fun Message(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .size(42.dp)
-                    .border(1.5.dp, borderColor, CircleShape)
+                    .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
                     .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
                     .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
                     .align(Alignment.Top),
                 painter = painterResource(id = R.drawable.ai_icon),
                 contentScale = ContentScale.Crop,
