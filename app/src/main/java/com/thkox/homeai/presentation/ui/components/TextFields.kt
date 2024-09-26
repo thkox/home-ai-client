@@ -1,13 +1,18 @@
 package com.thkox.homeai.presentation.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.wear.compose.material.ContentAlpha
 
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
+import com.thkox.homeai.presentation.ui.activities.welcome.screens.EnterServerAddressContent
+import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 
 @Composable
 fun ModernTextField(
@@ -31,4 +36,34 @@ fun ModernTextField(
             unfocusedBorderColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.disabled),
         )
     )
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun ModernTextFieldDarkPreview() {
+    HomeAITheme {
+        ModernTextField(
+            value = "",
+            onValueChange = {},
+            label = "Dark Preview"
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Composable
+private fun ModernTextFieldLightPreview() {
+    HomeAITheme {
+        ModernTextField(
+            value = "",
+            onValueChange = {},
+            label = "Light Preview"
+        )
+    }
 }

@@ -52,14 +52,6 @@ fun MainTopAppBar(
                 )
             }
         },
-        actions = {
-            IconButton(onClick = onClickProfileIcon) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = stringResource(R.string.profile)
-                )
-            }
-        },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,  // Background color
             navigationIconContentColor = MaterialTheme.colorScheme.onPrimary, // Color for navigation icon

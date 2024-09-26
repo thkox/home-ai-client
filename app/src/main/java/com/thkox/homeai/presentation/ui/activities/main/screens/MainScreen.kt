@@ -49,7 +49,7 @@ fun MainScreen() {
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MainTopAppBar(
-                text = "Home AI",
+                text = "New Conversation",
                 onClickNavigationIcon = { /*TODO*/ },
                 onClickProfileIcon = { /*TODO*/ }
             )
