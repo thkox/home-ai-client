@@ -16,11 +16,11 @@ class EnterServerAddressUseCase @Inject constructor(
         val formattedAddress = formatAddress(address)
         return withContext(Dispatchers.IO) {
             try {
-                sharedPreferencesManager.saveBaseUrl(formattedAddress)
                 retrofitHolder.updateRetrofit()
                 val apiService = retrofitHolder.getRetrofit().create(ApiService::class.java)
                 val response = apiService.isFastApiApp(formattedAddress)
                 if (response.isSuccessful && response.body()?.string()?.contains("Home AI API") == true) {
+                    sharedPreferencesManager.saveBaseUrl(formattedAddress)
                     EnterServerAddressState.Success
                 } else {
                     EnterServerAddressState.Error("Invalid server address or not a FastAPI app")

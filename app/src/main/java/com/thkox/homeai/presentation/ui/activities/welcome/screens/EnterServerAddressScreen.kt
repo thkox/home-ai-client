@@ -21,7 +21,6 @@ fun EnterServerAddressScreen(
     viewModel: EnterServerAddressViewModel = hiltViewModel(),
     navigateTo: () -> Unit
 ) {
-    val context = LocalContext.current
     val serverAddress by viewModel.serverAddress.observeAsState("")
     val enterServerAddressState by viewModel.enterServerAddressState.observeAsState()
 
@@ -36,7 +35,6 @@ fun EnterServerAddressScreen(
         onServerAddressChanged = { viewModel.onServerAddressChanged(it) },
         onValidateServerAddress = { viewModel.validateServerAddress() },
         enterServerAddressState = enterServerAddressState,
-        context = context,
         modifier = modifier
     )
 }
@@ -47,7 +45,6 @@ fun EnterServerAddressContent(
     onServerAddressChanged: (String) -> Unit,
     onValidateServerAddress: () -> Unit,
     enterServerAddressState: EnterServerAddressState?,
-    context: android.content.Context,
     modifier: Modifier = Modifier
 ) {
     var isError by remember { mutableStateOf(false) }
@@ -80,7 +77,6 @@ fun EnterServerAddressContent(
                 .padding(16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // Up Section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -94,7 +90,6 @@ fun EnterServerAddressContent(
                 )
             }
 
-            // Middle Section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -103,7 +98,7 @@ fun EnterServerAddressContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Please enter the address of the app to continue.",
+                    text = "Please enter the server address of the app to continue.",
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -114,7 +109,7 @@ fun EnterServerAddressContent(
                         isError = false
                         errorMessage = ""
                     },
-                    label = { Text("Server Address") },
+                    label = { Text("(e.g. http://192.168.5.90:8000)") },
                     modifier = Modifier.fillMaxWidth(),
                     isError = isError || enterServerAddressState is EnterServerAddressState.Error,
                     singleLine = true
@@ -134,7 +129,6 @@ fun EnterServerAddressContent(
                 }
             }
 
-            // Down Section
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -161,7 +155,6 @@ private fun EnterServerAddressScreenDarkPreview() {
             onServerAddressChanged = {},
             onValidateServerAddress = {},
             enterServerAddressState = null,
-            context = LocalContext.current
         )
     }
 }
@@ -179,7 +172,6 @@ private fun EnterServerAddressScreenLightPreview() {
             onServerAddressChanged = {},
             onValidateServerAddress = {},
             enterServerAddressState = null,
-            context = LocalContext.current
         )
     }
 }
