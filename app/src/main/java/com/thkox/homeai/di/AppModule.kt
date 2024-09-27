@@ -7,10 +7,15 @@ import com.thkox.homeai.data.api.AuthInterceptor
 import com.thkox.homeai.data.api.RetrofitHolder
 import com.thkox.homeai.data.api.TokenProvider
 import com.thkox.homeai.data.repository.AuthRepositoryImpl
+import com.thkox.homeai.data.repository.ConversationRepositoryImpl
+import com.thkox.homeai.data.repository.DocumentRepositoryImpl
 import com.thkox.homeai.data.repository.TokenProviderImpl
 import com.thkox.homeai.data.sources.local.SharedPreferencesManager
 import com.thkox.homeai.domain.repository.AuthRepository
+import com.thkox.homeai.domain.repository.ConversationRepository
+import com.thkox.homeai.domain.repository.DocumentRepository
 import com.thkox.homeai.domain.usecase.EnterServerAddressUseCase
+import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.user.LoginUseCase
 import com.thkox.homeai.domain.usecase.user.RegisterUseCase
 import dagger.Module
@@ -89,6 +94,18 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideConversationRepository(apiService: ApiService): ConversationRepository {
+        return ConversationRepositoryImpl(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDocumentRepository(apiService: ApiService): DocumentRepository {
+        return DocumentRepositoryImpl(apiService)
+    }
+
+    @Provides
+    @Singleton
     fun provideEnterServerAddressUseCase(
         sharedPreferencesManager: SharedPreferencesManager,
         retrofitHolder: RetrofitHolder
@@ -109,5 +126,11 @@ object AppModule {
         loginUseCase: LoginUseCase
     ): RegisterUseCase {
         return RegisterUseCase(authRepository, loginUseCase)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSendMessageUseCase(conversationRepository: ConversationRepository): SendMessageUseCase {
+        return SendMessageUseCase(conversationRepository)
     }
 }
