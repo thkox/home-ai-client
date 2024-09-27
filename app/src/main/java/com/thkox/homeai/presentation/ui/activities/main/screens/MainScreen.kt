@@ -31,14 +31,12 @@ fun MainScreen() {
         sender = "User",
         text = "Hello there!",
         timestamp = "12:00",
-        senderImage = null
     )
 
     val secondMessage = Message(
         sender = "Home AI",
         text = "Hello! How can I help you today?",
         timestamp = "15:00",
-        senderImage = null
     )
 
     Scaffold(
@@ -57,7 +55,8 @@ fun MainScreen() {
                 onSendClick = { /*TODO*/ },
                 onMicClick = { /*TODO*/ },
                 text = text,
-                onTextChange = { newText -> text = newText }
+                onTextChange = { newText -> text = newText },
+                onAttachFilesClick = { /*TODO*/ }
             )
         }
     ) { values ->

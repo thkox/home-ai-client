@@ -146,7 +146,8 @@ fun ChatInputBar(
     onSendClick: () -> Unit,
     onMicClick: () -> Unit,
     text: String,
-    onTextChange: (String) -> Unit
+    onTextChange: (String) -> Unit,
+    onAttachFilesClick: () -> Unit
 ) {
     var isTextFieldFocused by remember { mutableStateOf(false) }
 
@@ -162,7 +163,7 @@ fun ChatInputBar(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             AttachFileButton(
-                onClick = {   }
+                onClick = { onAttachFilesClick() }
             )
             Surface(
                 shape = RoundedCornerShape(20.dp),
@@ -210,7 +211,8 @@ fun ChatInputFieldNightPreview() {
                 // TODO: Implement mic recording functionality
             },
             text = text,
-            onTextChange = { newText -> text = newText }
+            onTextChange = { newText -> text = newText },
+            onAttachFilesClick = {}
         )
     }
 }
@@ -231,7 +233,8 @@ fun ChatInputFieldLightPreview() {
                 // TODO: Implement mic recording functionality
             },
             text = text,
-            onTextChange = { newText -> text = newText }
+            onTextChange = { newText -> text = newText },
+            onAttachFilesClick = {}
         )
     }
 }

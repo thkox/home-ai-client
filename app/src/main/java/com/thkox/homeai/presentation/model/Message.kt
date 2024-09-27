@@ -8,5 +8,4 @@ data class Message(
     val sender: String,
     val text: String,
     val timestamp: String,
-    val senderImage: Image? = null
 )
