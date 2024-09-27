@@ -23,13 +23,19 @@ interface ApiService {
         @Body userCreateRequest: UserCreateRequest
     ): Response<UserResponseDto>
 
+    @PUT("/users/me")
+    suspend fun updateMyProfile(
+        @Body userCreateRequest: UserCreateRequest
+    ): Response<UserResponseDto>
+
+    @PUT("/users/{user_id}")
+    suspend fun updateProfile(
+        @Path("user_id") userId: String,
+        @Body userCreateRequest: UserCreateRequest
+    ): Response<UserResponseDto>
+
     @POST("/conversations/")
     suspend fun startConversation(): Response<ConversationDto>
-
-    data class ContinueConversationRequest(
-        val message: String,
-        val selectedDocuments: List<String>?
-    )
 
     @POST("/conversations/{conversationId}/continue")
     suspend fun continueConversation(
@@ -58,4 +64,9 @@ interface ApiService {
 
     @GET("/conversations/me")
     suspend fun getUserConversations(): Response<List<ConversationDto>>
+
+    @GET("/conversations/{conversationId}/messages")
+    suspend fun getConversationMessages(
+        @Path("conversationId") conversationId: String
+    ): Response<List<MessageDto>>
 }
