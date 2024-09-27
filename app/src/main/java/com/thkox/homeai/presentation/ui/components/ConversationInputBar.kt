@@ -1,9 +1,6 @@
 package com.thkox.homeai.presentation.ui.components
 
 import android.content.res.Configuration
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,22 +8,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.AttachFile
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -97,7 +87,7 @@ fun AttachFileButton(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ChatTextField(
+fun ConversationTextField(
     text: String,
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -142,7 +132,7 @@ fun ChatTextField(
 
 
 @Composable
-fun ChatInputBar(
+fun ConversationInputBar(
     onSendClick: () -> Unit,
     onMicClick: () -> Unit,
     text: String,
@@ -176,7 +166,7 @@ fun ChatInputBar(
                         shape = RoundedCornerShape(20.dp)
                     )
             ) {
-                ChatTextField(
+                ConversationTextField(
                     text = text,
                     onTextChange = onTextChange,
                     modifier = Modifier
@@ -200,10 +190,10 @@ fun ChatInputBar(
     uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
-fun ChatInputFieldNightPreview() {
+fun ConversationInputFieldNightPreview() {
     var text by remember { mutableStateOf("") }
     HomeAITheme {
-        ChatInputBar(
+        ConversationInputBar(
             onSendClick = {
                 // TODO: Implement send functionality
             },
@@ -222,10 +212,10 @@ fun ChatInputFieldNightPreview() {
     uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
-fun ChatInputFieldLightPreview() {
+fun ConversationInputFieldLightPreview() {
     var text by remember { mutableStateOf("") }
     HomeAITheme {
-        ChatInputBar(
+        ConversationInputBar(
             onSendClick = {
                 // TODO: Implement send functionality
             },

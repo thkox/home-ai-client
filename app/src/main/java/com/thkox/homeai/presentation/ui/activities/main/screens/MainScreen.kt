@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import com.thkox.homeai.presentation.model.Message
-import com.thkox.homeai.presentation.ui.components.ChatInputBar
+import com.thkox.homeai.presentation.ui.components.ConversationInputBar
 import com.thkox.homeai.presentation.ui.components.MainTopAppBar
 import com.thkox.homeai.presentation.ui.components.Message
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
@@ -51,7 +51,7 @@ fun MainScreen() {
             )
         },
         bottomBar = {
-            ChatInputBar(
+            ConversationInputBar(
                 onSendClick = { /*TODO*/ },
                 onMicClick = { /*TODO*/ },
                 text = text,
