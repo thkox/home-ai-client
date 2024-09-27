@@ -4,78 +4,110 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.thkox.homeai.presentation.model.Message
 import com.thkox.homeai.presentation.ui.components.ConversationInputBar
 import com.thkox.homeai.presentation.ui.components.MainTopAppBar
 import com.thkox.homeai.presentation.ui.components.Message
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
+import com.thkox.homeai.presentation.viewModel.main.MainViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+fun MainScreen(
+    viewModel: MainViewModel = hiltViewModel()
+) {
+    val messages by viewModel.messages.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
     var text by remember { mutableStateOf("") }
 
-    val firstMessage = Message(
-        sender = "User",
-        text = "Hello there!",
-        timestamp = "12:00",
+    MainContent(
+        messages = messages,
+        isLoading = isLoading,
+        text = text,
+        onTextChange = { newText -> text = newText },
+        onSendClick = {
+            viewModel.sendMessage(text)
+            text = ""
+        },
+        onMicClick = {
+            // Handle mic click
+        },
+        onAttachFilesClick = {
+            // Handle attach files click
+        },
+        onClickNavigationIcon = {
+            // Handle navigation icon click
+        },
+        onClickProfileIcon = {
+            // Handle profile icon click
+        }
     )
+}
 
-    val secondMessage = Message(
-        sender = "Home AI",
-        text = "Hello! How can I help you today?",
-        timestamp = "15:00",
-    )
-
+@Composable
+fun MainContent(
+    messages: List<Message>,
+    isLoading: Boolean,
+    text: String,
+    onTextChange: (String) -> Unit,
+    onClickNavigationIcon: () -> Unit,
+    onClickProfileIcon: () -> Unit,
+    onSendClick: () -> Unit,
+    onMicClick: () -> Unit,
+    onAttachFilesClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.fillMaxSize(),
         topBar = {
             MainTopAppBar(
                 text = "New Conversation",
-                onClickNavigationIcon = { /*TODO*/ },
-                onClickProfileIcon = { /*TODO*/ }
+                onClickNavigationIcon = { onClickNavigationIcon() },
+                onClickProfileIcon = { onClickProfileIcon() }
             )
         },
         bottomBar = {
             ConversationInputBar(
-                onSendClick = { /*TODO*/ },
-                onMicClick = { /*TODO*/ },
+                onSendClick = onSendClick,
+                onMicClick = { onMicClick() },
                 text = text,
-                onTextChange = { newText -> text = newText },
-                onAttachFilesClick = { /*TODO*/ }
+                onTextChange = onTextChange,
+                onAttachFilesClick = { onAttachFilesClick() }
             )
         }
-    ) { values ->
+    ) { paddingValues ->
         Column(
-            modifier = Modifier.padding(values)
+            modifier = Modifier.padding(paddingValues)
         ) {
-            Message(
-                message = firstMessage,
-                isSenderMe = true,
-                isFirstMessageBySender = true,
-                isLastMessageBySender = true
-            )
-
-            Message(
-                message = secondMessage,
-                isSenderMe = false,
-                isFirstMessageBySender = true,
-                isLastMessageBySender = true
-            )
+            if (isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
+            LazyColumn {
+                items(messages) { message ->
+                    Message(
+                        message = message,
+                        isSenderMe = message.sender == "User",
+                        isFirstMessageBySender = true,
+                        isLastMessageBySender = true
+                    )
+                }
+            }
         }
     }
 }
@@ -88,7 +120,17 @@ fun MainScreen() {
 @Composable
 private fun MainScreenDarkPreview() {
     HomeAITheme {
-        MainScreen()
+        MainContent(
+            messages = emptyList(),
+            isLoading = false,
+            text = "",
+            onTextChange = {},
+            onClickNavigationIcon = {},
+            onClickProfileIcon = {},
+            onSendClick = {},
+            onMicClick = {},
+            onAttachFilesClick = {}
+        )
     }
 }
 
@@ -100,6 +142,16 @@ private fun MainScreenDarkPreview() {
 @Composable
 private fun MainScreenLightPreview() {
     HomeAITheme {
-        MainScreen()
+        MainContent(
+            messages = emptyList(),
+            isLoading = false,
+            text = "",
+            onTextChange = {},
+            onClickNavigationIcon = {},
+            onClickProfileIcon = {},
+            onSendClick = {},
+            onMicClick = {},
+            onAttachFilesClick = {}
+        )
     }
 }
