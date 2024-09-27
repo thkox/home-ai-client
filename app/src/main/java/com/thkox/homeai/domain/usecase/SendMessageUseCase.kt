@@ -1,25 +1,23 @@
 // File: app/src/main/java/com/thkox/homeai/domain/usecase/SendMessageUseCase.kt
 package com.thkox.homeai.domain.usecase
 
+import android.icu.text.SimpleDateFormat
 import com.thkox.homeai.data.models.ContinueConversationRequest
 import com.thkox.homeai.domain.repository.ConversationRepository
 import com.thkox.homeai.presentation.model.Message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import java.util.Date
+import java.util.Locale
 
 class SendMessageUseCase(
     private val conversationRepository: ConversationRepository
 ) {
     private var conversationId: String? = null
 
-    suspend fun sendMessage(userMessage: String): Pair<Message, Message?> {
+    suspend fun sendMessage(userMessage: String): Message? {
         return withContext(Dispatchers.IO) {
-            val userMessageObj = Message(
-                sender = "User",
-                text = userMessage,
-                timestamp = System.currentTimeMillis().toString()
-            )
 
             if (conversationId == null) {
                 val startResponse = conversationRepository.startConversation()
@@ -35,17 +33,21 @@ class SendMessageUseCase(
 
             val aiMessageObj = if (continueResponse.isSuccessful) {
                 continueResponse.body()?.let {
+
+                    val dateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+                    val timestamp = dateFormat.format(Date(System.currentTimeMillis()))
+
                     Message(
                         sender = "Home AI",
                         text = it.content,
-                        timestamp = System.currentTimeMillis().toString()
+                        timestamp = timestamp
                     )
                 }
             } else {
                 null
             }
 
-            Pair(userMessageObj, aiMessageObj)
+            aiMessageObj
         }
     }
 }

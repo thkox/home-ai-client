@@ -22,6 +22,7 @@ class RetrofitHolder @Inject constructor(
         } else if (!baseUrl.startsWith("http://") && !baseUrl.startsWith("https://")) {
             baseUrl = "http://$baseUrl"
         }
+
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(baseUrl)
