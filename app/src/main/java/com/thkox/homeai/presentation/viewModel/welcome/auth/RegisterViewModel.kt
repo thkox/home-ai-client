@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thkox.homeai.domain.models.UserRegistration
 import com.thkox.homeai.domain.usecase.user.RegisterUseCase
-import com.thkox.homeai.domain.util.Resource
+import com.thkox.homeai.domain.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

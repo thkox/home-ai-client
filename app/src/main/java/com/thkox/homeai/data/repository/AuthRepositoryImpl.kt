@@ -8,7 +8,7 @@ import com.thkox.homeai.domain.models.User
 import com.thkox.homeai.domain.models.UserRegistration
 import com.thkox.homeai.domain.repository.AuthRepository
 import com.thkox.homeai.domain.repository.TokenRepository
-import com.thkox.homeai.domain.util.Resource
+import com.thkox.homeai.domain.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

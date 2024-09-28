@@ -2,14 +2,13 @@ package com.thkox.homeai.domain.usecase.user
 
 import com.thkox.homeai.domain.models.UserRegistration
 import com.thkox.homeai.domain.repository.AuthRepository
-import com.thkox.homeai.domain.util.Resource
+import com.thkox.homeai.domain.utils.Resource
 
 class RegisterUseCase(
     private val authRepository: AuthRepository,
     private val loginUseCase: LoginUseCase
 ) {
     suspend operator fun invoke(userRegistration: UserRegistration): Resource<Unit> {
-        // Validate fields
         if (userRegistration.firstName.isBlank()) {
             return Resource.Error("First name cannot be empty", "firstName")
         }

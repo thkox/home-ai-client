@@ -1,4 +1,4 @@
-package com.thkox.homeai.domain.util
+package com.thkox.homeai.domain.utils
 
 sealed class Resource<T>(
     val data: T? = null,
