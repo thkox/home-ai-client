@@ -41,7 +41,12 @@ class MainViewModel @Inject constructor(
     private val _conversations = MutableStateFlow<List<ConversationDto>>(emptyList())
     val conversations: StateFlow<List<ConversationDto>> = _conversations
 
-    private var currentConversationId: String? = null
+    private var _currentConversationId: String? = null
+    var currentConversationId: String?
+        get() = _currentConversationId
+        set(value) {
+            _currentConversationId = value
+        }
 
     fun openDrawer() {
         _isDrawerOpen.value = true
@@ -54,7 +59,7 @@ class MainViewModel @Inject constructor(
     fun startNewConversation() {
         _messages.value = emptyList()
         _conversationTitle.value = "New Conversation"
-        currentConversationId = null
+        _currentConversationId = null
         closeDrawer()
     }
 
@@ -81,7 +86,7 @@ class MainViewModel @Inject constructor(
                         } else {
                             "Conversation"
                         }).toString()
-                        currentConversationId = conversationId
+                        _currentConversationId = conversationId
 
                         _messages.value = getConversationMessagesUseCase.invoke(conversationId)
                     }
@@ -106,11 +111,16 @@ class MainViewModel @Inject constructor(
             _isAiResponding.value = true
 
             try {
+                if (_currentConversationId != null) {
+                    sendMessageUseCase.setConversationId(_currentConversationId!!)
+                }
+
                 val aiMessageObj = sendMessageUseCase.sendMessage(userMessage)
                 aiMessageObj?.let {
                     _messages.value += it
-                    currentConversationId = sendMessageUseCase.conversationId
+                    _currentConversationId = sendMessageUseCase.conversationId
                     updateConversationTitle()
+                    loadConversations()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -130,7 +140,7 @@ class MainViewModel @Inject constructor(
         val response = getUserConversationsUseCase.getUserConversations()
         if (response.isSuccessful) {
             val conversations = response.body()
-            conversations?.firstOrNull { it.id == currentConversationId }?.title?.let {
+            conversations?.firstOrNull { it.id == _currentConversationId }?.title?.let {
                 _conversationTitle.value = it
             }
         }

@@ -71,6 +71,7 @@ fun MainScreen(
         drawerState = drawerState,
         conversations = conversations,
         onNewConversationClick = {
+            viewModel.currentConversationId = null
             viewModel.startNewConversation()
         },
         onConversationClick = { conversationId ->
@@ -126,12 +127,14 @@ fun MenuNavigationDrawer(
                     selected = false,
                     onClick = { onNewConversationClick() }
                 )
-                conversations.forEach { conversation ->
-                    NavigationDrawerItem(
-                        label = { Text(text = conversation.title ?: "New Conversation") },
-                        selected = false,
-                        onClick = { onConversationClick(conversation.id) }
-                    )
+                LazyColumn {
+                    items(conversations) { conversation ->
+                        NavigationDrawerItem(
+                            label = { Text(text = conversation.title ?: "New Conversation") },
+                            selected = false,
+                            onClick = { onConversationClick(conversation.id) }
+                        )
+                    }
                 }
             }
         }

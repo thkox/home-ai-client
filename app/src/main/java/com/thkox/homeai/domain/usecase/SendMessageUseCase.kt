@@ -51,4 +51,8 @@ class SendMessageUseCase(
             aiMessageObj
         }
     }
+
+    fun setConversationId(conversationId: String?) {
+        _conversationId = conversationId
+    }
 }
