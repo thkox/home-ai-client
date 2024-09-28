@@ -2,15 +2,22 @@ package com.thkox.homeai.presentation.ui.activities.main.screens
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,9 +28,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.thkox.homeai.data.models.ConversationDto
 import com.thkox.homeai.presentation.model.Message
 import com.thkox.homeai.presentation.ui.components.ConversationInputBar
 import com.thkox.homeai.presentation.ui.components.MainTopAppBar
@@ -40,32 +48,96 @@ fun MainScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val isAiResponding by viewModel.isAiResponding.collectAsState()
     val conversationTitle by viewModel.conversationTitle.collectAsState()
+    val isDrawerOpen by viewModel.isDrawerOpen.collectAsState()
+    val conversations by viewModel.conversations.collectAsState()
     var text by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
 
-    MainContent(
-        messages = messages,
-        isLoading = isLoading,
-        isAiResponding = isAiResponding,
-        text = text,
-        onTextChange = { newText -> text = newText },
-        onSendClick = {
-            viewModel.sendMessage(text)
-            text = ""
+    val drawerState = rememberDrawerState(if (isDrawerOpen) DrawerValue.Open else DrawerValue.Closed)
+
+    LaunchedEffect(isDrawerOpen) {
+        if (isDrawerOpen) {
+            drawerState.open()
+        } else {
+            drawerState.close()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadConversations()
+    }
+
+    MenuNavigationDrawer(
+        drawerState = drawerState,
+        conversations = conversations,
+        onNewConversationClick = {
+            viewModel.startNewConversation()
         },
-        onMicClick = {
-            // Handle mic click
+        onConversationClick = { conversationId ->
+            viewModel.loadConversation(conversationId)
         },
-        onAttachFilesClick = {
-            // Handle attach files click
-        },
-        onClickNavigationIcon = {
-            // Handle navigation icon click
-        },
-        onClickProfileIcon = {
-            // Handle profile icon click
-        },
-        conversationTitle = conversationTitle
+        mainContent = {
+            MainContent(
+                messages = messages,
+                isLoading = isLoading,
+                isAiResponding = isAiResponding,
+                text = text,
+                onTextChange = { newText -> text = newText },
+                onSendClick = {
+                    viewModel.sendMessage(text)
+                    text = ""
+                },
+                onMicClick = {
+                    // Handle mic click
+                },
+                onAttachFilesClick = {
+                    // Handle attach files click
+                },
+                onClickNavigationIcon = {
+                    coroutineScope.launch {
+                        viewModel.openDrawer()
+                    }
+                },
+                onClickProfileIcon = {
+                    // Handle profile icon click
+                },
+                conversationTitle = conversationTitle
+            )
+        }
     )
+}
+
+@Composable
+fun MenuNavigationDrawer(
+    drawerState: DrawerState,
+    conversations: List<ConversationDto>,
+    onNewConversationClick: () -> Unit,
+    onConversationClick: (String) -> Unit,
+    mainContent: @Composable () -> Unit
+) {
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Text("Drawer title", modifier = Modifier.padding(16.dp))
+                HorizontalDivider()
+                NavigationDrawerItem(
+                    label = { Text(text = "+ Conversation") },
+                    selected = false,
+                    onClick = { onNewConversationClick() }
+                )
+                conversations.forEach { conversation ->
+                    NavigationDrawerItem(
+                        label = { Text(text = conversation.title ?: "New Conversation") },
+                        selected = false,
+                        onClick = { onConversationClick(conversation.id) }
+                    )
+                }
+            }
+        }
+    ) {
+        mainContent()
+    }
 }
 
 @Composable
