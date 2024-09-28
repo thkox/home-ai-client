@@ -38,11 +38,13 @@ fun MainScreen(
 ) {
     val messages by viewModel.messages.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val isAiResponding by viewModel.isAiResponding.collectAsState()
     var text by remember { mutableStateOf("") }
 
     MainContent(
         messages = messages,
         isLoading = isLoading,
+        isAiResponding = isAiResponding,
         text = text,
         onTextChange = { newText -> text = newText },
         onSendClick = {
@@ -68,6 +70,7 @@ fun MainScreen(
 fun MainContent(
     messages: List<Message>,
     isLoading: Boolean,
+    isAiResponding: Boolean,
     text: String,
     onTextChange: (String) -> Unit,
     onClickNavigationIcon: () -> Unit,
@@ -105,7 +108,8 @@ fun MainContent(
                     onMicClick = { onMicClick() },
                     text = text,
                     onTextChange = onTextChange,
-                    onAttachFilesClick = { onAttachFilesClick() }
+                    onAttachFilesClick = { onAttachFilesClick() },
+                    isAiResponding = isAiResponding
                 )
             }
         }
@@ -150,7 +154,8 @@ private fun MainScreenDarkPreview() {
             onClickProfileIcon = {},
             onSendClick = {},
             onMicClick = {},
-            onAttachFilesClick = {}
+            onAttachFilesClick = {},
+            isAiResponding = false
         )
     }
 }
@@ -172,7 +177,8 @@ private fun MainScreenLightPreview() {
             onClickProfileIcon = {},
             onSendClick = {},
             onMicClick = {},
-            onAttachFilesClick = {}
+            onAttachFilesClick = {},
+            isAiResponding = false
         )
     }
 }

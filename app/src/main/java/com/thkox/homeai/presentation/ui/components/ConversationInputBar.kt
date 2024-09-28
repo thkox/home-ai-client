@@ -37,6 +37,12 @@ import androidx.compose.ui.unit.times
 import com.thkox.homeai.R
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import kotlinx.coroutines.launch
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+
 
 @Composable
 fun SubmitButton(
@@ -82,7 +88,7 @@ fun AttachFileButton(
             tint = Color.White
         )
     }
-    
+
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -113,7 +119,8 @@ fun ConversationTextField(
         },
         modifier = modifier
             .heightIn(min = TextFieldDefaults.MinHeight, max = 2 * TextFieldDefaults.MinHeight)
-            .bringIntoViewRequester(bringIntoViewRequester),
+            .bringIntoViewRequester(bringIntoViewRequester)
+            .animateContentSize(animationSpec = tween(durationMillis = 10000)),
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Done
         ),
@@ -137,7 +144,8 @@ fun ConversationInputBar(
     onMicClick: () -> Unit,
     text: String,
     onTextChange: (String) -> Unit,
-    onAttachFilesClick: () -> Unit
+    onAttachFilesClick: () -> Unit,
+    isAiResponding: Boolean
 ) {
     var isTextFieldFocused by remember { mutableStateOf(false) }
 
@@ -152,9 +160,15 @@ fun ConversationInputBar(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
-            AttachFileButton(
-                onClick = { onAttachFilesClick() }
-            )
+            AnimatedVisibility(
+                visible = !isAiResponding,
+                enter = fadeIn(animationSpec = tween(durationMillis = 8000)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 200))
+            ) {
+                AttachFileButton(
+                    onClick = { onAttachFilesClick() }
+                )
+            }
             Surface(
                 shape = RoundedCornerShape(20.dp),
                 modifier = Modifier
@@ -175,35 +189,18 @@ fun ConversationInputBar(
                 )
             }
 
-            SubmitButton(
-                text = text,
-                onMicClick = onMicClick,
-                onSendClick = onSendClick
-            )
+            AnimatedVisibility(
+                visible = !isAiResponding,
+                enter = fadeIn(animationSpec = tween(durationMillis = 8000)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 200))
+            ) {
+                SubmitButton(
+                    text = text,
+                    onMicClick = onMicClick,
+                    onSendClick = onSendClick
+                )
+            }
         }
-    }
-}
-
-
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
-@Composable
-fun ConversationInputFieldNightPreview() {
-    var text by remember { mutableStateOf("") }
-    HomeAITheme {
-        ConversationInputBar(
-            onSendClick = {
-                // TODO: Implement send functionality
-            },
-            onMicClick = {
-                // TODO: Implement mic recording functionality
-            },
-            text = text,
-            onTextChange = { newText -> text = newText },
-            onAttachFilesClick = {}
-        )
     }
 }
 
@@ -224,7 +221,8 @@ fun ConversationInputFieldLightPreview() {
             },
             text = text,
             onTextChange = { newText -> text = newText },
-            onAttachFilesClick = {}
+            onAttachFilesClick = {},
+            isAiResponding = false
         )
     }
 }

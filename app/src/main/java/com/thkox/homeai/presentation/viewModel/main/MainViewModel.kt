@@ -24,9 +24,11 @@ class MainViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _isAiResponding = MutableStateFlow(false)
+    val isAiResponding: StateFlow<Boolean> = _isAiResponding
+
     fun sendMessage(userMessage: String) {
         viewModelScope.launch {
-
             val dateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
             val timestamp = dateFormat.format(Date(System.currentTimeMillis()))
 
@@ -38,6 +40,7 @@ class MainViewModel @Inject constructor(
             _messages.value += userMessageObj
 
             _isLoading.value = true
+            _isAiResponding.value = true
 
             try {
                 val aiMessageObj = sendMessageUseCase.sendMessage(userMessage)
@@ -48,6 +51,7 @@ class MainViewModel @Inject constructor(
                 e.printStackTrace()
             } finally {
                 _isLoading.value = false
+                _isAiResponding.value = false
             }
         }
     }
