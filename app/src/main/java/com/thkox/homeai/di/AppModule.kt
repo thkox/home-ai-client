@@ -15,6 +15,7 @@ import com.thkox.homeai.domain.repository.AuthRepository
 import com.thkox.homeai.domain.repository.ConversationRepository
 import com.thkox.homeai.domain.repository.DocumentRepository
 import com.thkox.homeai.domain.usecase.EnterServerAddressUseCase
+import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.user.LoginUseCase
 import com.thkox.homeai.domain.usecase.user.RegisterUseCase
@@ -136,5 +137,11 @@ object AppModule {
     @Singleton
     fun provideSendMessageUseCase(conversationRepository: ConversationRepository): SendMessageUseCase {
         return SendMessageUseCase(conversationRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesGetUserConversationsUseCase(conversationRepository: ConversationRepository): GetUserConversationsUseCase {
+        return GetUserConversationsUseCase(conversationRepository)
     }
 }

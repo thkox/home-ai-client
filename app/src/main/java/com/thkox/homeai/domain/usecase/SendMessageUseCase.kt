@@ -7,29 +7,30 @@ import com.thkox.homeai.domain.repository.ConversationRepository
 import com.thkox.homeai.presentation.model.Message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Response
 import java.util.Date
 import java.util.Locale
 
 class SendMessageUseCase(
     private val conversationRepository: ConversationRepository
 ) {
-    private var conversationId: String? = null
+    private var _conversationId: String? = null
+    val conversationId: String?
+        get() = _conversationId
 
     suspend fun sendMessage(userMessage: String): Message? {
         return withContext(Dispatchers.IO) {
 
-            if (conversationId == null) {
+            if (_conversationId == null) {
                 val startResponse = conversationRepository.startConversation()
                 if (startResponse.isSuccessful) {
-                    conversationId = startResponse.body()?.id
+                    _conversationId = startResponse.body()?.id
                 } else {
                     throw Exception("Failed to start conversation")
                 }
             }
 
             val request = ContinueConversationRequest(userMessage, null)
-            val continueResponse = conversationRepository.continueConversation(conversationId!!, request)
+            val continueResponse = conversationRepository.continueConversation(_conversationId!!, request)
 
             val aiMessageObj = if (continueResponse.isSuccessful) {
                 continueResponse.body()?.let {

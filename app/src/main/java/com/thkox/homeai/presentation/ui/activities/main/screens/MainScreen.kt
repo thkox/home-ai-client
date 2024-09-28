@@ -39,6 +39,7 @@ fun MainScreen(
     val messages by viewModel.messages.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val isAiResponding by viewModel.isAiResponding.collectAsState()
+    val conversationTitle by viewModel.conversationTitle.collectAsState()
     var text by remember { mutableStateOf("") }
 
     MainContent(
@@ -62,7 +63,8 @@ fun MainScreen(
         },
         onClickProfileIcon = {
             // Handle profile icon click
-        }
+        },
+        conversationTitle = conversationTitle
     )
 }
 
@@ -78,6 +80,7 @@ fun MainContent(
     onSendClick: () -> Unit,
     onMicClick: () -> Unit,
     onAttachFilesClick: () -> Unit,
+    conversationTitle: String,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -93,7 +96,7 @@ fun MainContent(
         modifier = modifier.fillMaxSize(),
         topBar = {
             MainTopAppBar(
-                text = "New Conversation",
+                text = conversationTitle,
                 onClickNavigationIcon = { onClickNavigationIcon() },
                 onClickProfileIcon = { onClickProfileIcon() }
             )
@@ -155,7 +158,8 @@ private fun MainScreenDarkPreview() {
             onSendClick = {},
             onMicClick = {},
             onAttachFilesClick = {},
-            isAiResponding = false
+            isAiResponding = false,
+            conversationTitle = "New Conversation"
         )
     }
 }
@@ -178,7 +182,8 @@ private fun MainScreenLightPreview() {
             onSendClick = {},
             onMicClick = {},
             onAttachFilesClick = {},
-            isAiResponding = false
+            isAiResponding = false,
+            conversationTitle = "New Conversation"
         )
     }
 }
