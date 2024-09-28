@@ -24,6 +24,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -65,6 +66,9 @@ object AppModule {
     fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
+            .connectTimeout(60, TimeUnit.SECONDS)  // Increase connection timeout
+            .readTimeout(120, TimeUnit.SECONDS)    // Increase read timeout
+            .writeTimeout(60, TimeUnit.SECONDS)    // Increase write timeout
             .build()
     }
 
