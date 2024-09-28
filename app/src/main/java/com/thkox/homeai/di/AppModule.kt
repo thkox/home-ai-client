@@ -19,6 +19,7 @@ import com.thkox.homeai.domain.usecase.EnterServerAddressUseCase
 import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
 import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
+import com.thkox.homeai.domain.usecase.UpdateConversationTitleUseCase
 import com.thkox.homeai.domain.usecase.user.LoginUseCase
 import com.thkox.homeai.domain.usecase.user.RegisterUseCase
 import dagger.Module
@@ -157,5 +158,13 @@ object AppModule {
     @Singleton
     fun provideDeleteConversationUseCase(conversationRepository: ConversationRepository): DeleteConversationUseCase {
         return DeleteConversationUseCase(conversationRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdateConversationTitleUseCase(
+        getUserConversationsUseCase: GetUserConversationsUseCase
+    ): UpdateConversationTitleUseCase {
+        return UpdateConversationTitleUseCase(getUserConversationsUseCase)
     }
 }

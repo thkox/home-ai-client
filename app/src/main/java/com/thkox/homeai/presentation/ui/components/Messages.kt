@@ -95,9 +95,9 @@ fun MessageBubble(
     }
 
     val shape = if (isSenderMe) {
-        RoundedCornerShape(30.dp, 5.dp, 30.dp, 30.dp)
+        RoundedCornerShape(25.dp, 5.dp, 25.dp, 25.dp)
     } else {
-        RoundedCornerShape(5.dp, 30.dp, 30.dp, 30.dp)
+        RoundedCornerShape(5.dp, 25.dp, 25.dp, 25.dp)
     }
 
     val horizontalArrangement = if (isSenderMe) {
@@ -166,13 +166,13 @@ fun Message(
     message: Message,
     isSenderMe: Boolean,
 ) {
-    val spaceBetweenSenders = Modifier
+    val spaceBetweenSenders = Modifier.padding(top = 8.dp)
 
     Row(modifier = spaceBetweenSenders) {
         if (!isSenderMe ) {
             Image(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                    .padding(start = 8.dp, end = 10.dp)
                     .size(42.dp)
                     .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
                     .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
@@ -204,7 +204,8 @@ private fun MessageFromUserPreview() {
     Message(
         message = Message(
             sender = "Home AI",
-            text = "This is a message.",
+            text = "This is a message." +
+                    "asjudfasouidhfasoiufhaoisudfhasoikudhfasiofhuasoifdhuaisohfdaosfdhasoifdhasoiudfhasoifdhashofdasoiudfhiaos",
             timestamp = "15:02 PM"
         ),
         isSenderMe = false,
@@ -219,7 +220,8 @@ private fun MessageFromMePreview() {
     Message(
         message = Message(
             sender = "First Last",
-            text = "This is another message.",
+            text = "This is another message." +
+                    "asdfiuhasdiuhasiuhasdfiuhidafshuhiuihudfsahuidsfahuasdfiafudshfhsuidafshduiahifusdhfisuadhafsiduasfdhshasdfhuoahudffdhu",
             timestamp = "16:52 PM"
         ),
         isSenderMe = true,
