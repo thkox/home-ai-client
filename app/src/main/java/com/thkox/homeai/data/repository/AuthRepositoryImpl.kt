@@ -1,8 +1,8 @@
 package com.thkox.homeai.data.repository
 
-import com.thkox.homeai.data.api.ApiService
-import com.thkox.homeai.data.api.RetrofitHolder
-import com.thkox.homeai.data.api.TokenProvider
+import com.thkox.homeai.data.sources.remote.ApiService
+import com.thkox.homeai.data.sources.remote.RetrofitHolder
+import com.thkox.homeai.domain.repository.TokenRepository
 import com.thkox.homeai.data.models.UserCreateRequest
 import com.thkox.homeai.domain.models.Token
 import com.thkox.homeai.domain.models.User
@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 
 class AuthRepositoryImpl(
     private val retrofitHolder: RetrofitHolder,
-    private val tokenProvider: TokenProvider
+    private val tokenRepository: TokenRepository
 ) : AuthRepository {
 
     private val apiService: ApiService
@@ -27,7 +27,7 @@ class AuthRepositoryImpl(
                 if (response.isSuccessful) {
                     val tokenDto = response.body()
                     tokenDto?.let {
-                        tokenProvider.saveToken(it.accessToken)
+                        tokenRepository.saveToken(it.accessToken)
                         Resource.Success(Token(it.accessToken, it.tokenType))
                     } ?: Resource.Error("Invalid response")
                 } else {

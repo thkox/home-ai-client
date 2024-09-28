@@ -2,14 +2,14 @@ package com.thkox.homeai.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.thkox.homeai.data.api.ApiService
-import com.thkox.homeai.data.api.AuthInterceptor
-import com.thkox.homeai.data.api.RetrofitHolder
-import com.thkox.homeai.data.api.TokenProvider
+import com.thkox.homeai.data.sources.remote.ApiService
+import com.thkox.homeai.data.sources.remote.AuthInterceptor
+import com.thkox.homeai.data.sources.remote.RetrofitHolder
+import com.thkox.homeai.domain.repository.TokenRepository
 import com.thkox.homeai.data.repository.AuthRepositoryImpl
 import com.thkox.homeai.data.repository.ConversationRepositoryImpl
 import com.thkox.homeai.data.repository.DocumentRepositoryImpl
-import com.thkox.homeai.data.repository.TokenProviderImpl
+import com.thkox.homeai.data.repository.TokenRepositoryImpl
 import com.thkox.homeai.data.sources.local.SharedPreferencesManager
 import com.thkox.homeai.domain.repository.AuthRepository
 import com.thkox.homeai.domain.repository.ConversationRepository
@@ -42,8 +42,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideTokenProvider(sharedPreferences: SharedPreferences): TokenProvider {
-        return TokenProviderImpl(sharedPreferences)
+    fun provideTokenProvider(sharedPreferences: SharedPreferences): TokenRepository {
+        return TokenRepositoryImpl(sharedPreferences)
     }
 
     @Provides
@@ -60,8 +60,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthInterceptor(tokenProvider: TokenProvider): AuthInterceptor {
-        return AuthInterceptor(tokenProvider)
+    fun provideAuthInterceptor(tokenRepository: TokenRepository): AuthInterceptor {
+        return AuthInterceptor(tokenRepository)
     }
 
     @Provides
@@ -94,9 +94,9 @@ object AppModule {
     @Singleton
     fun provideAuthRepository(
         retrofitHolder: RetrofitHolder,
-        tokenProvider: TokenProvider
+        tokenRepository: TokenRepository
     ): AuthRepository {
-        return AuthRepositoryImpl(retrofitHolder, tokenProvider)
+        return AuthRepositoryImpl(retrofitHolder, tokenRepository)
     }
 
     @Provides

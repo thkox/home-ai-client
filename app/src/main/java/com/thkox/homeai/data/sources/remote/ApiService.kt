@@ -1,4 +1,4 @@
-package com.thkox.homeai.data.api
+package com.thkox.homeai.data.sources.remote
 
 import com.thkox.homeai.data.models.*
 import okhttp3.MultipartBody
@@ -9,7 +9,7 @@ import retrofit2.http.*
 interface ApiService {
 
     @GET
-    suspend fun isFastApiApp(@Url address: String): Response<ResponseBody>
+    suspend fun root(@Url address: String): Response<ResponseBody>
 
     @POST("/token")
     @FormUrlEncoded
@@ -25,12 +25,6 @@ interface ApiService {
 
     @PUT("/users/me")
     suspend fun updateMyProfile(
-        @Body userCreateRequest: UserCreateRequest
-    ): Response<UserResponseDto>
-
-    @PUT("/users/{user_id}")
-    suspend fun updateProfile(
-        @Path("user_id") userId: String,
         @Body userCreateRequest: UserCreateRequest
     ): Response<UserResponseDto>
 

@@ -1,14 +1,14 @@
 package com.thkox.homeai.data.sources.local
 
 import android.content.SharedPreferences
-import com.thkox.homeai.data.api.TokenProvider
+import com.thkox.homeai.domain.repository.TokenRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class SharedPreferencesManager @Inject constructor(
     private val sharedPreferences: SharedPreferences
-) : TokenProvider {
+) : TokenRepository {
 
     override fun getToken(): String? {
         return sharedPreferences.getString("jwt_token", null)

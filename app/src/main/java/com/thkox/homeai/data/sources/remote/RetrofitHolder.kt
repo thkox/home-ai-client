@@ -1,4 +1,4 @@
-package com.thkox.homeai.data.api
+package com.thkox.homeai.data.sources.remote
 
 import com.thkox.homeai.data.sources.local.SharedPreferencesManager
 import okhttp3.OkHttpClient

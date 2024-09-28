@@ -1,9 +1,9 @@
 package com.thkox.homeai.data.repository
 
 import android.content.SharedPreferences
-import com.thkox.homeai.data.api.TokenProvider
+import com.thkox.homeai.domain.repository.TokenRepository
 
-class TokenProviderImpl(private val sharedPreferences: SharedPreferences) : TokenProvider {
+class TokenRepositoryImpl(private val sharedPreferences: SharedPreferences) : TokenRepository {
 
     companion object {
         private const val KEY_TOKEN = "jwt_token"
