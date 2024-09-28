@@ -24,7 +24,6 @@ import com.thkox.homeai.presentation.ui.components.WelcomeTopAppBar
 
 @Composable
 fun LoginScreen(
-    navigateToTutorial: () -> Unit,
     navigateToRegister: () -> Unit,
     navigateToEnterServerAddress: () -> Unit,
     navigateToMain: () -> Unit,
@@ -32,7 +31,6 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val email by viewModel.username.observeAsState("")
     val password by viewModel.password.observeAsState("")
     val loginState by viewModel.loginState.observeAsState()
@@ -44,7 +42,6 @@ fun LoginScreen(
         onPasswordChanged = { viewModel.onPasswordChanged(it) },
         onLoginClicked = { viewModel.login() },
         loginState = loginState,
-        context = context,
         navigateToRegister = navigateToRegister,
         navigateToEnterServerAddress = navigateToEnterServerAddress,
         navigateToMain = navigateToMain,
@@ -61,13 +58,14 @@ fun LoginContent(
     onPasswordChanged: (String) -> Unit,
     onLoginClicked: () -> Unit,
     loginState: LoginState?,
-    context: android.content.Context,
     navigateToRegister: () -> Unit,
     navigateToEnterServerAddress: () -> Unit,
     navigateToMain: () -> Unit,
     sharedPreferencesManager: SharedPreferencesManager,
     modifier: Modifier = Modifier
 ) {
+    var errorMessage by remember { mutableStateOf("") }
+
     Scaffold(
         topBar = {
             WelcomeTopAppBar(
@@ -108,15 +106,25 @@ fun LoginContent(
             ModernTextField(
                 value = email,
                 onValueChange = onEmailChanged,
-                label = "Email"
+                label = "Email",
+                isError = errorMessage.isNotEmpty()
             )
             Spacer(modifier = Modifier.height(8.dp))
             ModernTextField(
                 value = password,
                 onValueChange = onPasswordChanged,
                 label = "Password",
-                isPassword = true
+                isPassword = true,
+                isError = errorMessage.isNotEmpty()
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            if (errorMessage.isNotEmpty()) {
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "Don't have an account? Register here.",
@@ -137,9 +145,11 @@ fun LoginContent(
                     }
                 }
                 is LoginState.Error -> {
-                    Toast.makeText(context, "Wrong Email or Password", Toast.LENGTH_SHORT).show()
+                    errorMessage = "Wrong Email or Password"
                 }
-                else -> {}
+                else -> {
+                    errorMessage = ""
+                }
             }
         }
     }
@@ -160,7 +170,6 @@ private fun LoginScreenDarkPreview() {
             onPasswordChanged = {},
             onLoginClicked = {},
             loginState = null,
-            context = LocalContext.current,
             navigateToRegister = {},
             navigateToEnterServerAddress = {},
             navigateToMain = {},
@@ -184,7 +193,6 @@ private fun LoginScreenLightPreview() {
             onPasswordChanged = {},
             onLoginClicked = {},
             loginState = null,
-            context = LocalContext.current,
             navigateToRegister = {},
             navigateToEnterServerAddress = {},
             navigateToMain = {},

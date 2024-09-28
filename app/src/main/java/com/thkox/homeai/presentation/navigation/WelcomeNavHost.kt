@@ -27,7 +27,6 @@ fun WelcomeNavHost(
         }
         composable("login") {
             LoginScreen(
-                navigateToTutorial = { navController.navigate("tutorial") },
                 navigateToRegister = { navController.navigate("register") },
                 navigateToEnterServerAddress = {
                     navController.navigate("enterServerAddress")
