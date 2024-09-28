@@ -120,7 +120,7 @@ fun ConversationTextField(
         modifier = modifier
             .heightIn(min = TextFieldDefaults.MinHeight, max = 2 * TextFieldDefaults.MinHeight)
             .bringIntoViewRequester(bringIntoViewRequester)
-            .animateContentSize(animationSpec = tween(durationMillis = 10000)),
+            .animateContentSize(),
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Done
         ),
@@ -162,8 +162,8 @@ fun ConversationInputBar(
         ) {
             AnimatedVisibility(
                 visible = !isAiResponding,
-                enter = fadeIn(animationSpec = tween(durationMillis = 8000)),
-                exit = fadeOut(animationSpec = tween(durationMillis = 200))
+                enter = fadeIn(),
+                exit = fadeOut()
             ) {
                 AttachFileButton(
                     onClick = { onAttachFilesClick() }
@@ -191,8 +191,8 @@ fun ConversationInputBar(
 
             AnimatedVisibility(
                 visible = !isAiResponding,
-                enter = fadeIn(animationSpec = tween(durationMillis = 8000)),
-                exit = fadeOut(animationSpec = tween(durationMillis = 200))
+                enter = fadeIn(),
+                exit = fadeOut()
             ) {
                 SubmitButton(
                     text = text,
