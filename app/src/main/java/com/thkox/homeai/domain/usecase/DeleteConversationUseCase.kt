@@ -9,7 +9,7 @@ import javax.inject.Inject
 class DeleteConversationUseCase @Inject constructor(
     private val conversationRepository: ConversationRepository
 ) {
-    suspend fun deleteConversation(conversationId: String): Response<Unit> {
+    suspend fun invoke(conversationId: String): Response<Unit> {
         return withContext(Dispatchers.IO) {
             conversationRepository.deleteConversation(conversationId)
         }

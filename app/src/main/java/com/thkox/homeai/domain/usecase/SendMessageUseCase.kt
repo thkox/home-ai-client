@@ -1,4 +1,3 @@
-// File: app/src/main/java/com/thkox/homeai/domain/usecase/SendMessageUseCase.kt
 package com.thkox.homeai.domain.usecase
 
 import android.icu.text.SimpleDateFormat
@@ -36,7 +35,7 @@ class SendMessageUseCase(
             val aiMessageObj = if (continueResponse.isSuccessful) {
                 continueResponse.body()?.let {
 
-                    val dateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+                    val dateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
                     val timestamp = dateFormat.format(Date(System.currentTimeMillis()))
 
                     Message(
