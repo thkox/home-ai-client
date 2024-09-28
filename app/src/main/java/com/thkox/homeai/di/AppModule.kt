@@ -14,7 +14,9 @@ import com.thkox.homeai.data.sources.local.SharedPreferencesManager
 import com.thkox.homeai.domain.repository.AuthRepository
 import com.thkox.homeai.domain.repository.ConversationRepository
 import com.thkox.homeai.domain.repository.DocumentRepository
+import com.thkox.homeai.domain.usecase.DeleteConversationUseCase
 import com.thkox.homeai.domain.usecase.EnterServerAddressUseCase
+import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
 import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.user.LoginUseCase
@@ -143,5 +145,17 @@ object AppModule {
     @Singleton
     fun providesGetUserConversationsUseCase(conversationRepository: ConversationRepository): GetUserConversationsUseCase {
         return GetUserConversationsUseCase(conversationRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetConversationMessagesUseCase(conversationRepository: ConversationRepository): GetConversationMessagesUseCase {
+        return GetConversationMessagesUseCase(conversationRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeleteConversationUseCase(conversationRepository: ConversationRepository): DeleteConversationUseCase {
+        return DeleteConversationUseCase(conversationRepository)
     }
 }
