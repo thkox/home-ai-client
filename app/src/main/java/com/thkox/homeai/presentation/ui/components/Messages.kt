@@ -95,9 +95,9 @@ fun MessageBubble(
     }
 
     val shape = if (isSenderMe) {
-        RoundedCornerShape(20.dp, 4.dp, 20.dp, 20.dp)
+        RoundedCornerShape(30.dp, 5.dp, 30.dp, 30.dp)
     } else {
-        RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp)
+        RoundedCornerShape(5.dp, 30.dp, 30.dp, 30.dp)
     }
 
     val horizontalArrangement = if (isSenderMe) {
@@ -106,8 +106,16 @@ fun MessageBubble(
         Arrangement.Start
     }
 
+    val paddingModifier = if (isSenderMe) {
+        Modifier.padding(start = 25.dp, end = 0.dp)
+    } else {
+        Modifier.padding(start = 0.dp, end = 35.dp)
+    }
+
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(paddingModifier),
         horizontalArrangement = horizontalArrangement
     ) {
         Surface(
@@ -126,8 +134,6 @@ fun SenderAndTextMessage(
     modifier: Modifier = Modifier,
     message: Message,
     isSenderMe: Boolean,
-    isFirstMessageBySender: Boolean,
-    isLastMessageBySender: Boolean
 ) {
 
     val horizontalArrangement = if (isSenderMe) {
@@ -141,22 +147,16 @@ fun SenderAndTextMessage(
         horizontalArrangement = horizontalArrangement
     ) {
         Column {
-            if (isLastMessageBySender) {
-                SenderNameAndTimestamp(
-                    isSenderMe = isSenderMe,
-                    senderName = message.sender,
-                    timestamp = message.timestamp
-                )
-            }
+            SenderNameAndTimestamp(
+                isSenderMe = isSenderMe,
+                senderName = message.sender,
+                timestamp = message.timestamp
+            )
             MessageBubble(
                 message = message,
                 isSenderMe = isSenderMe,
             )
-            if (isFirstMessageBySender) {
-                Spacer(modifier = Modifier.height(8.dp)) // Space between senders
-            } else {
-                Spacer(modifier = Modifier.height(4.dp)) // Space between messages
-            }
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -165,13 +165,11 @@ fun SenderAndTextMessage(
 fun Message(
     message: Message,
     isSenderMe: Boolean,
-    isFirstMessageBySender: Boolean,
-    isLastMessageBySender: Boolean,
 ) {
-    val spaceBetweenSenders = if (isLastMessageBySender) Modifier.padding(top = 8.dp) else Modifier
+    val spaceBetweenSenders = Modifier
 
     Row(modifier = spaceBetweenSenders) {
-        if (!isSenderMe && isLastMessageBySender) {
+        if (!isSenderMe ) {
             Image(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
@@ -186,16 +184,13 @@ fun Message(
                 contentDescription = null,
             )
         } else {
-            // Space under avatar for sender or non-last non-sender messages
             Spacer(modifier = Modifier.width(74.dp))
         }
         SenderAndTextMessage(
             message = message,
             isSenderMe = isSenderMe,
-            isFirstMessageBySender = isFirstMessageBySender,
-            isLastMessageBySender = isLastMessageBySender,
             modifier = Modifier
-                .padding(end = 16.dp) // Maintain end padding
+                .padding(end = 16.dp)
                 .weight(1f)
         )
     }
@@ -213,8 +208,6 @@ private fun MessageFromUserPreview() {
             timestamp = "15:02 PM"
         ),
         isSenderMe = false,
-        isFirstMessageBySender = false,
-        isLastMessageBySender = true,
     )
 }
 
@@ -230,8 +223,6 @@ private fun MessageFromMePreview() {
             timestamp = "16:52 PM"
         ),
         isSenderMe = true,
-        isFirstMessageBySender = false,
-        isLastMessageBySender = true,
     )
 }
 

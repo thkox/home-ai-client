@@ -205,8 +205,6 @@ fun MainContent(
                     Message(
                         message = message,
                         isSenderMe = message.sender == "User",
-                        isFirstMessageBySender = true,
-                        isLastMessageBySender = true
                     )
                 }
             }
