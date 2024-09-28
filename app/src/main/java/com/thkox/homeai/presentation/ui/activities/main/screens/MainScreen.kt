@@ -6,15 +6,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +30,7 @@ import com.thkox.homeai.presentation.ui.components.MainTopAppBar
 import com.thkox.homeai.presentation.ui.components.Message
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import com.thkox.homeai.presentation.viewModel.main.MainViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
@@ -73,6 +77,15 @@ fun MainContent(
     onAttachFilesClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(messages) {
+        coroutineScope.launch {
+            listState.animateScrollToItem(messages.size)
+        }
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -83,22 +96,29 @@ fun MainContent(
             )
         },
         bottomBar = {
-            ConversationInputBar(
-                onSendClick = onSendClick,
-                onMicClick = { onMicClick() },
-                text = text,
-                onTextChange = onTextChange,
-                onAttachFilesClick = { onAttachFilesClick() }
-            )
+            Column {
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                }
+                ConversationInputBar(
+                    onSendClick = onSendClick,
+                    onMicClick = { onMicClick() },
+                    text = text,
+                    onTextChange = onTextChange,
+                    onAttachFilesClick = { onAttachFilesClick() }
+                )
+            }
         }
     ) { paddingValues ->
         Column(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
-            LazyColumn {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.weight(1f)
+            ) {
                 items(messages) { message ->
                     Message(
                         message = message,
@@ -111,6 +131,7 @@ fun MainContent(
         }
     }
 }
+
 
 @Preview(
     showBackground = true,
