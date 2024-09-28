@@ -100,11 +100,8 @@ class MainViewModel @Inject constructor(
 
     fun sendMessage(userMessage: String) {
         viewModelScope.launch {
-            val userMessageObj = Message(
-                sender = "User",
-                text = userMessage,
-                timestamp = getCurrentTimestamp()
-            )
+            val userMessageObj = sendMessageUseCase.formatMessage(userMessage, "User")
+
             _messages.value += userMessageObj
 
             _isLoading.value = true
@@ -115,7 +112,7 @@ class MainViewModel @Inject constructor(
                     sendMessageUseCase.setConversationId(_currentConversationId!!)
                 }
 
-                val aiMessageObj = sendMessageUseCase.sendMessage(userMessage)
+                val aiMessageObj = sendMessageUseCase.invoke(userMessage)
                 aiMessageObj?.let {
                     _messages.value += it
                     _currentConversationId = sendMessageUseCase.conversationId
@@ -129,11 +126,6 @@ class MainViewModel @Inject constructor(
                 _isAiResponding.value = false
             }
         }
-    }
-
-    private fun getCurrentTimestamp(): String {
-        val dateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
-        return dateFormat.format(Date(System.currentTimeMillis()))
     }
 
     private suspend fun updateConversationTitle() {

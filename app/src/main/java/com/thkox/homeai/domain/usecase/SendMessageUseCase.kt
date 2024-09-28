@@ -16,7 +16,7 @@ class SendMessageUseCase(
     val conversationId: String?
         get() = _conversationId
 
-    suspend fun sendMessage(userMessage: String): Message? {
+    suspend fun invoke(userMessage: String): Message? {
         return withContext(Dispatchers.IO) {
 
             if (_conversationId == null) {
@@ -35,14 +35,7 @@ class SendMessageUseCase(
             val aiMessageObj = if (continueResponse.isSuccessful) {
                 continueResponse.body()?.let {
 
-                    val dateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
-                    val timestamp = dateFormat.format(Date(System.currentTimeMillis()))
-
-                    Message(
-                        sender = "Home AI",
-                        text = it.content,
-                        timestamp = timestamp
-                    )
+                    formatMessage(it.content, "Home AI")
                 }
             } else {
                 null
@@ -54,5 +47,15 @@ class SendMessageUseCase(
 
     fun setConversationId(conversationId: String?) {
         _conversationId = conversationId
+    }
+
+    fun formatMessage(message:String, sender:String) : Message {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        val timestamp = dateFormat.format(Date(System.currentTimeMillis()))
+        return Message(
+            sender = sender,
+            text = message,
+            timestamp = timestamp
+        )
     }
 }

@@ -2,7 +2,9 @@ package com.thkox.homeai.presentation.ui.activities.main.screens
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -104,7 +106,8 @@ fun MainScreen(
                 },
                 conversationTitle = conversationTitle
             )
-        }
+        },
+        currentConversationId = viewModel.currentConversationId
     )
 }
 
@@ -114,8 +117,11 @@ fun MenuNavigationDrawer(
     conversations: List<ConversationDto>,
     onNewConversationClick: () -> Unit,
     onConversationClick: (String) -> Unit,
-    mainContent: @Composable () -> Unit
+    mainContent: @Composable () -> Unit,
+    currentConversationId: String?
 ) {
+    val sortedConversations = conversations.sortedByDescending { it.startTime }
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -128,12 +134,13 @@ fun MenuNavigationDrawer(
                     onClick = { onNewConversationClick() }
                 )
                 LazyColumn {
-                    items(conversations) { conversation ->
+                    items(sortedConversations) { conversation ->
                         NavigationDrawerItem(
                             label = { Text(text = conversation.title ?: "New Conversation") },
-                            selected = false,
+                            selected = conversation.id == currentConversationId,
                             onClick = { onConversationClick(conversation.id) }
                         )
+                        Spacer(modifier = Modifier.height(5.dp))
                     }
                 }
             }
@@ -142,7 +149,6 @@ fun MenuNavigationDrawer(
         mainContent()
     }
 }
-
 @Composable
 fun MainContent(
     messages: List<Message>,
