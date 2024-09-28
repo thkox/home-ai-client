@@ -1,15 +1,10 @@
 package com.thkox.homeai.presentation.ui.components
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
-import androidx.compose.material.icons.automirrored.filled.Backspace
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,9 +30,11 @@ fun MainTopAppBar(
     onClickProfileIcon: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
-        modifier = modifier.clip(shape = RoundedCornerShape(
-            bottomStart = 16.dp,
-            bottomEnd = 16.dp)
+        modifier = modifier.clip(
+            shape = RoundedCornerShape(
+                bottomStart = 16.dp,
+                bottomEnd = 16.dp
+            )
         ),
         title = {
             Text(
@@ -96,9 +93,11 @@ fun WelcomeTopAppBar(
     onClickBackIcon: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
-        modifier = modifier.clip(shape = RoundedCornerShape(
-            bottomStart = 16.dp,
-            bottomEnd = 16.dp)
+        modifier = modifier.clip(
+            shape = RoundedCornerShape(
+                bottomStart = 16.dp,
+                bottomEnd = 16.dp
+            )
         ),
         title = {
             Text(

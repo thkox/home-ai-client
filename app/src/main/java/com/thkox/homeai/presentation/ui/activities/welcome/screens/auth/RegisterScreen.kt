@@ -1,25 +1,41 @@
 package com.thkox.homeai.presentation.ui.activities.welcome.screens.auth
 
+import android.content.Context
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import android.content.Context
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.thkox.homeai.R
-import com.thkox.homeai.presentation.ui.components.ModernTextField
-import com.thkox.homeai.presentation.viewModel.welcome.auth.RegisterViewModel
-import com.thkox.homeai.presentation.viewModel.welcome.auth.RegisterState
-import com.thkox.homeai.presentation.ui.theme.HomeAITheme
-import com.thkox.homeai.presentation.ui.components.WelcomeTopAppBar
 import com.thkox.homeai.data.sources.local.SharedPreferencesManager
+import com.thkox.homeai.presentation.ui.components.ModernTextField
+import com.thkox.homeai.presentation.ui.components.WelcomeTopAppBar
+import com.thkox.homeai.presentation.ui.theme.HomeAITheme
+import com.thkox.homeai.presentation.viewModel.welcome.auth.RegisterState
+import com.thkox.homeai.presentation.viewModel.welcome.auth.RegisterViewModel
 
 @Composable
 fun RegisterScreen(
@@ -192,18 +208,21 @@ fun RegisterContent(
                 is RegisterState.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
                 }
+
                 is RegisterState.Success -> {
                     LaunchedEffect(Unit) {
                         navigateToTutorial()
                     }
                 }
+
                 is RegisterState.Error -> {
                     Text(
-                        text = (signUpState as RegisterState.Error).message,
+                        text = signUpState.message,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
+
                 else -> {}
             }
         }
@@ -234,7 +253,12 @@ private fun RegisterScreenDarkPreview() {
             navigateToLogin = {},
             fieldErrors = emptyMap(),
             navigateToTutorial = {},
-            sharedPreferencesManager = SharedPreferencesManager(LocalContext.current.getSharedPreferences("app_prefs", Context.MODE_PRIVATE))
+            sharedPreferencesManager = SharedPreferencesManager(
+                LocalContext.current.getSharedPreferences(
+                    "app_prefs",
+                    Context.MODE_PRIVATE
+                )
+            )
         )
     }
 }
@@ -263,7 +287,12 @@ private fun RegisterScreenLightPreview() {
             navigateToLogin = {},
             navigateToTutorial = {},
             fieldErrors = emptyMap(),
-            sharedPreferencesManager = SharedPreferencesManager(LocalContext.current.getSharedPreferences("app_prefs", Context.MODE_PRIVATE))
+            sharedPreferencesManager = SharedPreferencesManager(
+                LocalContext.current.getSharedPreferences(
+                    "app_prefs",
+                    Context.MODE_PRIVATE
+                )
+            )
         )
     }
 }

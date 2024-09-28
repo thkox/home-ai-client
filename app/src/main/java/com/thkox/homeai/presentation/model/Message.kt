@@ -1,6 +1,5 @@
 package com.thkox.homeai.presentation.model
 
-import android.media.Image
 import androidx.compose.runtime.Immutable
 
 @Immutable

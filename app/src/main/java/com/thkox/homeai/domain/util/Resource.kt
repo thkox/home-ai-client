@@ -5,6 +5,7 @@ sealed class Resource<T>(
     val message: String? = null,
     val field: String? = null
 ) {
-    class Success<T>(data: T): Resource<T>(data)
-    class Error<T>(message: String, field: String? = null, data: T? = null): Resource<T>(data, message, field)
+    class Success<T>(data: T) : Resource<T>(data)
+    class Error<T>(message: String, field: String? = null, data: T? = null) :
+        Resource<T>(data, message, field)
 }

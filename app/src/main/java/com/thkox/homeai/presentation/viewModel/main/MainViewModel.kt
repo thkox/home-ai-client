@@ -3,11 +3,11 @@ package com.thkox.homeai.presentation.viewModel.main
 import android.icu.text.SimpleDateFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thkox.homeai.data.models.ConversationDto
+import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
 import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.presentation.model.Message
-import com.thkox.homeai.data.models.ConversationDto
-import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

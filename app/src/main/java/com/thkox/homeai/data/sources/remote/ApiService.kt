@@ -1,10 +1,26 @@
 package com.thkox.homeai.data.sources.remote
 
-import com.thkox.homeai.data.models.*
+import com.thkox.homeai.data.models.ContinueConversationRequest
+import com.thkox.homeai.data.models.ConversationDto
+import com.thkox.homeai.data.models.DocumentDto
+import com.thkox.homeai.data.models.MessageDto
+import com.thkox.homeai.data.models.TokenDto
+import com.thkox.homeai.data.models.UserCreateRequest
+import com.thkox.homeai.data.models.UserResponseDto
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Url
 
 interface ApiService {
 

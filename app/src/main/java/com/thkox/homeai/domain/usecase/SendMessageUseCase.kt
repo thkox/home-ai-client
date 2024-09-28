@@ -30,7 +30,8 @@ class SendMessageUseCase(
             }
 
             val request = ContinueConversationRequest(userMessage, null)
-            val continueResponse = conversationRepository.continueConversation(_conversationId!!, request)
+            val continueResponse =
+                conversationRepository.continueConversation(_conversationId!!, request)
 
             val aiMessageObj = if (continueResponse.isSuccessful) {
                 continueResponse.body()?.let {

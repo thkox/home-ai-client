@@ -45,8 +45,9 @@ fun SenderNameAndTimestamp(
         Arrangement.Start
     }
 
-    Row (
-        modifier = Modifier.fillMaxWidth()
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
             .semantics(mergeDescendants = true) {},
         horizontalArrangement = horizontalArrangement
     ) {
@@ -93,7 +94,7 @@ fun MessageBubble(
         MaterialTheme.colorScheme.surfaceVariant
     }
 
-    val shape = if(isSenderMe) {
+    val shape = if (isSenderMe) {
         RoundedCornerShape(20.dp, 4.dp, 20.dp, 20.dp)
     } else {
         RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp)
@@ -105,7 +106,7 @@ fun MessageBubble(
         Arrangement.Start
     }
 
-    Row (
+    Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = horizontalArrangement
     ) {
@@ -139,8 +140,7 @@ fun SenderAndTextMessage(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement
     ) {
-        Column(
-        ) {
+        Column {
             if (isLastMessageBySender) {
                 SenderNameAndTimestamp(
                     isSenderMe = isSenderMe,
@@ -201,7 +201,7 @@ fun Message(
     }
 }
 
-@Preview (
+@Preview(
     showBackground = true
 )
 @Composable
@@ -218,7 +218,7 @@ private fun MessageFromUserPreview() {
     )
 }
 
-@Preview (
+@Preview(
     showBackground = true
 )
 @Composable

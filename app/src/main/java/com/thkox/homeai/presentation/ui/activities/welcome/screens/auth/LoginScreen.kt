@@ -1,26 +1,43 @@
 package com.thkox.homeai.presentation.ui.activities.welcome.screens.auth
 
 import android.content.res.Configuration
-import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.thkox.homeai.presentation.viewModel.welcome.auth.LoginViewModel
-import com.thkox.homeai.presentation.viewModel.welcome.auth.LoginState
-import com.thkox.homeai.presentation.ui.theme.HomeAITheme
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.painterResource
 import com.thkox.homeai.R
-import com.thkox.homeai.presentation.ui.components.ModernTextField
 import com.thkox.homeai.data.sources.local.SharedPreferencesManager
+import com.thkox.homeai.presentation.ui.components.ModernTextField
 import com.thkox.homeai.presentation.ui.components.WelcomeTopAppBar
+import com.thkox.homeai.presentation.ui.theme.HomeAITheme
+import com.thkox.homeai.presentation.viewModel.welcome.auth.LoginState
+import com.thkox.homeai.presentation.viewModel.welcome.auth.LoginViewModel
 
 @Composable
 fun LoginScreen(
@@ -139,14 +156,17 @@ fun LoginContent(
                 is LoginState.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.padding(top = 16.dp))
                 }
+
                 is LoginState.Success -> {
                     LaunchedEffect(Unit) {
                         navigateToMain()
                     }
                 }
+
                 is LoginState.Error -> {
                     errorMessage = "Wrong Email or Password"
                 }
+
                 else -> {
                     errorMessage = ""
                 }
@@ -173,7 +193,12 @@ private fun LoginScreenDarkPreview() {
             navigateToRegister = {},
             navigateToEnterServerAddress = {},
             navigateToMain = {},
-            sharedPreferencesManager = SharedPreferencesManager(LocalContext.current.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE))
+            sharedPreferencesManager = SharedPreferencesManager(
+                LocalContext.current.getSharedPreferences(
+                    "app_prefs",
+                    android.content.Context.MODE_PRIVATE
+                )
+            )
         )
     }
 }
@@ -196,7 +221,12 @@ private fun LoginScreenLightPreview() {
             navigateToRegister = {},
             navigateToEnterServerAddress = {},
             navigateToMain = {},
-            sharedPreferencesManager = SharedPreferencesManager(LocalContext.current.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE))
+            sharedPreferencesManager = SharedPreferencesManager(
+                LocalContext.current.getSharedPreferences(
+                    "app_prefs",
+                    android.content.Context.MODE_PRIVATE
+                )
+            )
         )
     }
 }

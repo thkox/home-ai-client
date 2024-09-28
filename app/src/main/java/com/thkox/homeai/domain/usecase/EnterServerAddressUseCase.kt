@@ -1,8 +1,8 @@
 package com.thkox.homeai.domain.usecase
 
+import com.thkox.homeai.data.sources.local.SharedPreferencesManager
 import com.thkox.homeai.data.sources.remote.ApiService
 import com.thkox.homeai.data.sources.remote.RetrofitHolder
-import com.thkox.homeai.data.sources.local.SharedPreferencesManager
 import com.thkox.homeai.presentation.viewModel.welcome.EnterServerAddressState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,7 +18,9 @@ class EnterServerAddressUseCase @Inject constructor(
             try {
                 val apiService = retrofitHolder.getRetrofit().create(ApiService::class.java)
                 val response = apiService.root(formattedAddress)
-                if (response.isSuccessful && response.body()?.string()?.contains("Home AI API") == true) {
+                if (response.isSuccessful && response.body()?.string()
+                        ?.contains("Home AI API") == true
+                ) {
                     sharedPreferencesManager.saveBaseUrl(formattedAddress)
                     retrofitHolder.updateRetrofit()
                     EnterServerAddressState.Success

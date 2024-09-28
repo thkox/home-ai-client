@@ -5,10 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
-import com.thkox.homeai.presentation.ui.activities.main.MainActivity
-import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import com.thkox.homeai.data.sources.local.SharedPreferencesManager
 import com.thkox.homeai.presentation.navigation.WelcomeNavHost
+import com.thkox.homeai.presentation.ui.activities.main.MainActivity
+import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

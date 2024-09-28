@@ -41,7 +41,10 @@ class RegisterUseCase(
             return Resource.Error("Password must contain at least one uppercase letter", "password")
         }
         if (!userRegistration.password.any { "!@#$%^&*()-_=+[]{}|;:,.<>?/".contains(it) }) {
-            return Resource.Error("Password must contain at least one special character", "password")
+            return Resource.Error(
+                "Password must contain at least one special character",
+                "password"
+            )
         }
 
         val result = authRepository.register(userRegistration)

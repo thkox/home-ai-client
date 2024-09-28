@@ -2,16 +2,16 @@ package com.thkox.homeai.presentation.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.wear.compose.material.ContentAlpha
-
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import com.thkox.homeai.presentation.ui.activities.welcome.screens.EnterServerAddressContent
+import androidx.wear.compose.material.ContentAlpha
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 
 @Composable
@@ -33,7 +33,9 @@ fun ModernTextField(
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface.copy(alpha = ContentAlpha.disabled),
+            unfocusedBorderColor = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface.copy(
+                alpha = ContentAlpha.disabled
+            ),
         )
     )
 }

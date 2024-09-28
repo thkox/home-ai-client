@@ -2,18 +2,18 @@ package com.thkox.homeai.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.thkox.homeai.data.sources.remote.ApiService
-import com.thkox.homeai.data.sources.remote.AuthInterceptor
-import com.thkox.homeai.data.sources.remote.RetrofitHolder
-import com.thkox.homeai.domain.repository.TokenRepository
 import com.thkox.homeai.data.repository.AuthRepositoryImpl
 import com.thkox.homeai.data.repository.ConversationRepositoryImpl
 import com.thkox.homeai.data.repository.DocumentRepositoryImpl
 import com.thkox.homeai.data.repository.TokenRepositoryImpl
 import com.thkox.homeai.data.sources.local.SharedPreferencesManager
+import com.thkox.homeai.data.sources.remote.ApiService
+import com.thkox.homeai.data.sources.remote.AuthInterceptor
+import com.thkox.homeai.data.sources.remote.RetrofitHolder
 import com.thkox.homeai.domain.repository.AuthRepository
 import com.thkox.homeai.domain.repository.ConversationRepository
 import com.thkox.homeai.domain.repository.DocumentRepository
+import com.thkox.homeai.domain.repository.TokenRepository
 import com.thkox.homeai.domain.usecase.DeleteConversationUseCase
 import com.thkox.homeai.domain.usecase.EnterServerAddressUseCase
 import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
