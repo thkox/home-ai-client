@@ -171,38 +171,13 @@ class MainViewModel @Inject constructor(
     fun uploadDocument(context: Context, uri: Uri) {
         viewModelScope.launch {
             try {
-                val contentResolver: ContentResolver = context.contentResolver
-                val displayName = contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-                    val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    cursor.moveToFirst()
-                    cursor.getString(nameIndex)
-                } ?: "temp_upload_file"
-
-                val inputStream: InputStream? = contentResolver.openInputStream(uri)
-                if (inputStream != null) {
-                    val tempFile = File(context.cacheDir, displayName)
-                    val outputStream = FileOutputStream(tempFile)
-                    inputStream.copyTo(outputStream)
-                    inputStream.close()
-                    outputStream.close()
-
-                    val requestFile = tempFile.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-                    val body = MultipartBody.Part.createFormData("files", tempFile.name, requestFile)
-
-                    // Log the request details
-                    Log.d("UploadDocument", "Uploading file: ${tempFile.name}")
-
-                    val response = uploadDocumentUseCase(listOf(body))
-                    if (response.isSuccessful) {
-                        val documentIds = response.body()?.map { it.id }
-                        Toast.makeText(context, "Document IDs: $documentIds", Toast.LENGTH_LONG).show()
-                    } else {
-                        Log.e("UploadDocument", "Upload failed: ${response.errorBody()?.string()}")
-                        Toast.makeText(context, "Upload failed", Toast.LENGTH_LONG).show()
-                    }
-                    tempFile.delete() // Clean up the temporary file
+                val response = uploadDocumentUseCase(context, uri)
+                if (response.isSuccessful) {
+                    val documentIds = response.body()?.map { it.id }
+                    Toast.makeText(context, "Document IDs: $documentIds", Toast.LENGTH_LONG).show()
                 } else {
-                    Toast.makeText(context, "Failed to open file", Toast.LENGTH_LONG).show()
+                    Log.e("UploadDocument", "Upload failed: ${response.errorBody()?.string()}")
+                    Toast.makeText(context, "Upload failed", Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
