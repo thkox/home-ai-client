@@ -6,4 +6,8 @@
     <string name="back">Back</string>
     <string name="add_conversation">Create new conversation</string>
     <string name="conversation">Conversation</string>
+    <string name="settings">Settings</string>
+    <string name="new_conversation">New Conversation</string>
+    <string name="past_conversations">Past Conversations</string>
+    <string name="delete">Delete</string>
 </resources>

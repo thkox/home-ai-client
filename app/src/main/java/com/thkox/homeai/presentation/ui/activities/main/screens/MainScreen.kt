@@ -17,17 +17,22 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -94,6 +99,10 @@ fun MainScreen(
         onConversationClick = { conversationId ->
             viewModel.loadConversation(conversationId)
         },
+        currentConversationId = viewModel.currentConversationId,
+        onDeleteConversation = { conversationId ->
+            viewModel.deleteConversation(conversationId)
+        },
         mainContent = {
             MainContent(
                 messages = messages,
@@ -118,8 +127,7 @@ fun MainScreen(
                 },
                 conversationTitle = conversationTitle
             )
-        },
-        currentConversationId = viewModel.currentConversationId
+        }
     )
 }
 
@@ -130,9 +138,33 @@ fun MenuNavigationDrawer(
     onNewConversationClick: () -> Unit,
     onConversationClick: (String) -> Unit,
     mainContent: @Composable () -> Unit,
-    currentConversationId: String?
+    currentConversationId: String?,
+    onDeleteConversation: (String) -> Unit
 ) {
     val sortedConversations = conversations.sortedByDescending { it.startTime }
+    var showDialog by remember { mutableStateOf(false) }
+    var conversationToDelete by remember { mutableStateOf<String?>(null) }
+
+    if (showDialog && conversationToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = "Delete Conversation") },
+            text = { Text(text = "Are you sure you want to delete this conversation?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    onDeleteConversation(conversationToDelete!!)
+                    showDialog = false
+                }) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("No")
+                }
+            }
+        )
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -170,21 +202,42 @@ fun MenuNavigationDrawer(
                 }
                 HorizontalDivider()
                 Text(
-                    text = "Past Conversations",
+                    text = stringResource(R.string.past_conversations),
                     modifier = Modifier.padding(10.dp)
                 )
                 LazyColumn {
                     items(sortedConversations) { conversation ->
-                        NavigationDrawerItem(
-                            label = { Text(text = conversation.title ?: "New Conversation") },
-                            selected = conversation.id == currentConversationId,
-                            onClick = { onConversationClick(conversation.id) }
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            NavigationDrawerItem(
+                                label = { Text(text = conversation.title ?: stringResource(R.string.new_conversation)) },
+                                selected = conversation.id == currentConversationId,
+                                onClick = { onConversationClick(conversation.id) },
+                                modifier = Modifier.weight(1f)
+                            )
+                            IconButton(onClick = {
+                                conversationToDelete = conversation.id
+                                showDialog = true
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = stringResource(R.string.delete)
+                                )
+                            }
+                        }
                         Spacer(modifier = Modifier.height(5.dp))
                     }
                 }
                 HorizontalDivider()
                 NavigationDrawerItem(
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings)
+                        )
+                    },
                     label = { Text(text = "Settings") },
                     selected = false,
                     onClick = { onNewConversationClick() }
@@ -223,7 +276,8 @@ private fun MenuNavigationDrawerDarkPreview() {
                     conversationTitle = "New Conversation"
                 )
             },
-            currentConversationId = null
+            currentConversationId = null,
+            onDeleteConversation = {}
         )
     }
 }
@@ -255,7 +309,8 @@ private fun MenuNavigationDrawerLightPreview() {
                     conversationTitle = "New Conversation"
                 )
             },
-            currentConversationId = null
+            currentConversationId = null,
+            onDeleteConversation = {}
         )
     }
 }

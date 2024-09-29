@@ -4,6 +4,7 @@ import android.icu.text.SimpleDateFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thkox.homeai.data.models.ConversationDto
+import com.thkox.homeai.domain.usecase.DeleteConversationUseCase
 import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
 import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
@@ -22,7 +23,8 @@ class MainViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
     private val getUserConversationsUseCase: GetUserConversationsUseCase,
     private val getConversationMessagesUseCase: GetConversationMessagesUseCase,
-    private val updateConversationTitleUseCase: UpdateConversationTitleUseCase
+    private val updateConversationTitleUseCase: UpdateConversationTitleUseCase,
+    private val deleteConversationUseCase: DeleteConversationUseCase
 ) : ViewModel() {
 
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
@@ -134,6 +136,19 @@ class MainViewModel @Inject constructor(
         val title = updateConversationTitleUseCase(_currentConversationId!!)
         title?.let {
             _conversationTitle.value = it
+        }
+    }
+
+    fun deleteConversation(conversationId: String) {
+        viewModelScope.launch {
+            try {
+                val response = deleteConversationUseCase.invoke(conversationId)
+                if (response.isSuccessful) {
+                    loadConversations()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }
