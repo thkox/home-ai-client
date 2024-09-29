@@ -132,7 +132,7 @@ fun MainScreen(
                     // Handle mic click
                 },
                 onAttachFilesClick = {
-                    launcher.launch("application/*")
+                    launcher.launch("*/*")
                 },
                 onClickNavigationIcon = {
                     coroutineScope.launch {
