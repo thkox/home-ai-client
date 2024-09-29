@@ -13,8 +13,11 @@ class SendMessageUseCase(
     private val conversationRepository: ConversationRepository
 ) {
     private var _conversationId: String? = null
+    private var _documentIds: List<String>? = null
+
     val conversationId: String?
         get() = _conversationId
+
 
     suspend fun invoke(userMessage: String): Message? {
         return withContext(Dispatchers.IO) {
@@ -28,13 +31,12 @@ class SendMessageUseCase(
                 }
             }
 
-            val request = ContinueConversationRequest(userMessage, null)
+            val request = ContinueConversationRequest(userMessage, _documentIds)
             val continueResponse =
                 conversationRepository.continueConversation(_conversationId!!, request)
 
             val aiMessageObj = if (continueResponse.isSuccessful) {
                 continueResponse.body()?.let {
-
                     formatMessage(it.content, "Home AI")
                 }
             } else {
@@ -47,6 +49,10 @@ class SendMessageUseCase(
 
     fun setConversationId(conversationId: String?) {
         _conversationId = conversationId
+    }
+
+    fun setDocumentIds(documentIds: List<String>?) {
+        _documentIds = documentIds
     }
 
     fun formatMessage(message:String, sender:String) : Message {

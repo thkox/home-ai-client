@@ -66,6 +66,8 @@ class MainViewModel @Inject constructor(
             _currentConversationId = value
         }
 
+    private val _uploadedDocumentIds = mutableListOf<String>()
+
     fun openDrawer() {
         _isDrawerOpen.value = true
     }
@@ -126,8 +128,8 @@ class MainViewModel @Inject constructor(
             _isAiResponding.value = true
 
             try {
-
                 sendMessageUseCase.setConversationId(_currentConversationId)
+                sendMessageUseCase.setDocumentIds(_uploadedDocumentIds)
 
                 val aiMessageObj = sendMessageUseCase.invoke(userMessage)
                 aiMessageObj?.let {
@@ -136,6 +138,9 @@ class MainViewModel @Inject constructor(
                     updateConversationTitle()
                     loadConversations()
                 }
+
+                // Clear the list of document IDs after sending the message
+                _uploadedDocumentIds.clear()
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
@@ -174,6 +179,9 @@ class MainViewModel @Inject constructor(
                 val response = uploadDocumentUseCase(context, uri)
                 if (response.isSuccessful) {
                     val documentIds = response.body()?.map { it.id }
+                    documentIds?.let {
+                        _uploadedDocumentIds.addAll(it)
+                    }
                     Toast.makeText(context, "Document IDs: $documentIds", Toast.LENGTH_LONG).show()
                 } else {
                     Log.e("UploadDocument", "Upload failed: ${response.errorBody()?.string()}")
