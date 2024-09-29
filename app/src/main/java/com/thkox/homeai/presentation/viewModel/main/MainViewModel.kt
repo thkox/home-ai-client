@@ -112,9 +112,8 @@ class MainViewModel @Inject constructor(
             _isAiResponding.value = true
 
             try {
-                if (_currentConversationId != null) {
-                    sendMessageUseCase.setConversationId(_currentConversationId!!)
-                }
+
+                sendMessageUseCase.setConversationId(_currentConversationId)
 
                 val aiMessageObj = sendMessageUseCase.invoke(userMessage)
                 aiMessageObj?.let {
@@ -144,6 +143,9 @@ class MainViewModel @Inject constructor(
             try {
                 val response = deleteConversationUseCase.invoke(conversationId)
                 if (response.isSuccessful) {
+                    if (_currentConversationId == conversationId) {
+                        startNewConversation()
+                    }
                     loadConversations()
                 }
             } catch (e: Exception) {
