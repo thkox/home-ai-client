@@ -1,6 +1,7 @@
 package com.thkox.homeai.data.repository
 
 import com.thkox.homeai.data.models.UserCreateRequest
+import com.thkox.homeai.data.models.UserResponseDto
 import com.thkox.homeai.data.sources.remote.ApiService
 import com.thkox.homeai.data.sources.remote.RetrofitHolder
 import com.thkox.homeai.domain.models.Token
@@ -92,6 +93,24 @@ class AuthRepositoryImpl(
                     } ?: Resource.Error("Invalid response")
                 } else {
                     Resource.Error("Failed to fetch user details: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Resource.Error("Exception: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    override suspend fun updateMyProfile(userCreateRequest: UserCreateRequest): Resource<UserResponseDto> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = apiService.updateMyProfile(userCreateRequest)
+                if (response.isSuccessful) {
+                    val userResponseDto = response.body()
+                    userResponseDto?.let {
+                        Resource.Success(it)
+                    } ?: Resource.Error("Invalid response")
+                } else {
+                    Resource.Error("Update profile failed: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
                 Resource.Error("Exception: ${e.localizedMessage}")

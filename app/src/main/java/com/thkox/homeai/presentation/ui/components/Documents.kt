@@ -69,13 +69,14 @@ fun UploadDocumentButton(
 
 @Composable
 fun DocumentCard(
+    fileName: String = "",
     fileSize: String,
     uploadDate: String,
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
     onDeleteClick: () -> Unit,
     isCheckboxEnabled: Boolean = true,
 ) {
-    var isChecked by remember { mutableStateOf(false) }
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -84,7 +85,7 @@ fun DocumentCard(
     ) {
         Checkbox(
             checked = isChecked,
-            onCheckedChange = { isChecked = it },
+            onCheckedChange = onCheckedChange,
             enabled = isCheckboxEnabled
         )
         Icon(
@@ -93,6 +94,10 @@ fun DocumentCard(
             modifier = Modifier
                 .size(24.dp)
                 .padding(start = 8.dp)
+        )
+        Text(
+            text = fileName,
+            modifier = Modifier.padding(start = 8.dp)
         )
         Text(
             text = fileSize,
@@ -130,9 +135,12 @@ fun DocumentCard(
 private fun DocumentCardLightPreview() {
     HomeAITheme {
         DocumentCard(
+            fileName = "Document Name",
             fileSize = "1.2 MB",
             uploadDate = "Today",
-            onDeleteClick = { }
+            onDeleteClick = { },
+            isChecked = false,
+            onCheckedChange = { }
         )
     }
 }
@@ -146,9 +154,12 @@ private fun DocumentCardLightPreview() {
 private fun DocumentCardDarkPreview() {
     HomeAITheme {
         DocumentCard(
+            fileName = "Document Name",
             fileSize = "1.2 MB",
             uploadDate = "Today",
-            onDeleteClick = { }
+            onDeleteClick = { },
+            isChecked = true,
+            onCheckedChange = { }
         )
     }
 }
