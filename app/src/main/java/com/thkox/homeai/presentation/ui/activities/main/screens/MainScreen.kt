@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -29,6 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -122,7 +124,14 @@ fun MenuNavigationDrawer(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet(
+                modifier = Modifier.clip(
+                    shape = RoundedCornerShape(
+                        topEnd = 50.dp,
+                        bottomEnd = 50.dp
+                    )
+                ),
+            ) {
                 Text("Drawer title", modifier = Modifier.padding(16.dp))
                 HorizontalDivider()
                 NavigationDrawerItem(
@@ -146,6 +155,73 @@ fun MenuNavigationDrawer(
         mainContent()
     }
 }
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun MenuNavigationDrawerDarkPreview() {
+    HomeAITheme {
+        MenuNavigationDrawer(
+            drawerState = rememberDrawerState(DrawerValue.Open),
+            conversations = emptyList(),
+            onNewConversationClick = {},
+            onConversationClick = {},
+            mainContent = {
+                MainContent(
+                    messages = emptyList(),
+                    isLoading = false,
+                    text = "",
+                    onTextChange = {},
+                    onClickNavigationIcon = {},
+                    onSendClick = {},
+                    onMicClick = {},
+                    onAttachFilesClick = {},
+                    isAiResponding = false,
+                    conversationTitle = "New Conversation"
+                )
+            },
+            currentConversationId = null
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Composable
+private fun MenuNavigationDrawerLightPreview() {
+    HomeAITheme {
+        MenuNavigationDrawer(
+            drawerState = rememberDrawerState(DrawerValue.Open),
+            conversations = emptyList(),
+            onNewConversationClick = {},
+            onConversationClick = {},
+            mainContent = {
+                MainContent(
+                    messages = emptyList(),
+                    isLoading = false,
+                    text = "",
+                    onTextChange = {},
+                    onClickNavigationIcon = {},
+                    onSendClick = {},
+                    onMicClick = {},
+                    onAttachFilesClick = {},
+                    isAiResponding = false,
+                    conversationTitle = "New Conversation"
+                )
+            },
+            currentConversationId = null
+        )
+    }
+}
+
+
+
 @Composable
 fun MainContent(
     messages: List<Message>,
