@@ -172,13 +172,10 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val contentResolver: ContentResolver = context.contentResolver
-                val cursor = contentResolver.query(uri, null, null, null, null)
-                val displayName = cursor?.use {
-                    if (it.moveToFirst()) {
-                        it.getString(it.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
-                    } else {
-                        "temp_upload_file"
-                    }
+                val displayName = contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                    val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    cursor.moveToFirst()
+                    cursor.getString(nameIndex)
                 } ?: "temp_upload_file"
 
                 val inputStream: InputStream? = contentResolver.openInputStream(uri)
@@ -197,8 +194,8 @@ class MainViewModel @Inject constructor(
 
                     val response = uploadDocumentUseCase(listOf(body))
                     if (response.isSuccessful) {
-                        val documentId = response.body()?.id
-                        Toast.makeText(context, "Document ID: $documentId", Toast.LENGTH_LONG).show()
+                        val documentIds = response.body()?.map { it.id }
+                        Toast.makeText(context, "Document IDs: $documentIds", Toast.LENGTH_LONG).show()
                     } else {
                         Log.e("UploadDocument", "Upload failed: ${response.errorBody()?.string()}")
                         Toast.makeText(context, "Upload failed", Toast.LENGTH_LONG).show()

@@ -9,7 +9,7 @@ import javax.inject.Inject
 class UploadDocumentUseCase @Inject constructor(
     private val documentRepository: DocumentRepository
 ) {
-    suspend operator fun invoke(files: List<MultipartBody.Part>): Response<DocumentDto> {
+    suspend operator fun invoke(files: List<MultipartBody.Part>): Response<List<DocumentDto>> {
         return documentRepository.uploadDocuments(files)
     }
 }

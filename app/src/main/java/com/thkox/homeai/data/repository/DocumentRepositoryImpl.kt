@@ -9,7 +9,7 @@ import retrofit2.Response
 class DocumentRepositoryImpl(
     private val apiService: ApiService
 ) : DocumentRepository {
-    override suspend fun uploadDocuments(files: List<MultipartBody.Part>): Response<DocumentDto> {
+    override suspend fun uploadDocuments(files: List<MultipartBody.Part>): Response<List<DocumentDto>> {
         return apiService.uploadDocuments(files)
     }
 

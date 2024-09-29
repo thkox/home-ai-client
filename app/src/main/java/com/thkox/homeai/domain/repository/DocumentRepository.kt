@@ -5,7 +5,7 @@ import okhttp3.MultipartBody
 import retrofit2.Response
 
 interface DocumentRepository {
-    suspend fun uploadDocuments(files: List<MultipartBody.Part>): Response<DocumentDto>
+    suspend fun uploadDocuments(files: List<MultipartBody.Part>): Response<List<DocumentDto>>
     suspend fun deleteDocument(documentId: String): Response<Unit>
     suspend fun getUserDocuments(): Response<List<DocumentDto>>
 }
