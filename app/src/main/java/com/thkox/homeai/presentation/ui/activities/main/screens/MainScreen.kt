@@ -101,9 +101,6 @@ fun MainScreen(
                         viewModel.openDrawer()
                     }
                 },
-                onClickProfileIcon = {
-                    // Handle profile icon click
-                },
                 conversationTitle = conversationTitle
             )
         },
@@ -157,7 +154,6 @@ fun MainContent(
     text: String,
     onTextChange: (String) -> Unit,
     onClickNavigationIcon: () -> Unit,
-    onClickProfileIcon: () -> Unit,
     onSendClick: () -> Unit,
     onMicClick: () -> Unit,
     onAttachFilesClick: () -> Unit,
@@ -179,7 +175,6 @@ fun MainContent(
             MainTopAppBar(
                 text = conversationTitle,
                 onClickNavigationIcon = { onClickNavigationIcon() },
-                onClickProfileIcon = { onClickProfileIcon() }
             )
         },
         bottomBar = {
@@ -233,7 +228,6 @@ private fun MainScreenDarkPreview() {
             text = "",
             onTextChange = {},
             onClickNavigationIcon = {},
-            onClickProfileIcon = {},
             onSendClick = {},
             onMicClick = {},
             onAttachFilesClick = {},
@@ -257,7 +251,6 @@ private fun MainScreenLightPreview() {
             text = "",
             onTextChange = {},
             onClickNavigationIcon = {},
-            onClickProfileIcon = {},
             onSendClick = {},
             onMicClick = {},
             onAttachFilesClick = {},

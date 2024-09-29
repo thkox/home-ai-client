@@ -1,6 +1,7 @@
 package com.thkox.homeai.presentation.ui.components
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
@@ -27,13 +28,20 @@ fun MainTopAppBar(
     modifier: Modifier = Modifier,
     text: String,
     onClickNavigationIcon: () -> Unit = {},
-    onClickProfileIcon: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
-        modifier = modifier.clip(
+        modifier = modifier.padding(
+            start = 5.dp,
+            end = 5.dp,
+            top = 10.dp,
+            bottom = 2.dp
+        )
+            .clip(
             shape = RoundedCornerShape(
-                bottomStart = 16.dp,
-                bottomEnd = 16.dp
+                topStart = 100.dp,
+                topEnd = 100.dp,
+                bottomStart = 100.dp,
+                bottomEnd = 100.dp
             )
         ),
         title = {
