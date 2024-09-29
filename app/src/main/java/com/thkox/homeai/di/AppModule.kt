@@ -20,6 +20,7 @@ import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
 import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.UpdateConversationTitleUseCase
+import com.thkox.homeai.domain.usecase.UploadDocumentUseCase
 import com.thkox.homeai.domain.usecase.user.LoginUseCase
 import com.thkox.homeai.domain.usecase.user.RegisterUseCase
 import dagger.Module
@@ -166,5 +167,11 @@ object AppModule {
         getUserConversationsUseCase: GetUserConversationsUseCase
     ): UpdateConversationTitleUseCase {
         return UpdateConversationTitleUseCase(getUserConversationsUseCase)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUploadDocumentUseCase(documentRepository: DocumentRepository): UploadDocumentUseCase {
+        return UploadDocumentUseCase(documentRepository)
     }
 }

@@ -1,6 +1,11 @@
 package com.thkox.homeai.presentation.viewModel.main
 
+import android.content.ContentResolver
+import android.content.Context
 import android.icu.text.SimpleDateFormat
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thkox.homeai.data.models.ConversationDto
@@ -9,11 +14,18 @@ import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
 import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.UpdateConversationTitleUseCase
+import com.thkox.homeai.domain.usecase.UploadDocumentUseCase
 import com.thkox.homeai.presentation.model.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -24,7 +36,8 @@ class MainViewModel @Inject constructor(
     private val getUserConversationsUseCase: GetUserConversationsUseCase,
     private val getConversationMessagesUseCase: GetConversationMessagesUseCase,
     private val updateConversationTitleUseCase: UpdateConversationTitleUseCase,
-    private val deleteConversationUseCase: DeleteConversationUseCase
+    private val deleteConversationUseCase: DeleteConversationUseCase,
+    private val uploadDocumentUseCase: UploadDocumentUseCase
 ) : ViewModel() {
 
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
@@ -150,6 +163,44 @@ class MainViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+    }
+
+    fun uploadDocument(context: Context, uri: Uri) {
+        viewModelScope.launch {
+            try {
+                val contentResolver: ContentResolver = context.contentResolver
+                val inputStream: InputStream? = contentResolver.openInputStream(uri)
+                if (inputStream != null) {
+                    val tempFile = File(context.cacheDir, "temp_upload_file")
+                    val outputStream = FileOutputStream(tempFile)
+                    inputStream.copyTo(outputStream)
+                    inputStream.close()
+                    outputStream.close()
+
+                    val requestFile = tempFile.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                    val body = MultipartBody.Part.createFormData("files", tempFile.name, requestFile)
+
+                    // Log the request details
+                    Log.d("UploadDocument", "Uploading file: ${tempFile.name}")
+
+                    val response = uploadDocumentUseCase(listOf(body))
+                    if (response.isSuccessful) {
+                        val documentId = response.body()?.id
+                        Toast.makeText(context, "Document ID: $documentId", Toast.LENGTH_LONG).show()
+                    } else {
+                        Log.e("UploadDocument", "Upload failed: ${response.errorBody()?.string()}")
+                        Toast.makeText(context, "Upload failed", Toast.LENGTH_LONG).show()
+                    }
+                    tempFile.delete() // Clean up the temporary file
+                } else {
+                    Toast.makeText(context, "Failed to open file", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("UploadDocument", "Error uploading document", e)
+                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }

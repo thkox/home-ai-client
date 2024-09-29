@@ -1,6 +1,9 @@
 package com.thkox.homeai.presentation.ui.activities.main.screens
 
 import android.content.res.Configuration
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -73,6 +77,16 @@ fun MainScreen(
     val conversations by viewModel.conversations.collectAsState()
     var text by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
+
+    val context = LocalContext.current
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            viewModel.uploadDocument(context, it)
+        }
+    }
 
     val drawerState =
         rememberDrawerState(if (isDrawerOpen) DrawerValue.Open else DrawerValue.Closed)
@@ -118,7 +132,7 @@ fun MainScreen(
                     // Handle mic click
                 },
                 onAttachFilesClick = {
-                    // Handle attach files click
+                    launcher.launch("application/*")
                 },
                 onClickNavigationIcon = {
                     coroutineScope.launch {

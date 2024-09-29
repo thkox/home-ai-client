@@ -54,10 +54,8 @@ interface ApiService {
     ): Response<MessageDto>
 
     @Multipart
-    @POST("/documents/upload")
-    suspend fun uploadDocuments(
-        @Part files: List<MultipartBody.Part>
-    ): Response<List<DocumentDto>>
+    @POST("documents/upload")
+    suspend fun uploadDocument(@Part file: MultipartBody.Part): Response<DocumentDto>
 
     @DELETE("/documents/{documentId}")
     suspend fun deleteDocument(
