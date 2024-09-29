@@ -44,6 +44,9 @@ interface ApiService {
         @Body userCreateRequest: UserCreateRequest
     ): Response<UserResponseDto>
 
+    @GET("/users/me/details")
+    suspend fun getUserDetails(): Response<UserResponseDto>
+
     @POST("/conversations/")
     suspend fun startConversation(): Response<ConversationDto>
 
@@ -77,4 +80,14 @@ interface ApiService {
     suspend fun getConversationMessages(
         @Path("conversationId") conversationId: String
     ): Response<List<MessageDto>>
+
+    @GET("/conversations/{conversationId}/details")
+    suspend fun getConversationDetails(
+        @Path("conversationId") conversationId: String
+    ): Response<ConversationDto>
+
+    @GET("/documents/{documentId}/details")
+    suspend fun getDocumentDetails(
+        @Path("documentId") documentId: String
+    ): Response<DocumentDto>
 }

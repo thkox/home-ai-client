@@ -32,4 +32,8 @@ class ConversationRepositoryImpl(
     override suspend fun getConversationMessages(conversationId: String): Response<List<MessageDto>> {
         return apiService.getConversationMessages(conversationId)
     }
+
+    override suspend fun getConversationDetails(conversationId: String): Response<ConversationDto> {
+        return apiService.getConversationDetails(conversationId)
+    }
 }

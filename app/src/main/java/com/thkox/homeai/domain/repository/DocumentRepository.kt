@@ -8,4 +8,5 @@ interface DocumentRepository {
     suspend fun uploadDocuments(files: List<MultipartBody.Part>): Response<List<DocumentDto>>
     suspend fun deleteDocument(documentId: String): Response<Unit>
     suspend fun getUserDocuments(): Response<List<DocumentDto>>
+    suspend fun getDocumentDetails(documentId: String): Response<DocumentDto>
 }

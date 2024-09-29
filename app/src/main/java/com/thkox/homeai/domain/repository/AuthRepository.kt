@@ -8,4 +8,5 @@ import com.thkox.homeai.domain.utils.Resource
 interface AuthRepository {
     suspend fun login(email: String, password: String): Resource<Token>
     suspend fun register(userRegistration: UserRegistration): Resource<User>
+    suspend fun getUserDetails(): Resource<User>
 }

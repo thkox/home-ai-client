@@ -71,4 +71,31 @@ class AuthRepositoryImpl(
             }
         }
     }
+
+    override suspend fun getUserDetails(): Resource<User> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = apiService.getUserDetails()
+                if (response.isSuccessful) {
+                    val userDto = response.body()
+                    userDto?.let {
+                        Resource.Success(
+                            User(
+                                userId = it.userId,
+                                firstName = it.firstName,
+                                lastName = it.lastName,
+                                email = it.email,
+                                enabled = it.enabled,
+                                role = it.role
+                            )
+                        )
+                    } ?: Resource.Error("Invalid response")
+                } else {
+                    Resource.Error("Failed to fetch user details: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Resource.Error("Exception: ${e.localizedMessage}")
+            }
+        }
+    }
 }

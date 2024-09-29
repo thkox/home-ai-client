@@ -20,4 +20,8 @@ class DocumentRepositoryImpl(
     override suspend fun getUserDocuments(): Response<List<DocumentDto>> {
         return apiService.getUserDocuments()
     }
+
+    override suspend fun getDocumentDetails(documentId: String): Response<DocumentDto> {
+        return apiService.getDocumentDetails(documentId)
+    }
 }
