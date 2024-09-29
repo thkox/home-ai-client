@@ -1,5 +1,6 @@
 package com.thkox.homeai.presentation.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.thkox.homeai.R
 import com.thkox.homeai.presentation.model.Message
+import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 
 @Composable
 fun SenderNameAndTimestamp(
@@ -197,35 +199,75 @@ fun Message(
 }
 
 @Preview(
-    showBackground = true
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
-private fun MessageFromUserPreview() {
-    Message(
-        message = Message(
-            sender = "Home AI",
-            text = "This is a message." +
-                    "asjudfasouidhfasoiufhaoisudfhasoikudhfasiofhuasoifdhuaisohfdaosfdhasoifdhasoiudfhasoifdhashofdasoiudfhiaos",
-            timestamp = "15:02 PM"
-        ),
-        isSenderMe = false,
-    )
+private fun MessageFromAIDarkPreview() {
+    HomeAITheme {
+        Message(
+            message = Message(
+                sender = "Home AI",
+                text = "This is a message.",
+                timestamp = "15:02 PM"
+            ),
+            isSenderMe = false,
+        )
+    }
 }
 
 @Preview(
-    showBackground = true
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
-private fun MessageFromMePreview() {
-    Message(
-        message = Message(
-            sender = "First Last",
-            text = "This is another message." +
-                    "asdfiuhasdiuhasiuhasdfiuhidafshuhiuihudfsahuidsfahuasdfiafudshfhsuidafshduiahifusdhfisuadhafsiduasfdhshasdfhuoahudffdhu",
-            timestamp = "16:52 PM"
-        ),
-        isSenderMe = true,
-    )
+private fun MessageFromAILightPreview() {
+    HomeAITheme {
+        Message(
+            message = Message(
+                sender = "Home AI",
+                text = "This is a message.",
+                timestamp = "15:02 PM"
+            ),
+            isSenderMe = false,
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+private fun MessageFromMeDarkPreview() {
+    HomeAITheme {
+        Message(
+            message = Message(
+                sender = "First Last",
+                text = "This is another message.",
+                timestamp = "16:52 PM"
+            ),
+            isSenderMe = true,
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Composable
+private fun MessageFromMeLightPreview() {
+    HomeAITheme {
+        Message(
+            message = Message(
+                sender = "First Last",
+                text = "This is another message.",
+                timestamp = "16:52 PM"
+            ),
+            isSenderMe = true,
+        )
+    }
 }
 
 
