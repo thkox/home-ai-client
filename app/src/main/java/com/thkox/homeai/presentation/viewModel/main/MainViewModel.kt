@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
+import android.provider.OpenableColumns
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
@@ -171,9 +172,18 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val contentResolver: ContentResolver = context.contentResolver
+                val cursor = contentResolver.query(uri, null, null, null, null)
+                val displayName = cursor?.use {
+                    if (it.moveToFirst()) {
+                        it.getString(it.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
+                    } else {
+                        "temp_upload_file"
+                    }
+                } ?: "temp_upload_file"
+
                 val inputStream: InputStream? = contentResolver.openInputStream(uri)
                 if (inputStream != null) {
-                    val tempFile = File(context.cacheDir, "temp_upload_file")
+                    val tempFile = File(context.cacheDir, displayName)
                     val outputStream = FileOutputStream(tempFile)
                     inputStream.copyTo(outputStream)
                     inputStream.close()

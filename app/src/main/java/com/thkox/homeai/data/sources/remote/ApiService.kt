@@ -53,14 +53,14 @@ interface ApiService {
         @Body request: ContinueConversationRequest
     ): Response<MessageDto>
 
-    @Multipart
-    @POST("documents/upload")
-    suspend fun uploadDocument(@Part file: MultipartBody.Part): Response<DocumentDto>
+        @Multipart
+    @POST("/documents/upload")
+    suspend fun uploadDocuments(
+        @Part files: List<MultipartBody.Part>
+    ): Response<DocumentDto>
 
-    @DELETE("/documents/{documentId}")
-    suspend fun deleteDocument(
-        @Path("documentId") documentId: String
-    ): Response<Unit>
+    @DELETE("/documents/{id}")
+    suspend fun deleteDocument(@Path("id") documentId: String): Response<Unit>
 
     @GET("/documents/me")
     suspend fun getUserDocuments(): Response<List<DocumentDto>>
