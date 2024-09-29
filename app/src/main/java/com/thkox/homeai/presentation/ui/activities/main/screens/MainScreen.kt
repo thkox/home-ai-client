@@ -1,19 +1,28 @@
 package com.thkox.homeai.presentation.ui.activities.main.screens
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -31,11 +40,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.thkox.homeai.R
 import com.thkox.homeai.data.models.ConversationDto
 import com.thkox.homeai.presentation.model.Message
+import com.thkox.homeai.presentation.ui.components.AddConversationComposable
 import com.thkox.homeai.presentation.ui.components.ConversationInputBar
 import com.thkox.homeai.presentation.ui.components.MainTopAppBar
 import com.thkox.homeai.presentation.ui.components.Message
@@ -132,12 +145,33 @@ fun MenuNavigationDrawer(
                     )
                 ),
             ) {
-                Text("Drawer title", modifier = Modifier.padding(16.dp))
+                Row(
+                    modifier = Modifier.padding(5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        contentDescription = null,
+                        modifier = Modifier.size(50.dp)
+                    )
+                    Text("Home AI", modifier = Modifier.padding(16.dp))
+                }
+
                 HorizontalDivider()
-                NavigationDrawerItem(
-                    label = { Text(text = "+ Conversation") },
-                    selected = false,
-                    onClick = { onNewConversationClick() }
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AddConversationComposable(
+                        modifier = Modifier.padding(10.dp),
+                        onClick = onNewConversationClick
+                    )
+                }
+                HorizontalDivider()
+                Text(
+                    text = "Past Conversations",
+                    modifier = Modifier.padding(10.dp)
                 )
                 LazyColumn {
                     items(sortedConversations) { conversation ->
@@ -149,6 +183,12 @@ fun MenuNavigationDrawer(
                         Spacer(modifier = Modifier.height(5.dp))
                     }
                 }
+                HorizontalDivider()
+                NavigationDrawerItem(
+                    label = { Text(text = "Settings") },
+                    selected = false,
+                    onClick = { onNewConversationClick() }
+                )
             }
         }
     ) {
