@@ -20,7 +20,7 @@ import com.thkox.homeai.domain.usecase.GetConversationDetailsUseCase
 import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
 import com.thkox.homeai.domain.usecase.GetDocumentDetailsUseCase
 import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
-import com.thkox.homeai.domain.usecase.GetUserDocumentsDetailsUseCase
+import com.thkox.homeai.domain.usecase.GetUserDocumentDetailsUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.UpdateConversationTitleUseCase
 import com.thkox.homeai.domain.usecase.UpdateMyProfileUseCase
@@ -206,8 +206,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesGetUserDocumentsDetailsUseCase(documentRepository: DocumentRepository): GetUserDocumentsDetailsUseCase {
-        return GetUserDocumentsDetailsUseCase(documentRepository)
+    fun providesGetUserDocumentsDetailsUseCase(documentRepository: DocumentRepository): GetUserDocumentDetailsUseCase {
+        return GetUserDocumentDetailsUseCase(documentRepository)
     }
 
 

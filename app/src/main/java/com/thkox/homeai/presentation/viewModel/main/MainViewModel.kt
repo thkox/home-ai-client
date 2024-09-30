@@ -10,9 +10,12 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thkox.homeai.data.models.ConversationDto
+import com.thkox.homeai.data.models.DocumentDto
 import com.thkox.homeai.domain.usecase.DeleteConversationUseCase
+import com.thkox.homeai.domain.usecase.GetConversationDetailsUseCase
 import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
 import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
+import com.thkox.homeai.domain.usecase.GetUserDocumentsUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.UpdateConversationTitleUseCase
 import com.thkox.homeai.domain.usecase.UploadDocumentUseCase
@@ -38,7 +41,9 @@ class MainViewModel @Inject constructor(
     private val getConversationMessagesUseCase: GetConversationMessagesUseCase,
     private val updateConversationTitleUseCase: UpdateConversationTitleUseCase,
     private val deleteConversationUseCase: DeleteConversationUseCase,
-    private val uploadDocumentUseCase: UploadDocumentUseCase
+    private val uploadDocumentUseCase: UploadDocumentUseCase,
+    private val getUserDocumentsUseCase: GetUserDocumentsUseCase,
+    private val getConversationDetailsUseCase: GetConversationDetailsUseCase
 ) : ViewModel() {
 
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
@@ -66,7 +71,68 @@ class MainViewModel @Inject constructor(
             _currentConversationId = value
         }
 
-    private val _uploadedDocumentIds = mutableListOf<String>()
+    private val _userDocuments = MutableStateFlow<List<DocumentDto>>(emptyList())
+    val userDocuments: StateFlow<List<DocumentDto>> = _userDocuments
+
+    private val _selectedDocumentIds = MutableStateFlow<List<String>>(emptyList())
+    val selectedDocumentIds: StateFlow<List<String>> = _selectedDocumentIds
+
+    private val _uploadedDocumentIds = MutableStateFlow<MutableList<String>>(mutableListOf())
+    val uploadedDocumentIds: StateFlow<List<String>> = _uploadedDocumentIds
+
+    // Function to load user documents
+    fun loadUserDocuments() {
+        viewModelScope.launch {
+            val response = getUserDocumentsUseCase.invoke()
+            if (response.isSuccessful) {
+                _userDocuments.value = response.body() ?: emptyList()
+            }
+        }
+    }
+
+    // Function to load conversation details and selected document IDs
+    fun loadConversationDetails(conversationId: String) {
+        viewModelScope.launch {
+            val response = getConversationDetailsUseCase.invoke(conversationId)
+            if (response.isSuccessful) {
+                val conversation = response.body()
+                _selectedDocumentIds.value = conversation?.selectedDocumentIds ?: emptyList()
+            }
+        }
+    }
+
+    // Function to handle document selection
+    fun selectDocument(documentId: String) {
+        if (!_uploadedDocumentIds.value.contains(documentId)) {
+            _uploadedDocumentIds.value.add(documentId)
+        }
+    }
+
+    fun deselectDocument(documentId: String) {
+        _uploadedDocumentIds.value.remove(documentId)
+    }
+
+    // Modify uploadDocument function to update the document list
+    fun uploadDocument(context: Context, uri: Uri) {
+        viewModelScope.launch {
+            try {
+                val response = uploadDocumentUseCase(context, uri)
+                if (response.isSuccessful) {
+                    val documentIds = response.body()?.map { it.id }
+                    documentIds?.let {
+                        _uploadedDocumentIds.value.addAll(it)
+                        // Reload user documents after upload
+                        loadUserDocuments()
+                    }
+                } else {
+                    // Handle error
+                }
+            } catch (e: Exception) {
+                // Handle exception
+            }
+        }
+    }
+
 
     fun openDrawer() {
         _isDrawerOpen.value = true
@@ -79,6 +145,7 @@ class MainViewModel @Inject constructor(
     fun startNewConversation() {
         _messages.value = emptyList()
         _conversationTitle.value = "New Conversation"
+        _selectedDocumentIds.value = emptyList()
         _currentConversationId = null
         closeDrawer()
     }
@@ -129,7 +196,7 @@ class MainViewModel @Inject constructor(
 
             try {
                 sendMessageUseCase.setConversationId(_currentConversationId)
-                sendMessageUseCase.setDocumentIds(_uploadedDocumentIds)
+                sendMessageUseCase.setDocumentIds(_uploadedDocumentIds.value.toList())
 
                 val aiMessageObj = sendMessageUseCase.invoke(userMessage)
                 aiMessageObj?.let {
@@ -140,7 +207,7 @@ class MainViewModel @Inject constructor(
                 }
 
                 // Clear the list of document IDs after sending the message
-                _uploadedDocumentIds.clear()
+                _uploadedDocumentIds.value.clear()
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
@@ -169,28 +236,6 @@ class MainViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-            }
-        }
-    }
-
-    fun uploadDocument(context: Context, uri: Uri) {
-        viewModelScope.launch {
-            try {
-                val response = uploadDocumentUseCase(context, uri)
-                if (response.isSuccessful) {
-                    val documentIds = response.body()?.map { it.id }
-                    documentIds?.let {
-                        _uploadedDocumentIds.addAll(it)
-                    }
-                    Toast.makeText(context, "Document IDs: $documentIds", Toast.LENGTH_LONG).show()
-                } else {
-                    Log.e("UploadDocument", "Upload failed: ${response.errorBody()?.string()}")
-                    Toast.makeText(context, "Upload failed", Toast.LENGTH_LONG).show()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.e("UploadDocument", "Error uploading document", e)
-                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
     }

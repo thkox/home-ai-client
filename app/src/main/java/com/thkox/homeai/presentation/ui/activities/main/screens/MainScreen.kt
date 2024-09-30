@@ -59,6 +59,7 @@ import com.thkox.homeai.data.models.ConversationDto
 import com.thkox.homeai.presentation.model.Message
 import com.thkox.homeai.presentation.ui.components.AddConversationComposable
 import com.thkox.homeai.presentation.ui.components.ConversationInputBar
+import com.thkox.homeai.presentation.ui.components.DocumentsBottomSheet
 import com.thkox.homeai.presentation.ui.components.MainTopAppBar
 import com.thkox.homeai.presentation.ui.components.Message
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
@@ -77,6 +78,7 @@ fun MainScreen(
     val conversations by viewModel.conversations.collectAsState()
     var text by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
+    var showDocumentsBottomSheet by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -96,6 +98,13 @@ fun MainScreen(
             drawerState.open()
         } else {
             drawerState.close()
+        }
+    }
+
+    LaunchedEffect(viewModel.currentConversationId) {
+        viewModel.loadUserDocuments()
+        viewModel.currentConversationId?.let { conversationId ->
+            viewModel.loadConversationDetails(conversationId)
         }
     }
 
@@ -132,7 +141,7 @@ fun MainScreen(
                     // Handle mic click
                 },
                 onAttachFilesClick = {
-                    launcher.launch("*/*")
+                    showDocumentsBottomSheet = true
                 },
                 onClickNavigationIcon = {
                     coroutineScope.launch {
@@ -141,6 +150,16 @@ fun MainScreen(
                 },
                 conversationTitle = conversationTitle
             )
+
+            // Display the DocumentsBottomSheet
+            if (showDocumentsBottomSheet) {
+                DocumentsBottomSheet(
+                    onDismissRequest = {
+                        showDocumentsBottomSheet = false
+                    },
+                    viewModel = viewModel
+                )
+            }
         }
     )
 }
