@@ -11,6 +11,7 @@ import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
 import com.thkox.homeai.domain.usecase.GetDocumentDetailsUseCase
 import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
 import com.thkox.homeai.domain.usecase.GetUserDocumentsUseCase
+import com.thkox.homeai.domain.usecase.RecognizeSpeechUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.UpdateConversationTitleUseCase
 import com.thkox.homeai.domain.usecase.UploadDocumentUseCase
@@ -19,6 +20,7 @@ import com.thkox.homeai.presentation.models.ConversationUIModel
 import com.thkox.homeai.presentation.models.DocumentUIModel
 import com.thkox.homeai.presentation.models.MessageUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,7 +41,8 @@ class MainViewModel @Inject constructor(
     private val uploadDocumentUseCase: UploadDocumentUseCase,
     private val getUserDocumentsUseCase: GetUserDocumentsUseCase,
     private val getDocumentDetailsUseCase: GetDocumentDetailsUseCase,
-    private val getConversationDetailsUseCase: GetConversationDetailsUseCase
+    private val getConversationDetailsUseCase: GetConversationDetailsUseCase,
+    private val recognizeSpeechUseCase: RecognizeSpeechUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MainState())
@@ -51,6 +54,37 @@ class MainViewModel @Inject constructor(
         set(value) {
             _currentConversationId = value
         }
+
+    private var speechRecognitionJob: Job? = null
+
+    fun startSpeechRecognition() {
+        speechRecognitionJob?.cancel()
+        speechRecognitionJob = viewModelScope.launch {
+            _state.value = _state.value.copy(isRecording = true, speechText = null)
+            recognizeSpeechUseCase.startListening().collect { result ->
+                _state.value = _state.value.copy(speechText = result)
+            }
+            // After the flow completes
+            val finalText = _state.value.speechText
+            if (!finalText.isNullOrBlank()) {
+                sendMessage(finalText)
+            }
+            _state.value = _state.value.copy(isRecording = false, speechText = null)
+        }
+    }
+
+    fun stopSpeechRecognition(sendMessage: Boolean) {
+        recognizeSpeechUseCase.stopListening()
+        speechRecognitionJob?.cancel()
+        speechRecognitionJob = null
+        if (sendMessage) {
+            val finalText = _state.value.speechText
+            if (!finalText.isNullOrBlank()) {
+                sendMessage(finalText)
+            }
+        }
+        _state.value = _state.value.copy(isRecording = false)
+    }
 
     fun loadUserDocuments() {
         viewModelScope.launch {
@@ -225,24 +259,38 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun sendMessage(userMessage: String) {
+    fun sendMessage(userMessage: String? = null, fromSpeech: Boolean = false) {
         viewModelScope.launch {
+            val messageText = if (fromSpeech) {
+                _state.value.speechText ?: ""
+            } else {
+                userMessage ?: ""
+            }
+
+            if (messageText.isBlank()) {
+                _state.value = _state.value.copy(
+                    conversationErrorMessage = "Message cannot be empty."
+                )
+                return@launch
+            }
+
             val userMessageObj = MessageUIModel(
                 sender = "User",
-                text = userMessage,
+                text = messageText,
                 timestamp = getCurrentTimestamp()
             )
             _state.value = _state.value.copy(
                 messages = _state.value.messages + userMessageObj,
                 isLoading = true,
                 isAiResponding = true,
-                conversationErrorMessage = null
+                conversationErrorMessage = null,
+                speechText = null
             )
 
             sendMessageUseCase.setConversationId(_currentConversationId)
             sendMessageUseCase.setDocumentIds(_state.value.uploadedDocumentIds.toList())
 
-            when (val result = sendMessageUseCase.invoke(userMessage)) {
+            when (val result = sendMessageUseCase.invoke(messageText)) {
                 is Resource.Success -> {
                     val aiMessage = result.data
                     aiMessage?.let {
@@ -268,9 +316,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Loading -> {
-                    // Handle loading state if needed
-                }
+                is Resource.Loading -> {}
             }
 
             _state.value = _state.value.copy(
@@ -279,6 +325,7 @@ class MainViewModel @Inject constructor(
             )
         }
     }
+
 
     private fun getCurrentTimestamp(): String {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
@@ -304,9 +351,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Loading -> {
-                    // Handle loading state if needed
-                }
+                is Resource.Loading -> {}
             }
         }
     }
@@ -330,9 +375,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Loading -> {
-                    // Handle loading state if needed
-                }
+                is Resource.Loading -> {}
             }
         }
     }
@@ -353,9 +396,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Loading -> {
-                    // Handle loading state if needed
-                }
+                is Resource.Loading -> {}
             }
         }
     }
@@ -382,9 +423,7 @@ class MainViewModel @Inject constructor(
                     onResult(null)
                 }
 
-                is Resource.Loading -> {
-                    // Handle loading state if needed
-                }
+                is Resource.Loading -> {}
             }
         }
     }
@@ -402,5 +441,7 @@ data class MainState(
     val uploadedDocumentIds: List<String> = emptyList(),
     val isLoadingDocument: Boolean = false,
     val conversationErrorMessage: String? = null,
-    val documentErrorMessage: String? = null
+    val documentErrorMessage: String? = null,
+    val isRecording: Boolean = false,
+    val speechText: String? = null
 )

@@ -1,7 +1,9 @@
 package com.thkox.homeai.presentation.ui.activities.main.screens
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -61,6 +63,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import com.thkox.homeai.R
 import com.thkox.homeai.presentation.models.ConversationUIModel
 import com.thkox.homeai.presentation.models.MessageUIModel
@@ -73,6 +77,7 @@ import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import com.thkox.homeai.presentation.viewModel.main.MainViewModel
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
@@ -117,6 +122,12 @@ fun MainScreen(
         viewModel.loadConversations()
     }
 
+    LaunchedEffect(state.isRecording, state.speechText) {
+        if (!state.isRecording && !state.speechText.isNullOrEmpty()) {
+            text = state.speechText ?: ""
+        }
+    }
+
     if (showDialog && documentToDelete != null) {
         LaunchedEffect(documentToDelete) {
             viewModel.getDocumentDetails(documentToDelete!!) { document ->
@@ -149,6 +160,39 @@ fun MainScreen(
         )
     }
 
+    // Permissions
+    val microphonePermissionState = rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
+
+    var showPermissionDeniedDialog by remember { mutableStateOf(false) }
+
+    if (showPermissionDeniedDialog) {
+        AlertDialog(
+            onDismissRequest = { showPermissionDeniedDialog = false },
+            title = { Text(text = "Microphone Permission Required") },
+            text = {
+                Text(
+                    text = "This app needs access to your microphone to record audio. Please grant the permission in app settings."
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showPermissionDeniedDialog = false
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri = Uri.fromParts("package", context.packageName, null)
+                    intent.data = uri
+                    context.startActivity(intent)
+                }) {
+                    Text("Open Settings")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPermissionDeniedDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     MenuNavigationDrawer(
         drawerState = drawerState,
         conversations = state.conversations,
@@ -175,7 +219,22 @@ fun MainScreen(
                     text = ""
                 },
                 onMicClick = {
-                    // Handle mic click
+                    when {
+                        microphonePermissionState.hasPermission -> {
+                            if (state.isRecording) {
+                                viewModel.stopSpeechRecognition(sendMessage = false)
+                            } else {
+                                viewModel.startSpeechRecognition()
+                            }
+                        }
+                        microphonePermissionState.shouldShowRationale || !microphonePermissionState.permissionRequested -> {
+                            microphonePermissionState.launchPermissionRequest()
+                        }
+                        else -> {
+                            // Permission denied permanently
+                            showPermissionDeniedDialog = true
+                        }
+                    }
                 },
                 onAttachFilesClick = {
                     showDocumentsBottomSheet = true
@@ -186,7 +245,14 @@ fun MainScreen(
                     }
                 },
                 conversationTitle = state.conversationTitle,
-                conversationErrorMessage = state.conversationErrorMessage
+                conversationErrorMessage = state.conversationErrorMessage,
+                isRecording = state.isRecording,
+                onTextFieldClick = {
+                    if (state.isRecording) {
+                        viewModel.stopSpeechRecognition(sendMessage = false)
+                        text = state.speechText ?: ""
+                    }
+                }
             )
 
             if (showDocumentsBottomSheet) {
@@ -366,7 +432,9 @@ private fun MenuNavigationDrawerDarkPreview() {
                     onAttachFilesClick = {},
                     isAiResponding = false,
                     conversationTitle = "New Conversation",
-                    conversationErrorMessage = null
+                    conversationErrorMessage = null,
+                    isRecording = false,
+                    onTextFieldClick = {}
                 )
             },
             currentConversationId = null,
@@ -400,7 +468,9 @@ private fun MenuNavigationDrawerLightPreview() {
                     onAttachFilesClick = {},
                     isAiResponding = false,
                     conversationTitle = "New Conversation",
-                    conversationErrorMessage = null
+                    conversationErrorMessage = null,
+                    isRecording = false,
+                    onTextFieldClick = {}
                 )
             },
             currentConversationId = null,
@@ -423,6 +493,8 @@ fun MainContent(
     onAttachFilesClick: () -> Unit,
     conversationTitle: String,
     conversationErrorMessage: String?,
+    isRecording: Boolean,
+    onTextFieldClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -467,7 +539,9 @@ fun MainContent(
                     text = text,
                     onTextChange = onTextChange,
                     onAttachFilesClick = { onAttachFilesClick() },
-                    isAiResponding = isAiResponding
+                    isAiResponding = isAiResponding,
+                    isRecording = isRecording,
+                    onTextFieldClick = onTextFieldClick
                 )
             }
         }
@@ -513,7 +587,9 @@ private fun MainScreenDarkPreview() {
             onAttachFilesClick = {},
             isAiResponding = false,
             conversationTitle = "New Conversation",
-            conversationErrorMessage = null
+            conversationErrorMessage = null,
+            isRecording = false,
+            onTextFieldClick = {}
         )
     }
 }
@@ -537,7 +613,9 @@ private fun MainScreenLightPreview() {
             onAttachFilesClick = {},
             isAiResponding = false,
             conversationTitle = "New Conversation",
-            conversationErrorMessage = null
+            conversationErrorMessage = null,
+            isRecording = false,
+            onTextFieldClick = {}
         )
     }
 }

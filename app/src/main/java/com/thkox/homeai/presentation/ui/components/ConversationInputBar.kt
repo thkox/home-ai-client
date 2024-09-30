@@ -24,6 +24,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.MicOff
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -57,10 +59,21 @@ import kotlinx.coroutines.launch
 fun SubmitButton(
     text: String,
     onMicClick: () -> Unit,
-    onSendClick: () -> Unit
+    onSendClick: () -> Unit,
+    isRecording: Boolean
 ) {
     IconButton(
-        onClick = if (text.isEmpty()) onMicClick else onSendClick,
+        onClick = {
+            if (text.isEmpty()) {
+                if (isRecording) {
+                    // Do nothing
+                } else {
+                    onMicClick()
+                }
+            } else {
+                onSendClick()
+            }
+        },
         modifier = Modifier
             .size(48.dp)
             .background(
@@ -69,14 +82,23 @@ fun SubmitButton(
             )
             .padding(4.dp)
     ) {
+        val icon = when {
+            isRecording -> Icons.Default.MicOff
+            text.isEmpty() -> Icons.Default.Mic
+            else -> Icons.AutoMirrored.Filled.Send
+        }
+        val contentDescription = when {
+            isRecording -> "Stop Recording"
+            text.isEmpty() -> "Record Audio"
+            else -> "Send Message"
+        }
         Icon(
-            imageVector = if (text.isEmpty()) Icons.Default.Mic else Icons.AutoMirrored.Filled.Send,
-            contentDescription = if (text.isEmpty()) "Record Audio" else "Send Message",
+            imageVector = icon,
+            contentDescription = contentDescription,
             tint = Color.White
         )
     }
 }
-
 @Composable
 fun AttachFileButton(
     onClick: () -> Unit
@@ -105,9 +127,11 @@ fun AttachFileButton(
 fun ConversationTextField(
     text: String,
     onTextChange: (String) -> Unit,
+    onClick: () -> Unit,
+    isRecording: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val bringIntoViewRequester = BringIntoViewRequester()
     val coroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
 
@@ -129,7 +153,12 @@ fun ConversationTextField(
         modifier = modifier
             .heightIn(min = TextFieldDefaults.MinHeight, max = 2 * TextFieldDefaults.MinHeight)
             .bringIntoViewRequester(bringIntoViewRequester)
-            .animateContentSize(),
+            .animateContentSize()
+            .clickable {
+                if (isRecording) {
+                    onClick()
+                }
+            },
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Done
         ),
@@ -142,7 +171,8 @@ fun ConversationTextField(
         colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
-        )
+        ),
+        enabled = !isRecording
     )
 }
 
@@ -154,7 +184,9 @@ fun ConversationInputBar(
     text: String,
     onTextChange: (String) -> Unit,
     onAttachFilesClick: () -> Unit,
-    isAiResponding: Boolean
+    isAiResponding: Boolean,
+    isRecording: Boolean,
+    onTextFieldClick: () -> Unit
 ) {
     var isTextFieldFocused by remember { mutableStateOf(false) }
 
@@ -170,7 +202,7 @@ fun ConversationInputBar(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             AnimatedVisibility(
-                visible = !isAiResponding,
+                visible = !isAiResponding && !isRecording,
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
@@ -194,7 +226,9 @@ fun ConversationInputBar(
                     onTextChange = onTextChange,
                     modifier = Modifier
                         .weight(1f)
-                        .clickable { isTextFieldFocused = true }
+                        .clickable { isTextFieldFocused = true },
+                    onClick = onTextFieldClick,
+                    isRecording = isRecording
                 )
             }
 
@@ -206,7 +240,8 @@ fun ConversationInputBar(
                 SubmitButton(
                     text = text,
                     onMicClick = onMicClick,
-                    onSendClick = onSendClick
+                    onSendClick = onSendClick,
+                    isRecording = isRecording
                 )
             }
         }
@@ -231,7 +266,9 @@ fun ConversationInputFieldLightPreview() {
             text = text,
             onTextChange = { newText -> text = newText },
             onAttachFilesClick = {},
-            isAiResponding = false
+            isAiResponding = false,
+            isRecording = false,
+            onTextFieldClick = {}
         )
     }
 }

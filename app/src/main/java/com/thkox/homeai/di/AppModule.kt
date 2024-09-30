@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.thkox.homeai.data.repository.AuthRepositoryImpl
 import com.thkox.homeai.data.repository.ConversationRepositoryImpl
 import com.thkox.homeai.data.repository.DocumentRepositoryImpl
+import com.thkox.homeai.data.repository.SpeechRecognitionRepositoryImpl
 import com.thkox.homeai.data.repository.TokenRepositoryImpl
 import com.thkox.homeai.data.sources.local.SharedPreferencesManager
 import com.thkox.homeai.data.sources.remote.ApiService
@@ -13,6 +14,7 @@ import com.thkox.homeai.data.sources.remote.RetrofitHolder
 import com.thkox.homeai.domain.repository.AuthRepository
 import com.thkox.homeai.domain.repository.ConversationRepository
 import com.thkox.homeai.domain.repository.DocumentRepository
+import com.thkox.homeai.domain.repository.SpeechRecognitionRepository
 import com.thkox.homeai.domain.repository.TokenRepository
 import com.thkox.homeai.domain.usecase.DeleteConversationUseCase
 import com.thkox.homeai.domain.usecase.DeleteDocumentUseCase
@@ -22,6 +24,7 @@ import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
 import com.thkox.homeai.domain.usecase.GetDocumentDetailsUseCase
 import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
 import com.thkox.homeai.domain.usecase.GetUserDocumentDetailsUseCase
+import com.thkox.homeai.domain.usecase.RecognizeSpeechUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.UpdateConversationTitleUseCase
 import com.thkox.homeai.domain.usecase.UpdateMyProfileUseCase
@@ -117,6 +120,12 @@ object AppModule {
     @Singleton
     fun provideDocumentRepository(apiService: ApiService): DocumentRepository {
         return DocumentRepositoryImpl(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun providesSpeechRecognitionRepository(context: Context): SpeechRecognitionRepository {
+        return SpeechRecognitionRepositoryImpl(context)
     }
 
     @Provides
@@ -217,5 +226,9 @@ object AppModule {
         return DeleteDocumentUseCase(documentRepository)
     }
 
-
+    @Provides
+    @Singleton
+    fun providesRecognizeSpeechUseCase(speechRecognitionRepository: SpeechRecognitionRepository): RecognizeSpeechUseCase {
+        return RecognizeSpeechUseCase(speechRecognitionRepository)
+    }
 }
