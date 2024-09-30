@@ -1,15 +1,17 @@
 package com.thkox.homeai.domain.usecase
 
-import android.icu.text.SimpleDateFormat
 import com.thkox.homeai.data.models.ContinueConversationRequest
+import com.thkox.homeai.domain.models.Message
 import com.thkox.homeai.domain.repository.ConversationRepository
-import com.thkox.homeai.presentation.model.Message
+import com.thkox.homeai.domain.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
-class SendMessageUseCase(
+class SendMessageUseCase @Inject constructor(
     private val conversationRepository: ConversationRepository
 ) {
     private var _conversationId: String? = null
@@ -18,32 +20,38 @@ class SendMessageUseCase(
     val conversationId: String?
         get() = _conversationId
 
-
-    suspend fun invoke(userMessage: String): Message? {
+    suspend fun invoke(userMessage: String): Resource<Message?> {
         return withContext(Dispatchers.IO) {
+            try {
+                if (_conversationId == null) {
+                    val startResponse = conversationRepository.startConversation()
+                    if (startResponse.isSuccessful) {
+                        _conversationId = startResponse.body()?.id
+                    } else {
+                        return@withContext Resource.Error("Failed to start conversation")
+                    }
+                }
 
-            if (_conversationId == null) {
-                val startResponse = conversationRepository.startConversation()
-                if (startResponse.isSuccessful) {
-                    _conversationId = startResponse.body()?.id
+                val request = ContinueConversationRequest(userMessage, _documentIds)
+                val continueResponse =
+                    conversationRepository.continueConversation(_conversationId!!, request)
+
+                if (continueResponse.isSuccessful) {
+                    val messageDto = continueResponse.body()
+                    val aiMessage = messageDto?.let {
+                        Message(
+                            senderId = "00000000-0000-0000-0000-000000000000",
+                            content = it.content,
+                            timestamp = getCurrentTimestamp()
+                        )
+                    }
+                    Resource.Success(aiMessage)
                 } else {
-                    throw Exception("Failed to start conversation")
+                    Resource.Error("Failed to send message: ${continueResponse.message()}")
                 }
+            } catch (e: Exception) {
+                Resource.Error("An error occurred: ${e.localizedMessage}")
             }
-
-            val request = ContinueConversationRequest(userMessage, _documentIds)
-            val continueResponse =
-                conversationRepository.continueConversation(_conversationId!!, request)
-
-            val aiMessageObj = if (continueResponse.isSuccessful) {
-                continueResponse.body()?.let {
-                    formatMessage(it.content, "Home AI")
-                }
-            } else {
-                null
-            }
-
-            aiMessageObj
         }
     }
 
@@ -55,13 +63,8 @@ class SendMessageUseCase(
         _documentIds = documentIds
     }
 
-    fun formatMessage(message: String, sender: String): Message {
+    private fun getCurrentTimestamp(): String {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
-        val timestamp = dateFormat.format(Date(System.currentTimeMillis()))
-        return Message(
-            sender = sender,
-            text = message,
-            timestamp = timestamp
-        )
+        return dateFormat.format(Date())
     }
 }

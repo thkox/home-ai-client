@@ -1,10 +1,11 @@
-package com.thkox.homeai.domain.models
+package com.thkox.homeai.presentation.models
 
-data class User(
+data class UserUiModel(
     val userId: String,
     val firstName: String,
     val lastName: String,
     val email: String,
+    val password: String?,
     val enabled: Boolean,
     val role: String
 )

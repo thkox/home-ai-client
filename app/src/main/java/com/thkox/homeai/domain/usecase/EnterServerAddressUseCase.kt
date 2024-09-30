@@ -3,7 +3,7 @@ package com.thkox.homeai.domain.usecase
 import com.thkox.homeai.data.sources.local.SharedPreferencesManager
 import com.thkox.homeai.data.sources.remote.ApiService
 import com.thkox.homeai.data.sources.remote.RetrofitHolder
-import com.thkox.homeai.presentation.viewModel.welcome.EnterServerAddressState
+import com.thkox.homeai.domain.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -12,7 +12,7 @@ class EnterServerAddressUseCase @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val retrofitHolder: RetrofitHolder
 ) {
-    suspend fun invoke(address: String): EnterServerAddressState {
+    suspend fun invoke(address: String): Resource<Unit> {
         val formattedAddress = formatAddress(address)
         return withContext(Dispatchers.IO) {
             try {
@@ -23,12 +23,12 @@ class EnterServerAddressUseCase @Inject constructor(
                 ) {
                     sharedPreferencesManager.saveBaseUrl(formattedAddress)
                     retrofitHolder.updateRetrofit()
-                    EnterServerAddressState.Success
+                    Resource.Success(Unit)
                 } else {
-                    EnterServerAddressState.Error("Invalid server address or not a FastAPI app")
+                    Resource.Error("Invalid server address or not a FastAPI app")
                 }
             } catch (e: Exception) {
-                EnterServerAddressState.Error("Error: ${e.localizedMessage}")
+                Resource.Error("Error: ${e.localizedMessage}")
             }
         }
     }

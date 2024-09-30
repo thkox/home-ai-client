@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thkox.homeai.domain.models.UserRegistration
 import com.thkox.homeai.domain.usecase.user.RegisterUseCase
 import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.presentation.models.UserUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -69,16 +69,19 @@ class RegisterViewModel @Inject constructor(
             return
         }
 
-        val userRegistration = UserRegistration(
+        val userUiModel = UserUiModel(
+            userId = "", // Assuming userId is not needed for registration
             firstName = currentFirstName,
             lastName = currentLastName,
-            username = currentEmail,
-            password = currentPassword
+            email = currentEmail,
+            password = currentPassword,
+            enabled = true, // Assuming default value
+            role = "user" // Assuming default role
         )
 
         viewModelScope.launch {
             _registerState.value = RegisterState.Loading
-            val result = registerUseCase(userRegistration)
+            val result = registerUseCase(userUiModel)
             if (result is Resource.Success) {
                 _registerState.value = RegisterState.Success
             } else {
