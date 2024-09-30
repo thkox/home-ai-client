@@ -76,9 +76,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Loading -> {
-                    // Handle loading state if needed
-                }
+                is Resource.Loading -> {}
             }
         }
     }
@@ -100,9 +98,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Loading -> {
-                    // Handle loading state if needed
-                }
+                is Resource.Loading -> {}
             }
         }
     }
@@ -141,10 +137,7 @@ class MainViewModel @Inject constructor(
                         documentErrorMessage = result.message
                     )
                 }
-
-                is Resource.Loading -> {
-                    // Handle loading state if needed
-                }
+                is Resource.Loading -> {}
             }
             _state.value = _state.value.copy(isLoadingDocument = false)
         }
@@ -193,9 +186,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Loading -> {
-                    // Handle loading state if needed
-                }
+                is Resource.Loading -> {}
             }
         }
     }
@@ -228,9 +219,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Loading -> {
-                    // Handle loading state if needed
-                }
+                is Resource.Loading -> {}
             }
             _state.value = _state.value.copy(isLoading = false)
         }
