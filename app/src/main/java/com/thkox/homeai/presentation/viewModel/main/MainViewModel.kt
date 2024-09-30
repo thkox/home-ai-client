@@ -23,6 +23,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,23 +42,8 @@ class MainViewModel @Inject constructor(
     private val getConversationDetailsUseCase: GetConversationDetailsUseCase
 ) : ViewModel() {
 
-    private val _messages = MutableStateFlow<List<MessageUIModel>>(emptyList())
-    val messages: StateFlow<List<MessageUIModel>> = _messages.asStateFlow()
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
-    private val _isAiResponding = MutableStateFlow(false)
-    val isAiResponding: StateFlow<Boolean> = _isAiResponding.asStateFlow()
-
-    private val _conversationTitle = MutableStateFlow("New Conversation")
-    val conversationTitle: StateFlow<String> = _conversationTitle.asStateFlow()
-
-    private val _isDrawerOpen = MutableStateFlow(false)
-    val isDrawerOpen: StateFlow<Boolean> = _isDrawerOpen.asStateFlow()
-
-    private val _conversations = MutableStateFlow<List<ConversationUIModel>>(emptyList())
-    val conversations: StateFlow<List<ConversationUIModel>> = _conversations.asStateFlow()
+    private val _state = MutableStateFlow(MainState())
+    val state: StateFlow<MainState> = _state.asStateFlow()
 
     private var _currentConversationId: String? = null
     var currentConversationId: String?
@@ -63,18 +51,6 @@ class MainViewModel @Inject constructor(
         set(value) {
             _currentConversationId = value
         }
-
-    private val _userDocuments = MutableStateFlow<List<DocumentUIModel>>(emptyList())
-    val userDocuments: StateFlow<List<DocumentUIModel>> = _userDocuments.asStateFlow()
-
-    private val _selectedDocumentIds = MutableStateFlow<List<String>>(emptyList())
-    val selectedDocumentIds: StateFlow<List<String>> = _selectedDocumentIds.asStateFlow()
-
-    private val _uploadedDocumentIds = MutableStateFlow<List<String>>(emptyList())
-    val uploadedDocumentIds: StateFlow<List<String>> = _uploadedDocumentIds.asStateFlow()
-
-    private val _isLoadingDocument = MutableStateFlow(false)
-    val isLoadingDocument: StateFlow<Boolean> = _isLoadingDocument.asStateFlow()
 
     fun loadUserDocuments() {
         viewModelScope.launch {
@@ -88,11 +64,16 @@ class MainViewModel @Inject constructor(
                             fileSize = document.fileSize
                         )
                     } ?: emptyList()
-                    _userDocuments.value = documents
+                    _state.value = _state.value.copy(
+                        userDocuments = documents,
+                        documentErrorMessage = null
+                    )
                 }
 
                 is Resource.Error -> {
-                    // Handle error
+                    _state.value = _state.value.copy(
+                        documentErrorMessage = result.message
+                    )
                 }
 
                 is Resource.Loading -> {
@@ -107,11 +88,16 @@ class MainViewModel @Inject constructor(
             when (val result = getConversationDetailsUseCase.invoke(conversationId)) {
                 is Resource.Success -> {
                     val conversation = result.data
-                    _selectedDocumentIds.value = conversation?.selectedDocumentIds ?: emptyList()
+                    _state.value = _state.value.copy(
+                        selectedDocumentIds = conversation?.selectedDocumentIds ?: emptyList(),
+                        conversationErrorMessage = null
+                    )
                 }
 
                 is Resource.Error -> {
-                    // Handle error
+                    _state.value = _state.value.copy(
+                        conversationErrorMessage = result.message
+                    )
                 }
 
                 is Resource.Loading -> {
@@ -122,52 +108,64 @@ class MainViewModel @Inject constructor(
     }
 
     fun selectDocument(documentId: String) {
-        if (!_uploadedDocumentIds.value.contains(documentId)) {
-            _uploadedDocumentIds.value += documentId
+        if (!_state.value.uploadedDocumentIds.contains(documentId)) {
+            _state.value = _state.value.copy(
+                uploadedDocumentIds = _state.value.uploadedDocumentIds + documentId
+            )
         }
     }
 
     fun deselectDocument(documentId: String) {
-        _uploadedDocumentIds.value -= documentId
+        _state.value = _state.value.copy(
+            uploadedDocumentIds = _state.value.uploadedDocumentIds - documentId
+        )
     }
 
     fun uploadDocument(context: Context, uri: Uri) {
         viewModelScope.launch {
-            _isLoadingDocument.value = true
+            _state.value = _state.value.copy(isLoadingDocument = true)
             when (val result = uploadDocumentUseCase(context, uri)) {
                 is Resource.Success -> {
                     val documentIds = result.data?.map { it.id }
                     documentIds?.let { newIds ->
-                        _uploadedDocumentIds.value += newIds
+                        _state.value = _state.value.copy(
+                            uploadedDocumentIds = _state.value.uploadedDocumentIds + newIds,
+                            documentErrorMessage = null
+                        )
                         loadUserDocuments()
                     }
                 }
 
                 is Resource.Error -> {
-                    // Handle error
+                    _state.value = _state.value.copy(
+                        documentErrorMessage = result.message
+                    )
                 }
 
                 is Resource.Loading -> {
                     // Handle loading state if needed
                 }
             }
-            _isLoadingDocument.value = false
+            _state.value = _state.value.copy(isLoadingDocument = false)
         }
     }
 
     fun openDrawer() {
-        _isDrawerOpen.value = true
+        _state.value = _state.value.copy(isDrawerOpen = true)
     }
 
     fun closeDrawer() {
-        _isDrawerOpen.value = false
+        _state.value = _state.value.copy(isDrawerOpen = false)
     }
 
     fun startNewConversation() {
-        _messages.value = emptyList()
-        _conversationTitle.value = "New Conversation"
-        _uploadedDocumentIds.value = emptyList()
-        _selectedDocumentIds.value = emptyList()
+        _state.value = _state.value.copy(
+            messages = emptyList(),
+            conversationTitle = "New Conversation",
+            uploadedDocumentIds = emptyList(),
+            selectedDocumentIds = emptyList(),
+            conversationErrorMessage = null
+        )
         _currentConversationId = null
         closeDrawer()
     }
@@ -183,11 +181,16 @@ class MainViewModel @Inject constructor(
                             startTime = conversation.startTime
                         )
                     } ?: emptyList()
-                    _conversations.value = conversations
+                    _state.value = _state.value.copy(
+                        conversations = conversations,
+                        conversationErrorMessage = null
+                    )
                 }
 
                 is Resource.Error -> {
-                    // Handle error
+                    _state.value = _state.value.copy(
+                        conversationErrorMessage = result.message
+                    )
                 }
 
                 is Resource.Loading -> {
@@ -199,7 +202,7 @@ class MainViewModel @Inject constructor(
 
     fun loadConversation(conversationId: String) {
         viewModelScope.launch {
-            _isLoading.value = true
+            _state.value = _state.value.copy(isLoading = true)
             when (val result = getConversationMessagesUseCase.invoke(conversationId)) {
                 is Resource.Success -> {
                     _currentConversationId = conversationId
@@ -210,24 +213,26 @@ class MainViewModel @Inject constructor(
                             timestamp = message.timestamp
                         )
                     } ?: emptyList()
-                    _messages.value = messages
+                    _state.value = _state.value.copy(
+                        messages = messages,
+                        conversationErrorMessage = null
+                    )
 
-                    // Update conversation title
                     updateConversationTitle()
-
-                    // Close drawer after loading
                     closeDrawer()
                 }
 
                 is Resource.Error -> {
-                    // Handle error
+                    _state.value = _state.value.copy(
+                        conversationErrorMessage = result.message
+                    )
                 }
 
                 is Resource.Loading -> {
                     // Handle loading state if needed
                 }
             }
-            _isLoading.value = false
+            _state.value = _state.value.copy(isLoading = false)
         }
     }
 
@@ -238,13 +243,15 @@ class MainViewModel @Inject constructor(
                 text = userMessage,
                 timestamp = getCurrentTimestamp()
             )
-            _messages.value += userMessageObj
-
-            _isLoading.value = true
-            _isAiResponding.value = true
+            _state.value = _state.value.copy(
+                messages = _state.value.messages + userMessageObj,
+                isLoading = true,
+                isAiResponding = true,
+                conversationErrorMessage = null
+            )
 
             sendMessageUseCase.setConversationId(_currentConversationId)
-            sendMessageUseCase.setDocumentIds(_uploadedDocumentIds.value.toList())
+            sendMessageUseCase.setDocumentIds(_state.value.uploadedDocumentIds.toList())
 
             when (val result = sendMessageUseCase.invoke(userMessage)) {
                 is Resource.Success -> {
@@ -255,16 +262,21 @@ class MainViewModel @Inject constructor(
                             text = it.content,
                             timestamp = it.timestamp
                         )
-                        _messages.value += aiMessageObj
+                        _state.value = _state.value.copy(
+                            messages = _state.value.messages + aiMessageObj,
+                            uploadedDocumentIds = emptyList(),
+                            conversationErrorMessage = null
+                        )
                         _currentConversationId = sendMessageUseCase.conversationId
                         updateConversationTitle()
                         loadConversations()
                     }
-                    _uploadedDocumentIds.value = emptyList()
                 }
 
                 is Resource.Error -> {
-                    // Handle error
+                    _state.value = _state.value.copy(
+                        conversationErrorMessage = result.message
+                    )
                 }
 
                 is Resource.Loading -> {
@@ -272,14 +284,16 @@ class MainViewModel @Inject constructor(
                 }
             }
 
-            _isLoading.value = false
-            _isAiResponding.value = false
+            _state.value = _state.value.copy(
+                isLoading = false,
+                isAiResponding = false
+            )
         }
     }
 
     private fun getCurrentTimestamp(): String {
-        // Implement your timestamp logic here
-        return ""
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
+        return dateFormat.format(Date())
     }
 
     private fun updateConversationTitle() {
@@ -288,12 +302,17 @@ class MainViewModel @Inject constructor(
                 is Resource.Success -> {
                     val title = result.data
                     title?.let {
-                        _conversationTitle.value = it
+                        _state.value = _state.value.copy(
+                            conversationTitle = it,
+                            conversationErrorMessage = null
+                        )
                     }
                 }
 
                 is Resource.Error -> {
-                    // Handle error
+                    _state.value = _state.value.copy(
+                        conversationErrorMessage = result.message
+                    )
                 }
 
                 is Resource.Loading -> {
@@ -311,10 +330,15 @@ class MainViewModel @Inject constructor(
                         startNewConversation()
                     }
                     loadConversations()
+                    _state.value = _state.value.copy(
+                        conversationErrorMessage = null
+                    )
                 }
 
                 is Resource.Error -> {
-                    // Handle error
+                    _state.value = _state.value.copy(
+                        conversationErrorMessage = result.message
+                    )
                 }
 
                 is Resource.Loading -> {
@@ -329,10 +353,15 @@ class MainViewModel @Inject constructor(
             when (val result = deleteDocumentUseCase.invoke(documentId)) {
                 is Resource.Success -> {
                     loadUserDocuments()
+                    _state.value = _state.value.copy(
+                        documentErrorMessage = null
+                    )
                 }
 
                 is Resource.Error -> {
-                    // Handle error
+                    _state.value = _state.value.copy(
+                        documentErrorMessage = result.message
+                    )
                 }
 
                 is Resource.Loading -> {
@@ -358,6 +387,9 @@ class MainViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        documentErrorMessage = result.message
+                    )
                     onResult(null)
                 }
 
@@ -368,3 +400,18 @@ class MainViewModel @Inject constructor(
         }
     }
 }
+
+data class MainState(
+    val messages: List<MessageUIModel> = emptyList(),
+    val isLoading: Boolean = false,
+    val isAiResponding: Boolean = false,
+    val conversationTitle: String = "New Conversation",
+    val isDrawerOpen: Boolean = false,
+    val conversations: List<ConversationUIModel> = emptyList(),
+    val userDocuments: List<DocumentUIModel> = emptyList(),
+    val selectedDocumentIds: List<String> = emptyList(),
+    val uploadedDocumentIds: List<String> = emptyList(),
+    val isLoadingDocument: Boolean = false,
+    val conversationErrorMessage: String? = null,
+    val documentErrorMessage: String? = null
+)

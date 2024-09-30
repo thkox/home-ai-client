@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -122,8 +123,12 @@ fun DocumentsBottomSheet(
     onSelectDocument: (String) -> Unit,
     onDeselectDocument: (String) -> Unit,
     isLoading: Boolean,
-    onDeleteDocument: (String) -> Unit
+    onDeleteDocument: (String) -> Unit,
+    documentErrorMessage: String?
 ) {
+
+    val sortedDocuments = userDocuments.sortedByDescending { it.uploadTime }
+
     ModalBottomSheet(
         onDismissRequest = onDismissRequest
     ) {
@@ -137,6 +142,17 @@ fun DocumentsBottomSheet(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
+            if (documentErrorMessage != null) {
+                Text(
+                    text = documentErrorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+            }
+
             UploadDocumentButton(onClick = onUploadDocument)
             Text(
                 text = "or select from existing documents:",
@@ -144,8 +160,8 @@ fun DocumentsBottomSheet(
                 modifier = Modifier.padding(8.dp)
             )
             LazyColumn {
-                items(userDocuments.size) { index ->
-                    val document = userDocuments[index]
+                items(sortedDocuments.size) { index ->
+                    val document = sortedDocuments[index]
                     val isChecked =
                         uploadedDocumentIds.contains(document.id) || selectedDocumentIds.contains(
                             document.id

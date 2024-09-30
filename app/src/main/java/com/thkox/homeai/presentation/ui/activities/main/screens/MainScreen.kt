@@ -57,6 +57,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -76,19 +77,10 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
-    val messages by viewModel.messages.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val isAiResponding by viewModel.isAiResponding.collectAsState()
-    val conversationTitle by viewModel.conversationTitle.collectAsState()
-    val isDrawerOpen by viewModel.isDrawerOpen.collectAsState()
-    val conversations by viewModel.conversations.collectAsState()
-    val userDocuments by viewModel.userDocuments.collectAsState()
-    val selectedDocumentIds by viewModel.selectedDocumentIds.collectAsState()
-    val uploadedDocumentIds by viewModel.uploadedDocumentIds.collectAsState()
+    val state by viewModel.state.collectAsState()
     var text by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
     var showDocumentsBottomSheet by remember { mutableStateOf(false) }
-    val isLoadingDocument by viewModel.isLoadingDocument.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var documentToDelete by remember { mutableStateOf<String?>(null) }
     var documentName by remember { mutableStateOf<String?>(null) }
@@ -104,10 +96,10 @@ fun MainScreen(
     }
 
     val drawerState =
-        rememberDrawerState(if (isDrawerOpen) DrawerValue.Open else DrawerValue.Closed)
+        rememberDrawerState(if (state.isDrawerOpen) DrawerValue.Open else DrawerValue.Closed)
 
-    LaunchedEffect(isDrawerOpen) {
-        if (isDrawerOpen) {
+    LaunchedEffect(state.isDrawerOpen) {
+        if (state.isDrawerOpen) {
             drawerState.open()
         } else {
             drawerState.close()
@@ -138,7 +130,7 @@ fun MainScreen(
             text = {
                 Text(
                     text = "Do you want to delete the document ${documentName}? " +
-                            "After deletion any conversation that you had with that file it will lose access to it."
+                            "After deletion, any conversation that you had with that file will lose access to it."
                 )
             },
             confirmButton = {
@@ -159,7 +151,7 @@ fun MainScreen(
 
     MenuNavigationDrawer(
         drawerState = drawerState,
-        conversations = conversations,
+        conversations = state.conversations,
         onNewConversationClick = {
             viewModel.currentConversationId = null
             viewModel.startNewConversation()
@@ -173,9 +165,9 @@ fun MainScreen(
         },
         mainContent = {
             MainContent(
-                messages = messages,
-                isLoading = isLoading,
-                isAiResponding = isAiResponding,
+                messages = state.messages,
+                isLoading = state.isLoading,
+                isAiResponding = state.isAiResponding,
                 text = text,
                 onTextChange = { newText -> text = newText },
                 onSendClick = {
@@ -193,7 +185,8 @@ fun MainScreen(
                         viewModel.openDrawer()
                     }
                 },
-                conversationTitle = conversationTitle
+                conversationTitle = state.conversationTitle,
+                conversationErrorMessage = state.conversationErrorMessage
             )
 
             if (showDocumentsBottomSheet) {
@@ -201,17 +194,18 @@ fun MainScreen(
                     onDismissRequest = {
                         showDocumentsBottomSheet = false
                     },
-                    userDocuments = userDocuments,
-                    selectedDocumentIds = selectedDocumentIds,
-                    uploadedDocumentIds = uploadedDocumentIds,
+                    userDocuments = state.userDocuments,
+                    selectedDocumentIds = state.selectedDocumentIds,
+                    uploadedDocumentIds = state.uploadedDocumentIds,
                     onUploadDocument = { launcher.launch("*/*") },
                     onSelectDocument = { documentId -> viewModel.selectDocument(documentId) },
                     onDeselectDocument = { documentId -> viewModel.deselectDocument(documentId) },
-                    isLoading = isLoadingDocument,
+                    isLoading = state.isLoadingDocument,
                     onDeleteDocument = { documentId ->
                         documentToDelete = documentId
                         showDialog = true
-                    }
+                    },
+                    documentErrorMessage = state.documentErrorMessage
                 )
             }
         }
@@ -371,7 +365,8 @@ private fun MenuNavigationDrawerDarkPreview() {
                     onMicClick = {},
                     onAttachFilesClick = {},
                     isAiResponding = false,
-                    conversationTitle = "New Conversation"
+                    conversationTitle = "New Conversation",
+                    conversationErrorMessage = null
                 )
             },
             currentConversationId = null,
@@ -404,7 +399,8 @@ private fun MenuNavigationDrawerLightPreview() {
                     onMicClick = {},
                     onAttachFilesClick = {},
                     isAiResponding = false,
-                    conversationTitle = "New Conversation"
+                    conversationTitle = "New Conversation",
+                    conversationErrorMessage = null
                 )
             },
             currentConversationId = null,
@@ -426,6 +422,7 @@ fun MainContent(
     onMicClick: () -> Unit,
     onAttachFilesClick: () -> Unit,
     conversationTitle: String,
+    conversationErrorMessage: String?,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -448,6 +445,16 @@ fun MainContent(
         },
         bottomBar = {
             Column {
+                if (conversationErrorMessage != null) {
+                    Text(
+                        text = conversationErrorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+                }
                 if (isLoading) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 }
@@ -486,6 +493,7 @@ fun MainContent(
 }
 
 
+
 @Preview(
     showBackground = true,
     showSystemUi = true,
@@ -504,7 +512,8 @@ private fun MainScreenDarkPreview() {
             onMicClick = {},
             onAttachFilesClick = {},
             isAiResponding = false,
-            conversationTitle = "New Conversation"
+            conversationTitle = "New Conversation",
+            conversationErrorMessage = null
         )
     }
 }
@@ -527,7 +536,8 @@ private fun MainScreenLightPreview() {
             onMicClick = {},
             onAttachFilesClick = {},
             isAiResponding = false,
-            conversationTitle = "New Conversation"
+            conversationTitle = "New Conversation",
+            conversationErrorMessage = null
         )
     }
 }
