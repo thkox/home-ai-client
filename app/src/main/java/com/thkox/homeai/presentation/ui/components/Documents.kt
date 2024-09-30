@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -112,7 +114,8 @@ fun DocumentsBottomSheet(
     uploadedDocumentIds: List<String>,
     onUploadDocument: () -> Unit,
     onSelectDocument: (String) -> Unit,
-    onDeselectDocument: (String) -> Unit
+    onDeselectDocument: (String) -> Unit,
+    isLoading: Boolean
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest
@@ -122,6 +125,11 @@ fun DocumentsBottomSheet(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
+            if (isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
             UploadDocumentButton(onClick = onUploadDocument)
 
             LazyColumn {

@@ -67,6 +67,9 @@ class MainViewModel @Inject constructor(
     private val _uploadedDocumentIds = MutableStateFlow<List<String>>(emptyList())
     val uploadedDocumentIds: StateFlow<List<String>> = _uploadedDocumentIds
 
+    private val _isLoadingDocument = MutableStateFlow(false)
+    val isLoadingDocument: StateFlow<Boolean> = _isLoadingDocument
+
     // Function to load user documents
     fun loadUserDocuments() {
         viewModelScope.launch {
@@ -100,6 +103,7 @@ class MainViewModel @Inject constructor(
 
     fun uploadDocument(context: Context, uri: Uri) {
         viewModelScope.launch {
+            _isLoadingDocument.value = true
             try {
                 val response = uploadDocumentUseCase(context, uri)
                 if (response.isSuccessful) {
@@ -113,6 +117,8 @@ class MainViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+            } finally {
+                _isLoadingDocument.value = false
             }
         }
     }

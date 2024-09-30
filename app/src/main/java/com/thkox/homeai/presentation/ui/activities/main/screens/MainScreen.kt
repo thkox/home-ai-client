@@ -80,6 +80,7 @@ fun MainScreen(
     var text by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
     var showDocumentsBottomSheet by remember { mutableStateOf(false) }
+    val isLoadingDocument by viewModel.isLoadingDocument.collectAsState()
 
     val context = LocalContext.current
 
@@ -162,7 +163,8 @@ fun MainScreen(
                     uploadedDocumentIds = uploadedDocumentIds,
                     onUploadDocument = { launcher.launch("*/*") },
                     onSelectDocument = { documentId -> viewModel.selectDocument(documentId) },
-                    onDeselectDocument = { documentId -> viewModel.deselectDocument(documentId) }
+                    onDeselectDocument = { documentId -> viewModel.deselectDocument(documentId) },
+                    isLoading = isLoadingDocument
                 )
             }
         }
