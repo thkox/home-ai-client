@@ -8,19 +8,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class GetUserConversationsUseCase @Inject constructor(
+class GetConversationDetailsUseCase @Inject constructor(
     private val conversationRepository: ConversationRepository
 ) {
-    suspend operator fun invoke(): Resource<List<Conversation>> {
+    suspend operator fun invoke(conversationId: String): Resource<Conversation?> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = conversationRepository.getUserConversations()
+                val response = conversationRepository.getConversationDetails(conversationId)
                 if (response.isSuccessful) {
-                    val conversationDtos = response.body()
-                    val conversations = conversationDtos?.map { it.toDomainModel() } ?: emptyList()
-                    Resource.Success(conversations)
+                    val conversationDto = response.body()
+                    val conversation = conversationDto?.toDomainModel()
+                    Resource.Success(conversation)
                 } else {
-                    Resource.Error("Failed to get user conversations: ${response.message()}")
+                    Resource.Error("Failed to get conversation details: ${response.message()}")
                 }
             } catch (e: Exception) {
                 Resource.Error("An error occurred: ${e.localizedMessage}")

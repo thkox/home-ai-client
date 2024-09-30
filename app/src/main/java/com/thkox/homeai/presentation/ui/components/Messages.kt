@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.res.painterResource
@@ -31,7 +32,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.thkox.homeai.R
-import com.thkox.homeai.presentation.model.Message
+import com.thkox.homeai.presentation.models.MessageUIModel
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 
 @Composable
@@ -74,7 +75,7 @@ fun SenderNameAndTimestamp(
 
 @Composable
 fun MessageDisplay(
-    message: Message,
+    message: MessageUIModel,
 ) {
 
     Text(
@@ -87,7 +88,7 @@ fun MessageDisplay(
 
 @Composable
 fun MessageBubble(
-    message: Message,
+    message: MessageUIModel,
     isSenderMe: Boolean,
 ) {
     val backgroundBubbleColor = if (isSenderMe) {
@@ -134,7 +135,7 @@ fun MessageBubble(
 @Composable
 fun SenderAndTextMessage(
     modifier: Modifier = Modifier,
-    message: Message,
+    message: MessageUIModel,
     isSenderMe: Boolean,
 ) {
 
@@ -165,23 +166,22 @@ fun SenderAndTextMessage(
 
 @Composable
 fun Message(
-    message: Message,
+    message: MessageUIModel,
     isSenderMe: Boolean,
 ) {
     val spaceBetweenSenders = Modifier.padding(top = 8.dp)
 
     Row(modifier = spaceBetweenSenders) {
-        if (!isSenderMe ) {
+        if (!isSenderMe) {
             Image(
                 modifier = Modifier
                     .padding(start = 8.dp, end = 10.dp)
                     .size(42.dp)
-                    .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                    .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
+                    .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
+                    .background(Color.White)
                     .align(Alignment.Top),
-                painter = painterResource(id = R.drawable.ai_icon),
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
             )
@@ -206,7 +206,7 @@ fun Message(
 private fun MessageFromAIDarkPreview() {
     HomeAITheme {
         Message(
-            message = Message(
+            message = MessageUIModel(
                 sender = "Home AI",
                 text = "This is a message.",
                 timestamp = "15:02 PM"
@@ -224,7 +224,7 @@ private fun MessageFromAIDarkPreview() {
 private fun MessageFromAILightPreview() {
     HomeAITheme {
         Message(
-            message = Message(
+            message = MessageUIModel(
                 sender = "Home AI",
                 text = "This is a message.",
                 timestamp = "15:02 PM"
@@ -242,7 +242,7 @@ private fun MessageFromAILightPreview() {
 private fun MessageFromMeDarkPreview() {
     HomeAITheme {
         Message(
-            message = Message(
+            message = MessageUIModel(
                 sender = "First Last",
                 text = "This is another message.",
                 timestamp = "16:52 PM"
@@ -260,7 +260,7 @@ private fun MessageFromMeDarkPreview() {
 private fun MessageFromMeLightPreview() {
     HomeAITheme {
         Message(
-            message = Message(
+            message = MessageUIModel(
                 sender = "First Last",
                 text = "This is another message.",
                 timestamp = "16:52 PM"

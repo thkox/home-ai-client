@@ -39,10 +39,10 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
             val result = loginUseCase.invoke(currentUsername, currentPassword)
-            _loginState.value = if (result is Resource.Success) {
-                LoginState.Success
-            } else {
-                LoginState.Error(result.message ?: "Unknown error")
+            _loginState.value = when (result) {
+                is Resource.Success -> LoginState.Success
+                is Resource.Error -> LoginState.Error(result.message ?: "Unknown error")
+                is Resource.Loading -> LoginState.Loading
             }
         }
     }

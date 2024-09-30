@@ -15,12 +15,18 @@ import com.thkox.homeai.domain.repository.ConversationRepository
 import com.thkox.homeai.domain.repository.DocumentRepository
 import com.thkox.homeai.domain.repository.TokenRepository
 import com.thkox.homeai.domain.usecase.DeleteConversationUseCase
+import com.thkox.homeai.domain.usecase.DeleteDocumentUseCase
 import com.thkox.homeai.domain.usecase.EnterServerAddressUseCase
+import com.thkox.homeai.domain.usecase.GetConversationDetailsUseCase
 import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
+import com.thkox.homeai.domain.usecase.GetDocumentDetailsUseCase
 import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
+import com.thkox.homeai.domain.usecase.GetUserDocumentDetailsUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.UpdateConversationTitleUseCase
+import com.thkox.homeai.domain.usecase.UpdateMyProfileUseCase
 import com.thkox.homeai.domain.usecase.UploadDocumentUseCase
+import com.thkox.homeai.domain.usecase.user.GetUserDetailsUseCase
 import com.thkox.homeai.domain.usecase.user.LoginUseCase
 import com.thkox.homeai.domain.usecase.user.RegisterUseCase
 import dagger.Module
@@ -174,4 +180,42 @@ object AppModule {
     fun provideUploadDocumentUseCase(documentRepository: DocumentRepository): UploadDocumentUseCase {
         return UploadDocumentUseCase(documentRepository)
     }
+
+    @Provides
+    @Singleton
+    fun providesGetUserDetailsUseCase(authRepository: AuthRepository): GetUserDetailsUseCase {
+        return GetUserDetailsUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesUpdateMyProfileUseCase(authRepository: AuthRepository): UpdateMyProfileUseCase {
+        return UpdateMyProfileUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesGetConversationDetailsUseCase(conversationRepository: ConversationRepository): GetConversationDetailsUseCase {
+        return GetConversationDetailsUseCase(conversationRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesGetDocumentDetailsUseCase(documentRepository: DocumentRepository): GetDocumentDetailsUseCase {
+        return GetDocumentDetailsUseCase(documentRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesGetUserDocumentsDetailsUseCase(documentRepository: DocumentRepository): GetUserDocumentDetailsUseCase {
+        return GetUserDocumentDetailsUseCase(documentRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesDeleteDocumentUseCase(documentRepository: DocumentRepository): DeleteDocumentUseCase {
+        return DeleteDocumentUseCase(documentRepository)
+    }
+
+
 }

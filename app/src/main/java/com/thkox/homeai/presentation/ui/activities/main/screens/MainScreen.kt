@@ -4,6 +4,9 @@ import android.content.res.Configuration
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,11 +20,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,6 +32,7 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -48,17 +51,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.thkox.homeai.R
-import com.thkox.homeai.data.models.ConversationDto
-import com.thkox.homeai.presentation.model.Message
+import com.thkox.homeai.presentation.models.ConversationUIModel
+import com.thkox.homeai.presentation.models.MessageUIModel
 import com.thkox.homeai.presentation.ui.components.AddConversationComposable
 import com.thkox.homeai.presentation.ui.components.ConversationInputBar
+import com.thkox.homeai.presentation.ui.components.DocumentsBottomSheet
 import com.thkox.homeai.presentation.ui.components.MainTopAppBar
 import com.thkox.homeai.presentation.ui.components.Message
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
@@ -75,8 +82,16 @@ fun MainScreen(
     val conversationTitle by viewModel.conversationTitle.collectAsState()
     val isDrawerOpen by viewModel.isDrawerOpen.collectAsState()
     val conversations by viewModel.conversations.collectAsState()
+    val userDocuments by viewModel.userDocuments.collectAsState()
+    val selectedDocumentIds by viewModel.selectedDocumentIds.collectAsState()
+    val uploadedDocumentIds by viewModel.uploadedDocumentIds.collectAsState()
     var text by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
+    var showDocumentsBottomSheet by remember { mutableStateOf(false) }
+    val isLoadingDocument by viewModel.isLoadingDocument.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
+    var documentToDelete by remember { mutableStateOf<String?>(null) }
+    var documentName by remember { mutableStateOf<String?>(null) }
 
     val context = LocalContext.current
 
@@ -99,8 +114,47 @@ fun MainScreen(
         }
     }
 
+    LaunchedEffect(viewModel.currentConversationId) {
+        viewModel.loadUserDocuments()
+        viewModel.currentConversationId?.let { conversationId ->
+            viewModel.loadConversationDetails(conversationId)
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.loadConversations()
+    }
+
+    if (showDialog && documentToDelete != null) {
+        LaunchedEffect(documentToDelete) {
+            viewModel.getDocumentDetails(documentToDelete!!) { document ->
+                documentName = document?.fileName
+            }
+        }
+
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = "Delete Document") },
+            text = {
+                Text(
+                    text = "Do you want to delete the document ${documentName}? " +
+                            "After deletion any conversation that you had with that file it will lose access to it."
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.deleteDocument(documentToDelete!!)
+                    showDialog = false
+                }) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("No")
+                }
+            }
+        )
     }
 
     MenuNavigationDrawer(
@@ -132,7 +186,7 @@ fun MainScreen(
                     // Handle mic click
                 },
                 onAttachFilesClick = {
-                    launcher.launch("*/*")
+                    showDocumentsBottomSheet = true
                 },
                 onClickNavigationIcon = {
                     coroutineScope.launch {
@@ -141,6 +195,25 @@ fun MainScreen(
                 },
                 conversationTitle = conversationTitle
             )
+
+            if (showDocumentsBottomSheet) {
+                DocumentsBottomSheet(
+                    onDismissRequest = {
+                        showDocumentsBottomSheet = false
+                    },
+                    userDocuments = userDocuments,
+                    selectedDocumentIds = selectedDocumentIds,
+                    uploadedDocumentIds = uploadedDocumentIds,
+                    onUploadDocument = { launcher.launch("*/*") },
+                    onSelectDocument = { documentId -> viewModel.selectDocument(documentId) },
+                    onDeselectDocument = { documentId -> viewModel.deselectDocument(documentId) },
+                    isLoading = isLoadingDocument,
+                    onDeleteDocument = { documentId ->
+                        documentToDelete = documentId
+                        showDialog = true
+                    }
+                )
+            }
         }
     )
 }
@@ -148,7 +221,7 @@ fun MainScreen(
 @Composable
 fun MenuNavigationDrawer(
     drawerState: DrawerState,
-    conversations: List<ConversationDto>,
+    conversations: List<ConversationUIModel>,
     onNewConversationClick: () -> Unit,
     onConversationClick: (String) -> Unit,
     mainContent: @Composable () -> Unit,
@@ -196,10 +269,17 @@ fun MenuNavigationDrawer(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Icon(
+                    Image(
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .size(52.dp)
+                            .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                            .clip(CircleShape)
+                            .background(Color.White)
+                            .align(Alignment.Top),
                         painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                        contentScale = ContentScale.Crop,
                         contentDescription = null,
-                        modifier = Modifier.size(50.dp)
                     )
                     Text("Home AI", modifier = Modifier.padding(16.dp))
                 }
@@ -226,7 +306,11 @@ fun MenuNavigationDrawer(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             NavigationDrawerItem(
-                                label = { Text(text = conversation.title ?: stringResource(R.string.new_conversation)) },
+                                label = {
+                                    Text(
+                                        text = conversation.title
+                                    )
+                                },
                                 selected = conversation.id == currentConversationId,
                                 onClick = { onConversationClick(conversation.id) },
                                 modifier = Modifier.weight(1f)
@@ -330,10 +414,9 @@ private fun MenuNavigationDrawerLightPreview() {
 }
 
 
-
 @Composable
 fun MainContent(
-    messages: List<Message>,
+    messages: List<MessageUIModel>,
     isLoading: Boolean,
     isAiResponding: Boolean,
     text: String,
@@ -347,6 +430,7 @@ fun MainContent(
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(messages) {
         coroutineScope.launch {
@@ -368,7 +452,10 @@ fun MainContent(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 }
                 ConversationInputBar(
-                    onSendClick = onSendClick,
+                    onSendClick = {
+                        onSendClick()
+                        keyboardController?.hide()
+                    },
                     onMicClick = { onMicClick() },
                     text = text,
                     onTextChange = onTextChange,

@@ -30,20 +30,21 @@ fun MainTopAppBar(
     onClickNavigationIcon: () -> Unit = {},
 ) {
     CenterAlignedTopAppBar(
-        modifier = modifier.padding(
-            start = 5.dp,
-            end = 5.dp,
-            top = 10.dp,
-            bottom = 2.dp
-        )
-            .clip(
-            shape = RoundedCornerShape(
-                topStart = 100.dp,
-                topEnd = 100.dp,
-                bottomStart = 100.dp,
-                bottomEnd = 100.dp
+        modifier = modifier
+            .padding(
+                start = 5.dp,
+                end = 5.dp,
+                top = 10.dp,
+                bottom = 2.dp
             )
-        ),
+            .clip(
+                shape = RoundedCornerShape(
+                    topStart = 100.dp,
+                    topEnd = 100.dp,
+                    bottomStart = 100.dp,
+                    bottomEnd = 100.dp
+                )
+            ),
         title = {
             Text(
                 text = text

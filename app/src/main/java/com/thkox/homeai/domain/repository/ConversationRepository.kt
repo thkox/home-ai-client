@@ -15,4 +15,5 @@ interface ConversationRepository {
     suspend fun deleteConversation(conversationId: String): Response<Unit>
     suspend fun getUserConversations(): Response<List<ConversationDto>>
     suspend fun getConversationMessages(conversationId: String): Response<List<MessageDto>>
+    suspend fun getConversationDetails(conversationId: String): Response<ConversationDto>
 }
