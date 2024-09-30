@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.thkox.homeai.data.models.ConversationDto
 import com.thkox.homeai.data.models.DocumentDto
 import com.thkox.homeai.domain.usecase.DeleteConversationUseCase
+import com.thkox.homeai.domain.usecase.DeleteDocumentUseCase
 import com.thkox.homeai.domain.usecase.GetConversationDetailsUseCase
 import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
+import com.thkox.homeai.domain.usecase.GetDocumentDetailsUseCase
 import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
 import com.thkox.homeai.domain.usecase.GetUserDocumentsUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
@@ -28,8 +30,10 @@ class MainViewModel @Inject constructor(
     private val getConversationMessagesUseCase: GetConversationMessagesUseCase,
     private val updateConversationTitleUseCase: UpdateConversationTitleUseCase,
     private val deleteConversationUseCase: DeleteConversationUseCase,
+    private val deleteDocumentUseCase: DeleteDocumentUseCase,
     private val uploadDocumentUseCase: UploadDocumentUseCase,
     private val getUserDocumentsUseCase: GetUserDocumentsUseCase,
+    private val getDocumentDetailsUseCase: GetDocumentDetailsUseCase,
     private val getConversationDetailsUseCase: GetConversationDetailsUseCase
 ) : ViewModel() {
 
@@ -70,7 +74,6 @@ class MainViewModel @Inject constructor(
     private val _isLoadingDocument = MutableStateFlow(false)
     val isLoadingDocument: StateFlow<Boolean> = _isLoadingDocument
 
-    // Function to load user documents
     fun loadUserDocuments() {
         viewModelScope.launch {
             val response = getUserDocumentsUseCase.invoke()
@@ -80,7 +83,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    // Function to load conversation details and selected document IDs
     fun loadConversationDetails(conversationId: String) {
         viewModelScope.launch {
             val response = getConversationDetailsUseCase.invoke(conversationId)
@@ -122,7 +124,6 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
 
     fun openDrawer() {
         _isDrawerOpen.value = true
@@ -226,6 +227,31 @@ class MainViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+    }
+
+    fun deleteDocument(documentId: String) {
+        viewModelScope.launch {
+            try {
+                val response = deleteDocumentUseCase.invoke(documentId)
+                if (response.isSuccessful) {
+                    loadUserDocuments()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    // MainViewModel.kt
+    fun getDocumentDetails(documentId: String, onResult: (DocumentDto?) -> Unit) {
+        viewModelScope.launch {
+            val response = getDocumentDetailsUseCase.invoke(documentId)
+            if (response.isSuccessful) {
+                onResult(response.body())
+            } else {
+                onResult(null)
             }
         }
     }

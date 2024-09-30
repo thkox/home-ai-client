@@ -121,7 +121,8 @@ fun DocumentsBottomSheet(
     onUploadDocument: () -> Unit,
     onSelectDocument: (String) -> Unit,
     onDeselectDocument: (String) -> Unit,
-    isLoading: Boolean
+    isLoading: Boolean,
+    onDeleteDocument: (String) -> Unit
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest
@@ -162,7 +163,8 @@ fun DocumentsBottomSheet(
                                 onDeselectDocument(document.id)
                             }
                         },
-                        onDeleteClick = { /* Handle delete */ },
+                        onDeleteClick = {
+                            onDeleteDocument(document.id) },
                         isCheckboxEnabled = isCheckboxEnabled
                     )
                 }

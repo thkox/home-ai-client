@@ -81,6 +81,9 @@ fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
     var showDocumentsBottomSheet by remember { mutableStateOf(false) }
     val isLoadingDocument by viewModel.isLoadingDocument.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
+    var documentToDelete by remember { mutableStateOf<String?>(null) }
+    var documentName by remember { mutableStateOf<String?>(null) }
 
     val context = LocalContext.current
 
@@ -112,6 +115,34 @@ fun MainScreen(
 
     LaunchedEffect(Unit) {
         viewModel.loadConversations()
+    }
+
+    if (showDialog && documentToDelete != null) {
+        LaunchedEffect(documentToDelete) {
+            viewModel.getDocumentDetails(documentToDelete!!) { document ->
+                documentName = document?.fileName
+            }
+        }
+
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = "Delete Document") },
+            text = { Text(text = "Do you want to delete the document ${documentName}? " +
+                    "After deletion any conversation that you had with that file it will lose access to it.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.deleteDocument(documentToDelete!!)
+                    showDialog = false
+                }) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("No")
+                }
+            }
+        )
     }
 
     MenuNavigationDrawer(
@@ -164,7 +195,11 @@ fun MainScreen(
                     onUploadDocument = { launcher.launch("*/*") },
                     onSelectDocument = { documentId -> viewModel.selectDocument(documentId) },
                     onDeselectDocument = { documentId -> viewModel.deselectDocument(documentId) },
-                    isLoading = isLoadingDocument
+                    isLoading = isLoadingDocument,
+                    onDeleteDocument = { documentId ->
+                        documentToDelete = documentId
+                        showDialog = true
+                    }
                 )
             }
         }
