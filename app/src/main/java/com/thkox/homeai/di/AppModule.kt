@@ -170,9 +170,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideUpdateConversationTitleUseCase(
-        getUserConversationsUseCase: GetUserConversationsUseCase
+        getConversationDetailsUseCase: GetConversationDetailsUseCase
     ): UpdateConversationTitleUseCase {
-        return UpdateConversationTitleUseCase(getUserConversationsUseCase)
+        return UpdateConversationTitleUseCase(getConversationDetailsUseCase)
     }
 
     @Provides

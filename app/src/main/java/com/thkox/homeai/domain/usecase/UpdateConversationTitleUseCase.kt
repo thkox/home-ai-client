@@ -6,14 +6,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UpdateConversationTitleUseCase @Inject constructor(
-    private val getUserConversationsUseCase: GetUserConversationsUseCase
+    private val getConversationDetailsUseCase: GetConversationDetailsUseCase
 ) {
     suspend operator fun invoke(conversationId: String): Resource<String?> {
         return withContext(Dispatchers.IO) {
-            when (val result = getUserConversationsUseCase.invoke()) {
+            when (val result = getConversationDetailsUseCase.invoke(conversationId)) {
                 is Resource.Success -> {
-                    val conversations = result.data
-                    val conversation = conversations?.firstOrNull { it.id == conversationId }
+                    val conversation = result.data
                     Resource.Success(conversation?.title)
                 }
 
