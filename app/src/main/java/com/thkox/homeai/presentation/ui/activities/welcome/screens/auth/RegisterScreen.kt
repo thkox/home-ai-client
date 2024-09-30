@@ -45,7 +45,6 @@ fun RegisterScreen(
     modifier: Modifier = Modifier,
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val firstName by viewModel.firstName.observeAsState("")
     val lastName by viewModel.lastName.observeAsState("")
     val email by viewModel.email.observeAsState("")
@@ -75,7 +74,6 @@ fun RegisterScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterContent(
     firstName: String,
@@ -131,6 +129,12 @@ fun RegisterContent(
                 modifier = Modifier.size(64.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Please fill in the following details to create your account:",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
             ModernTextField(
                 value = firstName,
                 onValueChange = onFirstNameChanged,

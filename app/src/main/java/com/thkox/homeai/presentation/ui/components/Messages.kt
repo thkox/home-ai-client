@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.res.painterResource
@@ -179,9 +180,9 @@ fun Message(
                     .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
                     .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
+                    .background(Color.White)
                     .align(Alignment.Top),
-                painter = painterResource(id = R.drawable.ai_icon),
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
             )

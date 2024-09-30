@@ -62,6 +62,7 @@ import com.thkox.homeai.presentation.ui.components.MainTopAppBar
 import com.thkox.homeai.presentation.ui.components.Message
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import com.thkox.homeai.presentation.viewModel.main.MainViewModel
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import kotlinx.coroutines.launch
 
 @Composable
@@ -84,6 +85,9 @@ fun MainScreen(
     var showDialog by remember { mutableStateOf(false) }
     var documentToDelete by remember { mutableStateOf<String?>(null) }
     var documentName by remember { mutableStateOf<String?>(null) }
+
+    val listState = rememberLazyListState()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val context = LocalContext.current
 
@@ -412,6 +416,7 @@ fun MainContent(
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(messages) {
         coroutineScope.launch {
@@ -433,7 +438,10 @@ fun MainContent(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 }
                 ConversationInputBar(
-                    onSendClick = onSendClick,
+                    onSendClick = {
+                        onSendClick()
+                        keyboardController?.hide()
+                    },
                     onMicClick = { onMicClick() },
                     text = text,
                     onTextChange = onTextChange,
