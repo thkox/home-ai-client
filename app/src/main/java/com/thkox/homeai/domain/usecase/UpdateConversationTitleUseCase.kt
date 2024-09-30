@@ -1,6 +1,5 @@
 package com.thkox.homeai.domain.usecase
 
-import com.thkox.homeai.domain.models.Conversation
 import com.thkox.homeai.domain.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,9 +16,11 @@ class UpdateConversationTitleUseCase @Inject constructor(
                     val conversation = conversations?.firstOrNull { it.id == conversationId }
                     Resource.Success(conversation?.title)
                 }
+
                 is Resource.Error -> {
                     Resource.Error("Failed to update conversation title: ${result.message}")
                 }
+
                 is Resource.Loading -> {
                     Resource.Loading()
                 }

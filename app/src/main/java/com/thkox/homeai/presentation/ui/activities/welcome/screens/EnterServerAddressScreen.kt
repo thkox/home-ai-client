@@ -28,9 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.thkox.homeai.domain.utils.Resource
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import com.thkox.homeai.presentation.viewModel.welcome.EnterServerAddressViewModel
-import com.thkox.homeai.domain.utils.Resource
 
 @Composable
 fun EnterServerAddressScreen(

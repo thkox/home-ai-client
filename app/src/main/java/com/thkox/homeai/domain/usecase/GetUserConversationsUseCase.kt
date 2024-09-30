@@ -6,7 +6,6 @@ import com.thkox.homeai.domain.repository.ConversationRepository
 import com.thkox.homeai.domain.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Response
 import javax.inject.Inject
 
 class GetUserConversationsUseCase @Inject constructor(

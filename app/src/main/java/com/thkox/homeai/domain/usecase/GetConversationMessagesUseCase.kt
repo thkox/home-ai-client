@@ -43,7 +43,8 @@ class GetConversationMessagesUseCase @Inject constructor(
                 Locale.getDefault()
             )
             val date = LocalDateTime.parse(timestamp, inputFormatter)
-            val outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a", Locale.getDefault())
+            val outputFormatter =
+                DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a", Locale.getDefault())
             date.format(outputFormatter)
         } catch (e: Exception) {
             timestamp

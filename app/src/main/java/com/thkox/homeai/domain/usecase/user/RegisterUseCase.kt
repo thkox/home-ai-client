@@ -2,8 +2,8 @@ package com.thkox.homeai.domain.usecase.user
 
 import com.thkox.homeai.domain.models.UserRegistration
 import com.thkox.homeai.domain.repository.AuthRepository
-import com.thkox.homeai.presentation.models.UserUiModel
 import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.presentation.models.UserUiModel
 
 class RegisterUseCase(
     private val authRepository: AuthRepository,

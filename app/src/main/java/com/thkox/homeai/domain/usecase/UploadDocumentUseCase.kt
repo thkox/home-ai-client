@@ -26,11 +26,12 @@ class UploadDocumentUseCase @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val contentResolver: ContentResolver = context.contentResolver
-                val displayName = contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-                    val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    cursor.moveToFirst()
-                    cursor.getString(nameIndex)
-                } ?: "temp_upload_file"
+                val displayName =
+                    contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                        val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                        cursor.moveToFirst()
+                        cursor.getString(nameIndex)
+                    } ?: "temp_upload_file"
 
                 val inputStream: InputStream? = contentResolver.openInputStream(uri)
                 if (inputStream != null) {
@@ -40,8 +41,10 @@ class UploadDocumentUseCase @Inject constructor(
                     inputStream.close()
                     outputStream.close()
 
-                    val requestFile = tempFile.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-                    val body = MultipartBody.Part.createFormData("files", tempFile.name, requestFile)
+                    val requestFile =
+                        tempFile.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+                    val body =
+                        MultipartBody.Part.createFormData("files", tempFile.name, requestFile)
 
                     Log.d("UploadDocument", "Uploading file: ${tempFile.name}")
 

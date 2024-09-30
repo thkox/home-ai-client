@@ -33,7 +33,8 @@ class SendMessageUseCase @Inject constructor(
                 }
 
                 val request = ContinueConversationRequest(userMessage, _documentIds)
-                val continueResponse = conversationRepository.continueConversation(_conversationId!!, request)
+                val continueResponse =
+                    conversationRepository.continueConversation(_conversationId!!, request)
 
                 if (continueResponse.isSuccessful) {
                     val messageDto = continueResponse.body()
