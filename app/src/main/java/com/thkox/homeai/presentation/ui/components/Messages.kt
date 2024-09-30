@@ -32,7 +32,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.thkox.homeai.R
-import com.thkox.homeai.presentation.models.Message
+import com.thkox.homeai.presentation.models.MessageUIModel
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 
 @Composable
@@ -75,7 +75,7 @@ fun SenderNameAndTimestamp(
 
 @Composable
 fun MessageDisplay(
-    message: Message,
+    message: MessageUIModel,
 ) {
 
     Text(
@@ -88,7 +88,7 @@ fun MessageDisplay(
 
 @Composable
 fun MessageBubble(
-    message: Message,
+    message: MessageUIModel,
     isSenderMe: Boolean,
 ) {
     val backgroundBubbleColor = if (isSenderMe) {
@@ -135,7 +135,7 @@ fun MessageBubble(
 @Composable
 fun SenderAndTextMessage(
     modifier: Modifier = Modifier,
-    message: Message,
+    message: MessageUIModel,
     isSenderMe: Boolean,
 ) {
 
@@ -166,7 +166,7 @@ fun SenderAndTextMessage(
 
 @Composable
 fun Message(
-    message: Message,
+    message: MessageUIModel,
     isSenderMe: Boolean,
 ) {
     val spaceBetweenSenders = Modifier.padding(top = 8.dp)
@@ -206,7 +206,7 @@ fun Message(
 private fun MessageFromAIDarkPreview() {
     HomeAITheme {
         Message(
-            message = Message(
+            message = MessageUIModel(
                 sender = "Home AI",
                 text = "This is a message.",
                 timestamp = "15:02 PM"
@@ -224,7 +224,7 @@ private fun MessageFromAIDarkPreview() {
 private fun MessageFromAILightPreview() {
     HomeAITheme {
         Message(
-            message = Message(
+            message = MessageUIModel(
                 sender = "Home AI",
                 text = "This is a message.",
                 timestamp = "15:02 PM"
@@ -242,7 +242,7 @@ private fun MessageFromAILightPreview() {
 private fun MessageFromMeDarkPreview() {
     HomeAITheme {
         Message(
-            message = Message(
+            message = MessageUIModel(
                 sender = "First Last",
                 text = "This is another message.",
                 timestamp = "16:52 PM"
@@ -260,7 +260,7 @@ private fun MessageFromMeDarkPreview() {
 private fun MessageFromMeLightPreview() {
     HomeAITheme {
         Message(
-            message = Message(
+            message = MessageUIModel(
                 sender = "First Last",
                 text = "This is another message.",
                 timestamp = "16:52 PM"

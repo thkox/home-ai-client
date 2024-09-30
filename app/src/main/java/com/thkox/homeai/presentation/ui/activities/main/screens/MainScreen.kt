@@ -54,14 +54,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.thkox.homeai.R
-import com.thkox.homeai.data.models.ConversationDto
-import com.thkox.homeai.presentation.models.Message
+import com.thkox.homeai.presentation.models.ConversationUIModel
+import com.thkox.homeai.presentation.models.MessageUIModel
 import com.thkox.homeai.presentation.ui.components.AddConversationComposable
 import com.thkox.homeai.presentation.ui.components.ConversationInputBar
 import com.thkox.homeai.presentation.ui.components.DocumentsBottomSheet
@@ -69,7 +70,6 @@ import com.thkox.homeai.presentation.ui.components.MainTopAppBar
 import com.thkox.homeai.presentation.ui.components.Message
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import com.thkox.homeai.presentation.viewModel.main.MainViewModel
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import kotlinx.coroutines.launch
 
 @Composable
@@ -135,8 +135,12 @@ fun MainScreen(
         AlertDialog(
             onDismissRequest = { showDialog = false },
             title = { Text(text = "Delete Document") },
-            text = { Text(text = "Do you want to delete the document ${documentName}? " +
-                    "After deletion any conversation that you had with that file it will lose access to it.") },
+            text = {
+                Text(
+                    text = "Do you want to delete the document ${documentName}? " +
+                            "After deletion any conversation that you had with that file it will lose access to it."
+                )
+            },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.deleteDocument(documentToDelete!!)
@@ -217,7 +221,7 @@ fun MainScreen(
 @Composable
 fun MenuNavigationDrawer(
     drawerState: DrawerState,
-    conversations: List<ConversationDto>,
+    conversations: List<ConversationUIModel>,
     onNewConversationClick: () -> Unit,
     onConversationClick: (String) -> Unit,
     mainContent: @Composable () -> Unit,
@@ -305,7 +309,6 @@ fun MenuNavigationDrawer(
                                 label = {
                                     Text(
                                         text = conversation.title
-                                            ?: stringResource(R.string.new_conversation)
                                     )
                                 },
                                 selected = conversation.id == currentConversationId,
@@ -413,7 +416,7 @@ private fun MenuNavigationDrawerLightPreview() {
 
 @Composable
 fun MainContent(
-    messages: List<Message>,
+    messages: List<MessageUIModel>,
     isLoading: Boolean,
     isAiResponding: Boolean,
     text: String,

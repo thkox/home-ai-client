@@ -32,7 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.thkox.homeai.data.models.DocumentDto
+import com.thkox.homeai.presentation.models.DocumentUIModel
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 
 @Composable
@@ -115,7 +115,7 @@ fun DocumentCard(
 @Composable
 fun DocumentsBottomSheet(
     onDismissRequest: () -> Unit,
-    userDocuments: List<DocumentDto>,
+    userDocuments: List<DocumentUIModel>,
     selectedDocumentIds: List<String>,
     uploadedDocumentIds: List<String>,
     onUploadDocument: () -> Unit,
@@ -154,7 +154,7 @@ fun DocumentsBottomSheet(
 
                     DocumentCard(
                         fileName = document.fileName,
-                        fileSize = formatFileSize(document.size),
+                        fileSize = formatFileSize(document.fileSize),
                         isChecked = isChecked,
                         onCheckedChange = { checked ->
                             if (checked) {
@@ -164,7 +164,8 @@ fun DocumentsBottomSheet(
                             }
                         },
                         onDeleteClick = {
-                            onDeleteDocument(document.id) },
+                            onDeleteDocument(document.id)
+                        },
                         isCheckboxEnabled = isCheckboxEnabled
                     )
                 }
