@@ -77,7 +77,7 @@ class MainViewModel @Inject constructor(
     private val _selectedDocumentIds = MutableStateFlow<List<String>>(emptyList())
     val selectedDocumentIds: StateFlow<List<String>> = _selectedDocumentIds
 
-    private val _uploadedDocumentIds = MutableStateFlow<MutableList<String>>(mutableListOf())
+    private val _uploadedDocumentIds = MutableStateFlow<List<String>>(emptyList())
     val uploadedDocumentIds: StateFlow<List<String>> = _uploadedDocumentIds
 
     // Function to load user documents
@@ -101,34 +101,31 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    // Function to handle document selection
     fun selectDocument(documentId: String) {
         if (!_uploadedDocumentIds.value.contains(documentId)) {
-            _uploadedDocumentIds.value.add(documentId)
+            _uploadedDocumentIds.value += documentId
         }
     }
 
     fun deselectDocument(documentId: String) {
-        _uploadedDocumentIds.value.remove(documentId)
+        _uploadedDocumentIds.value -= documentId
     }
 
-    // Modify uploadDocument function to update the document list
     fun uploadDocument(context: Context, uri: Uri) {
         viewModelScope.launch {
             try {
                 val response = uploadDocumentUseCase(context, uri)
                 if (response.isSuccessful) {
                     val documentIds = response.body()?.map { it.id }
-                    documentIds?.let {
-                        _uploadedDocumentIds.value.addAll(it)
-                        // Reload user documents after upload
-                        loadUserDocuments()
-                    }
+                    documentIds?.let { newIds ->
+                        _uploadedDocumentIds.value += newIds
+                    loadUserDocuments()
+                }
                 } else {
-                    // Handle error
+                    // TODO: Handle error
                 }
             } catch (e: Exception) {
-                // Handle exception
+                e.printStackTrace()
             }
         }
     }
@@ -207,7 +204,7 @@ class MainViewModel @Inject constructor(
                 }
 
                 // Clear the list of document IDs after sending the message
-                _uploadedDocumentIds.value.clear()
+                _uploadedDocumentIds.value = emptyList()
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {

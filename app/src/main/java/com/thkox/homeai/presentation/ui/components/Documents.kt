@@ -143,7 +143,6 @@ fun DocumentsBottomSheet(
     val userDocuments by viewModel.userDocuments.collectAsState()
     val selectedDocumentIds by viewModel.selectedDocumentIds.collectAsState()
     val uploadedDocumentIds by viewModel.uploadedDocumentIds.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
     // Handle document upload
