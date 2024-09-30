@@ -1,12 +1,7 @@
 package com.thkox.homeai.presentation.viewModel.main
 
-import android.content.ContentResolver
 import android.content.Context
-import android.icu.text.SimpleDateFormat
 import android.net.Uri
-import android.provider.OpenableColumns
-import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thkox.homeai.data.models.ConversationDto
@@ -24,14 +19,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -119,8 +106,8 @@ class MainViewModel @Inject constructor(
                     val documentIds = response.body()?.map { it.id }
                     documentIds?.let { newIds ->
                         _uploadedDocumentIds.value += newIds
-                    loadUserDocuments()
-                }
+                        loadUserDocuments()
+                    }
                 } else {
                     // TODO: Handle error
                 }

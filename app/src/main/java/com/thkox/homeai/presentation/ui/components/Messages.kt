@@ -171,7 +171,7 @@ fun Message(
     val spaceBetweenSenders = Modifier.padding(top = 8.dp)
 
     Row(modifier = spaceBetweenSenders) {
-        if (!isSenderMe ) {
+        if (!isSenderMe) {
             Image(
                 modifier = Modifier
                     .padding(start = 8.dp, end = 10.dp)

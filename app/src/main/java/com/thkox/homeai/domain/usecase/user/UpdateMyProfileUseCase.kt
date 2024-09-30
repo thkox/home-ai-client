@@ -4,7 +4,6 @@ import com.thkox.homeai.data.models.UserCreateRequest
 import com.thkox.homeai.data.models.UserResponseDto
 import com.thkox.homeai.domain.repository.AuthRepository
 import com.thkox.homeai.domain.utils.Resource
-import retrofit2.Response
 import javax.inject.Inject
 
 class UpdateMyProfileUseCase @Inject constructor(

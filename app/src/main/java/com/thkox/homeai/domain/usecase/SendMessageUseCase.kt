@@ -55,7 +55,7 @@ class SendMessageUseCase(
         _documentIds = documentIds
     }
 
-    fun formatMessage(message:String, sender:String) : Message {
+    fun formatMessage(message: String, sender: String): Message {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault())
         val timestamp = dateFormat.format(Date(System.currentTimeMillis()))
         return Message(

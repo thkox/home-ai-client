@@ -92,7 +92,11 @@ class AuthRepositoryImpl(
                         )
                     } ?: Resource.Error("Invalid response")
                 } else {
-                    Resource.Error("Failed to fetch user details: ${response.errorBody()?.string()}")
+                    Resource.Error(
+                        "Failed to fetch user details: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
                 }
             } catch (e: Exception) {
                 Resource.Error("Exception: ${e.localizedMessage}")

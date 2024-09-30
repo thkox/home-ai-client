@@ -19,9 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -252,7 +250,12 @@ fun MenuNavigationDrawer(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             NavigationDrawerItem(
-                                label = { Text(text = conversation.title ?: stringResource(R.string.new_conversation)) },
+                                label = {
+                                    Text(
+                                        text = conversation.title
+                                            ?: stringResource(R.string.new_conversation)
+                                    )
+                                },
                                 selected = conversation.id == currentConversationId,
                                 onClick = { onConversationClick(conversation.id) },
                                 modifier = Modifier.weight(1f)
@@ -354,7 +357,6 @@ private fun MenuNavigationDrawerLightPreview() {
         )
     }
 }
-
 
 
 @Composable
