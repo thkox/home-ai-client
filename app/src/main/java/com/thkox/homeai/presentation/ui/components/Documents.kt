@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.thkox.homeai.data.models.DocumentDto
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import com.thkox.homeai.presentation.viewModel.main.MainViewModel
 
@@ -81,55 +82,35 @@ fun UploadDocumentButton(
 
 @Composable
 fun DocumentCard(
-    fileName: String = "",
+    fileName: String,
     fileSize: String,
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     onDeleteClick: () -> Unit,
-    isCheckboxEnabled: Boolean = true,
+    isCheckboxEnabled: Boolean
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .padding(8.dp)
             .fillMaxWidth()
+            .padding(8.dp)
+            .padding(16.dp)
     ) {
         Checkbox(
             checked = isChecked,
-            onCheckedChange = onCheckedChange,
+            onCheckedChange = if (isCheckboxEnabled) onCheckedChange else null,
             enabled = isCheckboxEnabled
         )
-        Icon(
-            imageVector = Icons.Filled.DocumentScanner,
-            contentDescription = "Document Icon",
-            modifier = Modifier
-                .size(24.dp)
-                .padding(start = 8.dp)
-        )
-        Text(
-            text = fileName,
-            modifier = Modifier.padding(start = 8.dp)
-        )
-        Text(
-            text = fileSize,
-            modifier = Modifier.padding(start = 8.dp)
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(
-            onClick = onDeleteClick,
-            modifier = Modifier
-                .size(24.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = CircleShape
-                )
-                .padding(4.dp)
+        Spacer(modifier = Modifier.width(8.dp))
+        Row(
+            modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
         ) {
-            Icon(
-                imageVector = Icons.Filled.Delete,
-                contentDescription = "Delete Document",
-                tint = Color.White
-            )
+            Text(text = fileName, style = MaterialTheme.typography.bodySmall)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = fileSize, style = MaterialTheme.typography.bodySmall)
+        }
+        IconButton(onClick = onDeleteClick) {
+            Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
         }
     }
 }
@@ -138,22 +119,13 @@ fun DocumentCard(
 @Composable
 fun DocumentsBottomSheet(
     onDismissRequest: () -> Unit,
-    viewModel: MainViewModel
+    userDocuments: List<DocumentDto>,
+    selectedDocumentIds: List<String>,
+    uploadedDocumentIds: List<String>,
+    onUploadDocument: () -> Unit,
+    onSelectDocument: (String) -> Unit,
+    onDeselectDocument: (String) -> Unit
 ) {
-    val userDocuments by viewModel.userDocuments.collectAsState()
-    val selectedDocumentIds by viewModel.selectedDocumentIds.collectAsState()
-    val uploadedDocumentIds by viewModel.uploadedDocumentIds.collectAsState()
-    val context = LocalContext.current
-
-    // Handle document upload
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let {
-            viewModel.uploadDocument(context, it)
-        }
-    }
-
     ModalBottomSheet(
         onDismissRequest = onDismissRequest
     ) {
@@ -162,21 +134,12 @@ fun DocumentsBottomSheet(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // Upload Document Button
-            UploadDocumentButton(
-                onClick = {
-                    launcher.launch("*/*")
-                }
-            )
+            UploadDocumentButton(onClick = onUploadDocument)
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Documents List
             LazyColumn {
                 items(userDocuments.size) { index ->
                     val document = userDocuments[index]
-                    val isChecked = uploadedDocumentIds.contains(document.id) ||
-                            selectedDocumentIds.contains(document.id)
+                    val isChecked = uploadedDocumentIds.contains(document.id) || selectedDocumentIds.contains(document.id)
                     val isCheckboxEnabled = !selectedDocumentIds.contains(document.id)
 
                     DocumentCard(
@@ -185,14 +148,12 @@ fun DocumentsBottomSheet(
                         isChecked = isChecked,
                         onCheckedChange = { checked ->
                             if (checked) {
-                                viewModel.selectDocument(document.id)
+                                onSelectDocument(document.id)
                             } else {
-                                viewModel.deselectDocument(document.id)
+                                onDeselectDocument(document.id)
                             }
                         },
-                        onDeleteClick = {
-                            // Handle delete document if needed
-                        },
+                        onDeleteClick = { /* Handle delete */ },
                         isCheckboxEnabled = isCheckboxEnabled
                     )
                 }
@@ -221,7 +182,8 @@ private fun DocumentCardLightPreview() {
             fileSize = "1.2 MB",
             onDeleteClick = { },
             isChecked = false,
-            onCheckedChange = { }
+            onCheckedChange = { },
+            isCheckboxEnabled = true
         )
     }
 }
@@ -239,7 +201,8 @@ private fun DocumentCardDarkPreview() {
             fileSize = "1.2 MB",
             onDeleteClick = { },
             isChecked = true,
-            onCheckedChange = { }
+            onCheckedChange = { },
+            isCheckboxEnabled = true
         )
     }
 }

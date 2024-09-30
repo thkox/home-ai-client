@@ -76,6 +76,9 @@ fun MainScreen(
     val conversationTitle by viewModel.conversationTitle.collectAsState()
     val isDrawerOpen by viewModel.isDrawerOpen.collectAsState()
     val conversations by viewModel.conversations.collectAsState()
+    val userDocuments by viewModel.userDocuments.collectAsState()
+    val selectedDocumentIds by viewModel.selectedDocumentIds.collectAsState()
+    val uploadedDocumentIds by viewModel.uploadedDocumentIds.collectAsState()
     var text by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
     var showDocumentsBottomSheet by remember { mutableStateOf(false) }
@@ -151,13 +154,17 @@ fun MainScreen(
                 conversationTitle = conversationTitle
             )
 
-            // Display the DocumentsBottomSheet
             if (showDocumentsBottomSheet) {
                 DocumentsBottomSheet(
                     onDismissRequest = {
                         showDocumentsBottomSheet = false
                     },
-                    viewModel = viewModel
+                    userDocuments = userDocuments,
+                    selectedDocumentIds = selectedDocumentIds,
+                    uploadedDocumentIds = uploadedDocumentIds,
+                    onUploadDocument = { launcher.launch("*/*") },
+                    onSelectDocument = { documentId -> viewModel.selectDocument(documentId) },
+                    onDeselectDocument = { documentId -> viewModel.deselectDocument(documentId) }
                 )
             }
         }
