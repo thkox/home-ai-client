@@ -154,11 +154,13 @@ fun DocumentsBottomSheet(
             }
 
             UploadDocumentButton(onClick = onUploadDocument)
-            Text(
-                text = "or select from existing documents:",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(8.dp)
-            )
+            if (sortedDocuments.isNotEmpty()) {
+                Text(
+                    text = "or select from existing documents:",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
             LazyColumn {
                 items(sortedDocuments.size) { index ->
                     val document = sortedDocuments[index]
@@ -190,11 +192,11 @@ fun DocumentsBottomSheet(
     }
 }
 
-fun formatFileSize(bytes: Float): String {
+fun formatFileSize(bytes: Int): String {
     return when {
-        bytes < 1024 -> String.format("%.2f bytes", bytes)
-        bytes < 1024 * 1024 -> String.format("%.2f KB", bytes / 1024)
-        else -> String.format("%.2f MB", bytes / (1024 * 1024))
+        bytes < 1024 -> String.format("%.2f bytes", bytes.toFloat())
+        bytes < 1024 * 1024 -> String.format("%.2f KB", bytes.toFloat() / 1024)
+        else -> String.format("%.2f MB", bytes.toFloat() / (1024 * 1024))
     }
 }
 
