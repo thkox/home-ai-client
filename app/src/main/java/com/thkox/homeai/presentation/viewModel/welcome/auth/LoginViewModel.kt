@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thkox.homeai.domain.usecase.user.LoginUseCase
+import com.thkox.homeai.domain.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,8 +38,12 @@ class LoginViewModel @Inject constructor(
 
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
-            val result = loginUseCase.execute(currentUsername, currentPassword)
-            _loginState.value = result
+            val result = loginUseCase.invoke(currentUsername, currentPassword)
+            _loginState.value = when (result) {
+                is Resource.Success -> LoginState.Success
+                is Resource.Error -> LoginState.Error(result.message ?: "Unknown error")
+                is Resource.Loading -> LoginState.Loading
+            }
         }
     }
 }
