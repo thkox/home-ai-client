@@ -1,7 +1,7 @@
 package com.thkox.homeai.domain.usecase
 
 import com.thkox.homeai.domain.repository.ConversationRepository
-import com.thkox.homeai.presentation.model.Message
+import com.thkox.homeai.presentation.models.Message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime

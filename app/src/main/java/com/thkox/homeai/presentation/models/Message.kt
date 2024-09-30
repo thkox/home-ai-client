@@ -1,4 +1,4 @@
-package com.thkox.homeai.presentation.model
+package com.thkox.homeai.presentation.models
 
 import androidx.compose.runtime.Immutable
 

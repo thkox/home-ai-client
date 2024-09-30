@@ -16,7 +16,7 @@ import com.thkox.homeai.domain.usecase.GetUserDocumentsUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.UpdateConversationTitleUseCase
 import com.thkox.homeai.domain.usecase.UploadDocumentUseCase
-import com.thkox.homeai.presentation.model.Message
+import com.thkox.homeai.presentation.models.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -244,7 +244,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    // MainViewModel.kt
     fun getDocumentDetails(documentId: String, onResult: (DocumentDto?) -> Unit) {
         viewModelScope.launch {
             val response = getDocumentDetailsUseCase.invoke(documentId)
@@ -256,3 +255,16 @@ class MainViewModel @Inject constructor(
         }
     }
 }
+
+data class MainState(
+    val messages: List<Message> = emptyList(),
+    val isLoading: Boolean = false,
+    val isAiResponding: Boolean = false,
+    val conversationTitle: String = "New Conversation",
+    val isDrawerOpen: Boolean = false,
+    val conversations: List<ConversationDto> = emptyList(),
+    val userDocuments: List<DocumentDto> = emptyList(),
+    val selectedDocumentIds: List<String> = emptyList(),
+    val uploadedDocumentIds: List<String> = emptyList(),
+    val isLoadingDocument: Boolean = false
+)

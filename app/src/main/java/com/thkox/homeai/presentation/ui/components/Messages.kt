@@ -32,7 +32,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.thkox.homeai.R
-import com.thkox.homeai.presentation.model.Message
+import com.thkox.homeai.presentation.models.Message
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 
 @Composable

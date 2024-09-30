@@ -61,7 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.thkox.homeai.R
 import com.thkox.homeai.data.models.ConversationDto
-import com.thkox.homeai.presentation.model.Message
+import com.thkox.homeai.presentation.models.Message
 import com.thkox.homeai.presentation.ui.components.AddConversationComposable
 import com.thkox.homeai.presentation.ui.components.ConversationInputBar
 import com.thkox.homeai.presentation.ui.components.DocumentsBottomSheet

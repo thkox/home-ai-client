@@ -177,7 +177,7 @@ fun LoginContent(
                 }
 
                 is LoginState.Error -> {
-                    errorMessage = "Wrong Email or Password"
+                    errorMessage = loginState.message
                 }
 
                 else -> {
