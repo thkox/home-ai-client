@@ -123,7 +123,7 @@ fun LoginContent(
                 modifier = Modifier
                     .padding(5.dp)
                     .size(52.dp)
-                    .border(0.dp, MaterialTheme.colorScheme.surface, CircleShape)
+                    .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
                     .clip(CircleShape)
                     .background(Color.White),
                 painter = painterResource(id = R.drawable.ic_launcher_foreground),

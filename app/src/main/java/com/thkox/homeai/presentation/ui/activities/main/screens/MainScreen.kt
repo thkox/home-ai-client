@@ -269,7 +269,7 @@ fun MenuNavigationDrawer(
                         modifier = Modifier
                             .padding(5.dp)
                             .size(52.dp)
-                            .border(0.dp, MaterialTheme.colorScheme.surface, CircleShape)
+                            .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
                             .clip(CircleShape)
                             .background(Color.White)
                             .align(Alignment.Top),

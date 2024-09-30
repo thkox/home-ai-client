@@ -177,8 +177,7 @@ fun Message(
                 modifier = Modifier
                     .padding(start = 8.dp, end = 10.dp)
                     .size(42.dp)
-                    .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                    .border(3.dp, MaterialTheme.colorScheme.surface, CircleShape)
+                    .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
                     .clip(CircleShape)
                     .background(Color.White)
                     .align(Alignment.Top),
