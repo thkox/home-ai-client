@@ -15,6 +15,7 @@ import com.thkox.homeai.domain.repository.ConversationRepository
 import com.thkox.homeai.domain.repository.DocumentRepository
 import com.thkox.homeai.domain.repository.TokenRepository
 import com.thkox.homeai.domain.usecase.DeleteConversationUseCase
+import com.thkox.homeai.domain.usecase.DeleteDocumentUseCase
 import com.thkox.homeai.domain.usecase.EnterServerAddressUseCase
 import com.thkox.homeai.domain.usecase.GetConversationDetailsUseCase
 import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
@@ -208,6 +209,12 @@ object AppModule {
     @Singleton
     fun providesGetUserDocumentsDetailsUseCase(documentRepository: DocumentRepository): GetUserDocumentDetailsUseCase {
         return GetUserDocumentDetailsUseCase(documentRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesDeleteDocumentUseCase(documentRepository: DocumentRepository): DeleteDocumentUseCase {
+        return DeleteDocumentUseCase(documentRepository)
     }
 
 
