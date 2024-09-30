@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.thkox.homeai.data.models.DocumentDto
@@ -82,7 +83,6 @@ fun DocumentCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .padding(16.dp)
     ) {
         Checkbox(
             checked = isChecked,
@@ -90,17 +90,23 @@ fun DocumentCard(
             enabled = isCheckboxEnabled
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Row(
-            modifier = Modifier
-                .weight(1f)
-                .align(Alignment.CenterVertically)
-        ) {
-            Text(text = fileName, style = MaterialTheme.typography.bodySmall)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = fileSize, style = MaterialTheme.typography.bodySmall)
-        }
+        Text(
+            text = fileName,
+            style = MaterialTheme.typography.bodySmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = fileSize,
+            style = MaterialTheme.typography.bodySmall
+        )
         IconButton(onClick = onDeleteClick) {
-            Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete"
+            )
         }
     }
 }
@@ -131,7 +137,11 @@ fun DocumentsBottomSheet(
             }
 
             UploadDocumentButton(onClick = onUploadDocument)
-
+            Text(
+                text = "or select from existing documents:",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(8.dp)
+            )
             LazyColumn {
                 items(userDocuments.size) { index ->
                     val document = userDocuments[index]
