@@ -78,6 +78,7 @@ import com.thkox.homeai.presentation.ui.components.Message
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import com.thkox.homeai.presentation.viewModel.main.MainViewModel
 import kotlinx.coroutines.launch
+import androidx.activity.compose.BackHandler
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -130,6 +131,13 @@ fun MainScreen(
     LaunchedEffect(state.isRecording, state.speechText) {
         if (!state.isRecording && !state.speechText.isNullOrEmpty()) {
             text = state.speechText ?: ""
+        }
+    }
+
+    BackHandler(enabled = drawerState.isOpen) {
+        coroutineScope.launch {
+            drawerState.close()
+            viewModel.closeDrawer()
         }
     }
 
@@ -310,6 +318,7 @@ fun MenuNavigationDrawer(
     val sortedConversations = conversations.sortedByDescending { it.startTime }
     var showDialog by remember { mutableStateOf(false) }
     var conversationToDelete by remember { mutableStateOf<String?>(null) }
+    val coroutineScope = rememberCoroutineScope()
 
     if (showDialog && conversationToDelete != null) {
         AlertDialog(
