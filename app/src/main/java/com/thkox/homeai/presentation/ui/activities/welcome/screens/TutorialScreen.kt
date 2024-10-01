@@ -116,9 +116,9 @@ fun TutorialContent(
                 state = pagerState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f),
-                contentPadding = PaddingValues(horizontal = 24.dp),
-                itemSpacing = 16.dp
+                    .height(300.dp),
+                contentPadding = PaddingValues(horizontal = 25.dp),
+                itemSpacing = 8.dp
             ) { page ->
                 TutorialCard(page = pages[page])
             }
