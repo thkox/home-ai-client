@@ -22,10 +22,16 @@ class ChangePasswordUseCase @Inject constructor(
             return Resource.Error("New password must contain at least one number", "newPassword")
         }
         if (!passwordChange.newPassword.any { it.isUpperCase() }) {
-            return Resource.Error("New password must contain at least one uppercase letter", "newPassword")
+            return Resource.Error(
+                "New password must contain at least one uppercase letter",
+                "newPassword"
+            )
         }
         if (!passwordChange.newPassword.any { "!@#$%^&*()-_=+[]{}|;:,.<>?/".contains(it) }) {
-            return Resource.Error("New password must contain at least one special character", "newPassword")
+            return Resource.Error(
+                "New password must contain at least one special character",
+                "newPassword"
+            )
         }
 
         return authRepository.changePassword(passwordChange)

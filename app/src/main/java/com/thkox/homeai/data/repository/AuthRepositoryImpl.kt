@@ -3,7 +3,6 @@ package com.thkox.homeai.data.repository
 import com.thkox.homeai.data.models.ChangePassword
 import com.thkox.homeai.data.models.UserCreateRequest
 import com.thkox.homeai.data.models.UserUpdateProfile
-import com.thkox.homeai.data.models.UserResponseDto
 import com.thkox.homeai.data.sources.remote.ApiService
 import com.thkox.homeai.data.sources.remote.RetrofitHolder
 import com.thkox.homeai.domain.models.PasswordChange

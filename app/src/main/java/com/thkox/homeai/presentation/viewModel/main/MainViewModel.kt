@@ -171,6 +171,7 @@ class MainViewModel @Inject constructor(
                         documentErrorMessage = result.message
                     )
                 }
+
                 is Resource.Loading -> {}
             }
             _state.value = _state.value.copy(isLoadingDocument = false)

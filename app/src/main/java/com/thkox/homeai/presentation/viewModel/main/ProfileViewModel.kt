@@ -1,14 +1,14 @@
 package com.thkox.homeai.presentation.viewModel.main
 
-import com.thkox.homeai.domain.usecase.user.ChangePasswordUseCase
-import com.thkox.homeai.domain.usecase.user.GetUserDetailsUseCase
-import com.thkox.homeai.domain.usecase.user.UpdateMyProfileUseCase
-import com.thkox.homeai.presentation.models.UserUIModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thkox.homeai.domain.models.PasswordChange
 import com.thkox.homeai.domain.models.UserProfileUpdate
+import com.thkox.homeai.domain.usecase.user.ChangePasswordUseCase
+import com.thkox.homeai.domain.usecase.user.GetUserDetailsUseCase
+import com.thkox.homeai.domain.usecase.user.UpdateMyProfileUseCase
 import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.presentation.models.UserUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,11 +47,13 @@ class ProfileViewModel @Inject constructor(
                         profileUpdateError = null
                     )
                 }
+
                 is Resource.Error -> {
                     _state.value = _state.value.copy(
                         profileUpdateError = result.message
                     )
                 }
+
                 is Resource.Loading -> {}
             }
         }
@@ -77,11 +79,13 @@ class ProfileViewModel @Inject constructor(
                         profileUpdateError = null
                     )
                 }
+
                 is Resource.Error -> {
                     _state.value = _state.value.copy(
                         profileUpdateError = result.message
                     )
                 }
+
                 is Resource.Loading -> {}
             }
             _state.value = _state.value.copy(isUpdatingProfile = false)
@@ -98,11 +102,13 @@ class ProfileViewModel @Inject constructor(
                         changePasswordError = null
                     )
                 }
+
                 is Resource.Error -> {
                     _state.value = _state.value.copy(
                         changePasswordError = result.message
                     )
                 }
+
                 is Resource.Loading -> {}
             }
             _state.value = _state.value.copy(isChangingPassword = false)

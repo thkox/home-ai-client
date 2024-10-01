@@ -163,7 +163,8 @@ fun MainScreen(
     }
 
     // Permissions
-    val microphonePermissionState = rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
+    val microphonePermissionState =
+        rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
 
     var showPermissionDeniedDialog by remember { mutableStateOf(false) }
 
@@ -230,9 +231,11 @@ fun MainScreen(
                                 viewModel.startSpeechRecognition()
                             }
                         }
+
                         microphonePermissionState.shouldShowRationale || !microphonePermissionState.permissionRequested -> {
                             microphonePermissionState.launchPermissionRequest()
                         }
+
                         else -> {
                             // Permission denied permanently
                             showPermissionDeniedDialog = true
@@ -571,7 +574,6 @@ fun MainContent(
         }
     }
 }
-
 
 
 @Preview(

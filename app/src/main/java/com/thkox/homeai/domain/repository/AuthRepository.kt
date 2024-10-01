@@ -1,8 +1,5 @@
 package com.thkox.homeai.domain.repository
 
-import com.thkox.homeai.data.models.ChangePassword
-import com.thkox.homeai.data.models.UserUpdateProfile
-import com.thkox.homeai.data.models.UserResponseDto
 import com.thkox.homeai.domain.models.PasswordChange
 import com.thkox.homeai.domain.models.Token
 import com.thkox.homeai.domain.models.User
