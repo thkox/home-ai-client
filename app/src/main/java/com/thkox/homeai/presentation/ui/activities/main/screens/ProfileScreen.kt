@@ -2,6 +2,7 @@ package com.thkox.homeai.presentation.ui.activities.main.screens
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
@@ -78,7 +80,7 @@ fun ProfileContent(
     Scaffold(
         topBar = {
             MainTopAppBar(
-                text = "Profile",
+                text = "Profile Settings",
                 isSecondScreen = true,
                 onClickNavigationIcon = { onClickNavigationIcon() }
             )
@@ -89,14 +91,18 @@ fun ProfileContent(
                 .padding(paddingValues)
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             item {
-                Text(
-                    text = "Profile",
-                    style = MaterialTheme.typography.headlineMedium,
-
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Profile",
+                        style = MaterialTheme.typography.headlineMedium
                     )
+                }
             }
 
             item {
@@ -168,10 +174,15 @@ fun ProfileContent(
             }
 
             item {
-                Text(
-                    text = "Change Password",
-                    style = MaterialTheme.typography.headlineSmall,
-                )
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Change Password",
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                }
             }
 
             item {
