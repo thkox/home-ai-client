@@ -13,6 +13,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.DocumentScanner
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Textsms
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,6 +37,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
+import com.thkox.homeai.presentation.models.TutorialPage
+import com.thkox.homeai.presentation.ui.components.TutorialCard
 import com.thkox.homeai.presentation.ui.components.WelcomeTopAppBar
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import kotlinx.coroutines.launch
@@ -47,9 +56,12 @@ fun TutorialContent(
     modifier: Modifier = Modifier,
     onLastPageAction: () -> Unit
 ) {
-    val context = LocalContext.current
     val pagerState = rememberPagerState()
-    val pages = listOf("Page 1", "Page 2", "Page 3")
+    val pages = listOf(
+        TutorialPage("Ask me anything!", "You can ask the Home AI any question you want using the text field or your microphone.", Icons.Default.Textsms),
+        TutorialPage("I can answer questions about your documents!", "Upload and select the documents that you want me to analyze using the attach file button.", Icons.Default.DocumentScanner),
+        TutorialPage("See your conversation history!", "At anytime you can see the conversation history, in the left menu side bar!", Icons.Default.Menu)
+    )
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
@@ -86,30 +98,23 @@ fun TutorialContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Text(
+                text = "Here are some tips to get you started:",
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             HorizontalPager(
                 count = pages.size,
                 state = pagerState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
-                contentPadding = PaddingValues(horizontal = 32.dp),
+                contentPadding = PaddingValues(horizontal = 24.dp),
                 itemSpacing = 16.dp
             ) { page ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = RoundedCornerShape(16.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = pages[page],
-                        fontSize = 24.sp,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
+                TutorialCard(page = pages[page])
             }
 
             Spacer(modifier = Modifier.height(16.dp))
