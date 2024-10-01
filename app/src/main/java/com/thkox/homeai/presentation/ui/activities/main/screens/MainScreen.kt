@@ -198,7 +198,10 @@ fun MainScreen(
 
     MenuNavigationDrawer(
         drawerState = drawerState,
+        firstName = state.firstName,
+        lastName = state.lastName,
         conversations = state.conversations,
+        userErrorMessage = state.userErrorMessage ?: "",
         onNewConversationClick = {
             viewModel.currentConversationId = null
             viewModel.startNewConversation()
@@ -287,7 +290,10 @@ fun MainScreen(
 @Composable
 fun MenuNavigationDrawer(
     drawerState: DrawerState,
+    firstName: String?,
+    lastName: String?,
     conversations: List<ConversationUIModel>,
+    userErrorMessage: String = "",
     onNewConversationClick: () -> Unit,
     onProfileSettingsClick: () -> Unit,
     onConversationClick: (String) -> Unit,
@@ -352,6 +358,31 @@ fun MenuNavigationDrawer(
                 }
 
                 HorizontalDivider()
+
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (firstName != null && lastName != null) {
+                        Text(
+                            text = "Hello, $firstName $lastName!",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
+                    if (userErrorMessage.isNotEmpty()) {
+                        Text(
+                            text = userErrorMessage,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
+                }
+
+                HorizontalDivider()
+
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
@@ -362,10 +393,12 @@ fun MenuNavigationDrawer(
                     )
                 }
                 HorizontalDivider()
-                Text(
-                    text = stringResource(R.string.past_conversations),
-                    modifier = Modifier.padding(10.dp)
-                )
+                if (sortedConversations.isNotEmpty()) {
+                    Text(
+                        text = stringResource(R.string.past_conversations),
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
                 LazyColumn {
                     items(sortedConversations) { conversation ->
                         Row(
@@ -446,7 +479,9 @@ private fun MenuNavigationDrawerDarkPreview() {
             },
             currentConversationId = null,
             onDeleteConversation = {},
-            onProfileSettingsClick = {}
+            onProfileSettingsClick = {},
+            firstName = "John",
+            lastName = "Doe"
         )
     }
 }
@@ -483,7 +518,9 @@ private fun MenuNavigationDrawerLightPreview() {
             },
             currentConversationId = null,
             onDeleteConversation = {},
-            onProfileSettingsClick = {}
+            onProfileSettingsClick = {},
+            firstName = "John",
+            lastName = "Doe"
         )
     }
 }

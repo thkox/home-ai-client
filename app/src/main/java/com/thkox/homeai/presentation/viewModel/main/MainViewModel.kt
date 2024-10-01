@@ -15,6 +15,7 @@ import com.thkox.homeai.domain.usecase.RecognizeSpeechUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.UpdateConversationTitleUseCase
 import com.thkox.homeai.domain.usecase.UploadDocumentUseCase
+import com.thkox.homeai.domain.usecase.user.GetUserDetailsUseCase
 import com.thkox.homeai.domain.utils.Resource
 import com.thkox.homeai.presentation.models.ConversationUIModel
 import com.thkox.homeai.presentation.models.DocumentUIModel
@@ -42,7 +43,8 @@ class MainViewModel @Inject constructor(
     private val getUserDocumentsUseCase: GetUserDocumentsUseCase,
     private val getDocumentDetailsUseCase: GetDocumentDetailsUseCase,
     private val getConversationDetailsUseCase: GetConversationDetailsUseCase,
-    private val recognizeSpeechUseCase: RecognizeSpeechUseCase
+    private val recognizeSpeechUseCase: RecognizeSpeechUseCase,
+    private val getUserDetailsUseCase: GetUserDetailsUseCase // Injected here
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MainState())
@@ -56,6 +58,33 @@ class MainViewModel @Inject constructor(
         }
 
     private var speechRecognitionJob: Job? = null
+
+    init {
+        loadUserDetails()
+    }
+
+    private fun loadUserDetails() {
+        viewModelScope.launch {
+            when (val result = getUserDetailsUseCase()) {
+                is Resource.Success -> {
+                    val user = result.data
+                    _state.value = _state.value.copy(
+                        firstName = user?.firstName,
+                        lastName = user?.lastName,
+                        userErrorMessage = null
+                    )
+                }
+
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        userErrorMessage = result.message
+                    )
+                }
+
+                is Resource.Loading -> {}
+            }
+        }
+    }
 
     fun startSpeechRecognition() {
         speechRecognitionJob?.cancel()
@@ -444,5 +473,8 @@ data class MainState(
     val conversationErrorMessage: String? = null,
     val documentErrorMessage: String? = null,
     val isRecording: Boolean = false,
-    val speechText: String? = null
+    val speechText: String? = null,
+    val firstName: String? = null,
+    val lastName: String? = null,
+    val userErrorMessage: String? = null
 )
