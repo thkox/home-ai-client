@@ -28,6 +28,7 @@ fun MainTopAppBar(
     modifier: Modifier = Modifier,
     text: String,
     onClickNavigationIcon: () -> Unit = {},
+    isSecondScreen: Boolean = false
 ) {
     CenterAlignedTopAppBar(
         modifier = modifier
@@ -51,11 +52,20 @@ fun MainTopAppBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = onClickNavigationIcon) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = stringResource(R.string.menu)
-                )
+            if (!isSecondScreen) {
+                IconButton(onClick = onClickNavigationIcon) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = stringResource(R.string.menu)
+                    )
+                }
+            } else {
+                IconButton(onClick = onClickNavigationIcon) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
+                        contentDescription = stringResource(R.string.back)
+                    )
+                }
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
