@@ -10,6 +10,7 @@ import com.thkox.homeai.domain.usecase.user.UpdateMyProfileUseCase
 import com.thkox.homeai.domain.utils.Resource
 import com.thkox.homeai.presentation.models.UserUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -76,8 +77,10 @@ class ProfileViewModel @Inject constructor(
                             role = user.role,
                             password = null
                         ),
-                        profileUpdateError = null
+                        profileUpdateError = null,
+                        profileUpdateSuccess = "Profile updated successfully!"
                     )
+                    clearProfileUpdateSuccessMessage()
                 }
 
                 is Resource.Error -> {
@@ -99,8 +102,10 @@ class ProfileViewModel @Inject constructor(
             when (val result = changePasswordUseCase(passwordChange)) {
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
-                        changePasswordError = null
+                        changePasswordError = null,
+                        passwordChangeSuccess = "Password changed successfully!"
                     )
+                    clearPasswordChangeSuccessMessage()
                 }
 
                 is Resource.Error -> {
@@ -114,12 +119,28 @@ class ProfileViewModel @Inject constructor(
             _state.value = _state.value.copy(isChangingPassword = false)
         }
     }
+
+    private fun clearProfileUpdateSuccessMessage() {
+        viewModelScope.launch {
+            delay(3000)
+            _state.value = _state.value.copy(profileUpdateSuccess = null)
+        }
+    }
+
+    private fun clearPasswordChangeSuccessMessage() {
+        viewModelScope.launch {
+            delay(3000)
+            _state.value = _state.value.copy(passwordChangeSuccess = null)
+        }
+    }
 }
 
 data class ProfileScreenState(
     val userProfile: UserUIModel? = null,
     val isUpdatingProfile: Boolean = false,
     val profileUpdateError: String? = null,
+    val profileUpdateSuccess: String? = null,
     val isChangingPassword: Boolean = false,
-    val changePasswordError: String? = null
+    val changePasswordError: String? = null,
+    val passwordChangeSuccess: String? = null
 )

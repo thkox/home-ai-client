@@ -1,16 +1,12 @@
 package com.thkox.homeai.presentation.ui.activities.main.screens
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -24,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -84,137 +81,158 @@ fun ProfileContent(
             )
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(
-                text = "Profile",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-
-            ModernTextField(
-                value = firstName,
-                onValueChange = { firstName = it },
-                label = "First Name"
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            ModernTextField(
-                value = lastName,
-                onValueChange = { lastName = it },
-                label = "Last Name"
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            ModernTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = "Email"
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-            if (state.profileUpdateError != null) {
+            item {
                 Text(
-                    text = state.profileUpdateError,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.bodyMedium
+                    text = "Profile",
+                    style = MaterialTheme.typography.headlineMedium,
+
                 )
-                Spacer(modifier = Modifier.height(8.dp))
             }
 
-            Button(
-                onClick = {
-                    keyboardController?.hide()
-                    onUpdateProfile(firstName, lastName, email)
-                },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !state.isUpdatingProfile
-            ) {
-                if (state.isUpdatingProfile) {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(24.dp)
+            item {
+                if (state.profileUpdateSuccess != null) {
+                    Text(
+                        text = state.profileUpdateSuccess,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
                 }
-                Text("Update Profile")
+                if (state.profileUpdateError != null) {
+                    Text(
+                        text = state.profileUpdateError,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            item {
+                ModernTextField(
+                    value = firstName,
+                    onValueChange = { firstName = it },
+                    label = "First Name"
+                )
+            }
 
-            HorizontalDivider()
+            item {
+                ModernTextField(
+                    value = lastName,
+                    onValueChange = { lastName = it },
+                    label = "Last Name"
+                )
+            }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            item {
+                ModernTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = "Email"
+                )
+            }
 
-            Text(
-                text = "Change Password",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+            item {
+                Button(
+                    onClick = {
+                        keyboardController?.hide()
+                        onUpdateProfile(firstName, lastName, email)
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !state.isUpdatingProfile
+                ) {
+                    if (state.isUpdatingProfile) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                    Text("Update Profile")
+                }
+            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            item {
+                Divider()
+            }
 
-            ModernTextField(
-                value = oldPassword,
-                onValueChange = { oldPassword = it },
-                label = "Old Password",
-                isPassword = true
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            ModernTextField(
-                value = newPassword,
-                onValueChange = { newPassword = it },
-                label = "New Password",
-                isPassword = true
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (state.changePasswordError != null) {
+            item {
                 Text(
-                    text = state.changePasswordError,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.fillMaxWidth(),
-                    style = MaterialTheme.typography.bodyMedium
+                    text = "Change Password",
+                    style = MaterialTheme.typography.headlineSmall,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
             }
 
-            Button(
-                onClick = {
-                    keyboardController?.hide()
-                    onChangePassword(oldPassword, newPassword)
-                    oldPassword = ""
-                    newPassword = ""
-                },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !state.isChangingPassword
-            ) {
-                if (state.isChangingPassword) {
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(24.dp)
+            item {
+                if (state.passwordChangeSuccess != null) {
+                    Text(
+                        text = state.passwordChangeSuccess,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
                 }
-                Text("Change Password")
+                if (state.changePasswordError != null) {
+                    Text(
+                        text = state.changePasswordError,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+
+            item {
+                ModernTextField(
+                    value = oldPassword,
+                    onValueChange = { oldPassword = it },
+                    label = "Old Password",
+                    isPassword = true
+                )
+            }
+
+            item {
+                ModernTextField(
+                    value = newPassword,
+                    onValueChange = { newPassword = it },
+                    label = "New Password",
+                    isPassword = true
+                )
+            }
+
+            item {
+                Button(
+                    onClick = {
+                        keyboardController?.hide()
+                        onChangePassword(oldPassword, newPassword)
+                        oldPassword = ""
+                        newPassword = ""
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !state.isChangingPassword
+                ) {
+                    if (state.isChangingPassword) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                    Text("Change Password")
+                }
             }
         }
     }
 }
-
 
 @Preview(
     showBackground = true,
