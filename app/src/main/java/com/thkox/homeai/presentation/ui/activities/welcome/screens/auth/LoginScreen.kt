@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -87,7 +88,7 @@ fun LoginContent(
     Scaffold(
         topBar = {
             WelcomeTopAppBar(
-                text = "Login",
+                text = stringResource(R.string.login),
                 onClickBackIcon = {
                     navigateToEnterServerAddress()
                 }
@@ -99,7 +100,7 @@ fun LoginContent(
                     onClick = onLoginClicked,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Login")
+                    Text(stringResource(R.string.login))
                 }
             }
         }
@@ -124,19 +125,19 @@ fun LoginContent(
                 contentDescription = null,
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Please enter your email and password to login.")
+            Text(stringResource(R.string.please_enter_your_email_and_password_to_login))
             Spacer(modifier = Modifier.height(8.dp))
             ModernTextField(
                 value = email,
                 onValueChange = onEmailChanged,
-                label = "Email",
+                label = stringResource(R.string.email),
                 isError = errorMessage.isNotEmpty()
             )
             Spacer(modifier = Modifier.height(8.dp))
             ModernTextField(
                 value = password,
                 onValueChange = onPasswordChanged,
-                label = "Password",
+                label = stringResource(R.string.password),
                 isPassword = true,
                 isError = errorMessage.isNotEmpty()
             )
@@ -150,7 +151,7 @@ fun LoginContent(
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Don't have an account? Register here.",
+                text = stringResource(R.string.don_t_have_an_account_register_here),
                 modifier = Modifier.clickable {
                     navigateToRegister()
                 },

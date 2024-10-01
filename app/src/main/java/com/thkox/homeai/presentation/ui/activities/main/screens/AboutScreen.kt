@@ -8,10 +8,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.thkox.homeai.R
 import com.thkox.homeai.presentation.ui.components.MainTopAppBar
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 
@@ -23,7 +25,7 @@ fun AboutScreen(
     Scaffold(
         topBar = {
             MainTopAppBar(
-                text = "About",
+                text = stringResource(R.string.about),
                 isSecondScreen = true,
                 onClickNavigationIcon = navigateToMain,
             )
@@ -70,8 +72,7 @@ fun AboutContent(
 
 @Preview(
     showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    name = "Light Mode"
+    uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Composable
 fun AboutScreenLightPreview() {
@@ -82,8 +83,7 @@ fun AboutScreenLightPreview() {
 
 @Preview(
     showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    name = "Dark Mode"
+    uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 fun AboutScreenDarkPreview() {

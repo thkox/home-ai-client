@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -92,7 +93,7 @@ fun EnterServerAddressContent(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = serverAddress.isNotEmpty()
                 ) {
-                    Text("Next")
+                    Text(stringResource(R.string.next))
                 }
             }
         }
@@ -112,7 +113,7 @@ fun EnterServerAddressContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Welcome to Home AI",
+                    text = stringResource(R.string.welcome_to_home_ai),
                     style = MaterialTheme.typography.displayLarge
                 )
             }
@@ -138,7 +139,7 @@ fun EnterServerAddressContent(
                 Spacer(modifier = Modifier.height(25.dp))
 
                 Text(
-                    text = "Please enter the server address of the app to continue.",
+                    text = stringResource(R.string.please_enter_the_server_address_of_the_app_to_continue),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -149,7 +150,7 @@ fun EnterServerAddressContent(
                         isError = false
                         errorMessage = ""
                     },
-                    label = { Text("(e.g. http://192.168.5.90:8000)") },
+                    label = { Text(stringResource(R.string.e_g_http_192_168_5_90_8000)) },
                     modifier = Modifier.fillMaxWidth(),
                     isError = isError || enterServerAddressState is Resource.Error,
                     singleLine = true

@@ -74,7 +74,7 @@ fun TutorialContent(
     Scaffold(
         topBar = {
             WelcomeTopAppBar(
-                text = "Tutorial",
+                text = stringResource(R.string.tutorial),
                 showBackButton = false
             )
         },
@@ -92,7 +92,9 @@ fun TutorialContent(
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = if (pagerState.currentPage == pagerState.pageCount - 1) "Start" else "Next")
+                    Text(text = if (pagerState.currentPage == pagerState.pageCount - 1) stringResource(
+                        R.string.start
+                    ) else stringResource(R.string.next))
                 }
             }
         }
@@ -106,7 +108,7 @@ fun TutorialContent(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Here are some tips to get you started:",
+                text = stringResource(R.string.here_are_some_tips_to_get_you_started),
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onBackground

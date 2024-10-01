@@ -150,10 +150,10 @@ fun MainScreen(
 
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text(text = "Delete Document") },
+            title = { Text(text = stringResource(R.string.delete_document)) },
             text = {
                 Text(
-                    text = "Do you want to delete the document ${documentName}?"
+                    text = stringResource(R.string.do_you_want_to_delete_the_document, documentName ?: "")
                 )
             },
             confirmButton = {
@@ -161,12 +161,12 @@ fun MainScreen(
                     viewModel.deleteDocument(documentToDelete!!)
                     showDialog = false
                 }) {
-                    Text("Yes")
+                    Text(stringResource(R.string.yes))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text("No")
+                    Text(stringResource(R.string.no))
                 }
             }
         )
@@ -180,10 +180,10 @@ fun MainScreen(
     if (showPermissionDeniedDialog) {
         AlertDialog(
             onDismissRequest = { showPermissionDeniedDialog = false },
-            title = { Text(text = "Microphone Permission Required") },
+            title = { Text(text = stringResource(R.string.microphone_permission_required)) },
             text = {
                 Text(
-                    text = "This app needs access to your microphone to record audio. Please grant the permission in app settings."
+                    text = stringResource(R.string.this_app_needs_access_to_your_microphone_to_record_audio_please_grant_the_permission_in_app_settings)
                 )
             },
             confirmButton = {
@@ -194,12 +194,12 @@ fun MainScreen(
                     intent.data = uri
                     context.startActivity(intent)
                 }) {
-                    Text("Open Settings")
+                    Text(stringResource(R.string.open_settings))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showPermissionDeniedDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -322,19 +322,19 @@ fun MenuNavigationDrawer(
     if (showDialog && conversationToDelete != null) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text(text = "Delete Conversation") },
-            text = { Text(text = "Are you sure you want to delete this conversation?") },
+            title = { Text(text = stringResource(R.string.delete_conversation)) },
+            text = { Text(text = stringResource(R.string.are_you_sure_you_want_to_delete_this_conversation)) },
             confirmButton = {
                 TextButton(onClick = {
                     onDeleteConversation(conversationToDelete!!)
                     showDialog = false
                 }) {
-                    Text("Yes")
+                    Text(stringResource(R.string.yes))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text("No")
+                    Text(stringResource(R.string.no))
                 }
             }
         )
@@ -375,7 +375,7 @@ fun MenuNavigationDrawer(
                                 contentScale = ContentScale.Crop,
                                 contentDescription = null,
                             )
-                            Text("Home AI", modifier = Modifier.padding(16.dp))
+                            Text(stringResource(R.string.home_ai), modifier = Modifier.padding(16.dp))
                         }
 
                         HorizontalDivider()
@@ -386,7 +386,7 @@ fun MenuNavigationDrawer(
                         ) {
                             if (firstName != null && lastName != null) {
                                 Text(
-                                    text = "Hello, $firstName $lastName!",
+                                    text = stringResource(R.string.hello, firstName, lastName),
                                     style = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier
                                         .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -460,7 +460,7 @@ fun MenuNavigationDrawer(
                                     contentDescription = stringResource(R.string.profile_settings)
                                 )
                             },
-                            label = { Text(text = "Profile Settings") },
+                            label = { Text(text = stringResource(R.string.profile_settings)) },
                             selected = false,
                             onClick = { onProfileSettingsClick() }
                         )
@@ -471,7 +471,7 @@ fun MenuNavigationDrawer(
                                     contentDescription = stringResource(R.string.logout)
                                 )
                             },
-                            label = { Text(text = "Logout") },
+                            label = { Text(stringResource(R.string.logout)) },
                             selected = false,
                             onClick = { onLogoutClick() }
                         )
@@ -482,7 +482,7 @@ fun MenuNavigationDrawer(
                                     contentDescription = stringResource(R.string.about)
                                 )
                             },
-                            label = { Text(text = "About") },
+                            label = { Text(stringResource(R.string.about)) },
                             selected = false,
                             onClick = { onAboutClick() }
                         )

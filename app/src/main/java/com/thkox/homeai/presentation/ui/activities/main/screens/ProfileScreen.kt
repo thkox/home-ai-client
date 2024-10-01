@@ -25,10 +25,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.thkox.homeai.R
 import com.thkox.homeai.presentation.models.UserUIModel
 import com.thkox.homeai.presentation.ui.components.MainTopAppBar
 import com.thkox.homeai.presentation.ui.components.ModernTextField
@@ -80,7 +82,7 @@ fun ProfileContent(
     Scaffold(
         topBar = {
             MainTopAppBar(
-                text = "Profile Settings",
+                text = stringResource(R.string.profile_settings),
                 isSecondScreen = true,
                 onClickNavigationIcon = { onClickNavigationIcon() }
             )
@@ -99,7 +101,7 @@ fun ProfileContent(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Profile",
+                        text = stringResource(R.string.profile),
                         style = MaterialTheme.typography.headlineMedium
                     )
                 }
@@ -129,7 +131,7 @@ fun ProfileContent(
                 ModernTextField(
                     value = firstName,
                     onValueChange = { firstName = it },
-                    label = "First Name"
+                    label = stringResource(R.string.first_name)
                 )
             }
 
@@ -137,7 +139,7 @@ fun ProfileContent(
                 ModernTextField(
                     value = lastName,
                     onValueChange = { lastName = it },
-                    label = "Last Name"
+                    label = stringResource(R.string.last_name)
                 )
             }
 
@@ -145,7 +147,7 @@ fun ProfileContent(
                 ModernTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = "Email"
+                    label = stringResource(R.string.email)
                 )
             }
 
@@ -165,7 +167,7 @@ fun ProfileContent(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                     }
-                    Text("Update Profile")
+                    Text(stringResource(R.string.update_profile))
                 }
             }
 
@@ -179,7 +181,7 @@ fun ProfileContent(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Change Password",
+                        text = stringResource(R.string.change_password),
                         style = MaterialTheme.typography.headlineSmall,
                     )
                 }
@@ -209,7 +211,7 @@ fun ProfileContent(
                 ModernTextField(
                     value = oldPassword,
                     onValueChange = { oldPassword = it },
-                    label = "Old Password",
+                    label = stringResource(R.string.old_password),
                     isPassword = true
                 )
             }
@@ -218,7 +220,7 @@ fun ProfileContent(
                 ModernTextField(
                     value = newPassword,
                     onValueChange = { newPassword = it },
-                    label = "New Password",
+                    label = stringResource(R.string.new_password),
                     isPassword = true
                 )
             }
@@ -241,7 +243,7 @@ fun ProfileContent(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                     }
-                    Text("Change Password")
+                    Text(stringResource(R.string.change_password))
                 }
             }
         }
