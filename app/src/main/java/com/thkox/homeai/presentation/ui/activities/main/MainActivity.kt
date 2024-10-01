@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
+import com.thkox.homeai.presentation.navigation.MainNavHost
 import com.thkox.homeai.presentation.ui.activities.main.screens.MainScreen
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +24,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen()
+                    MainNavHost(
+                        navController = rememberNavController(),
+                        startDestination = "main",
+                    )
                 }
             }
         }
