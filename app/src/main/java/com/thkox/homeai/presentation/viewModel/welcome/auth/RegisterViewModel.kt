@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thkox.homeai.domain.usecase.user.RegisterUseCase
 import com.thkox.homeai.domain.utils.Resource
-import com.thkox.homeai.presentation.models.UserUiModel
+import com.thkox.homeai.presentation.models.UserUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -69,7 +69,7 @@ class RegisterViewModel @Inject constructor(
             return
         }
 
-        val userUiModel = UserUiModel(
+        val userUiModel = UserUIModel(
             userId = "", // Assuming userId is not needed for registration
             firstName = currentFirstName,
             lastName = currentLastName,

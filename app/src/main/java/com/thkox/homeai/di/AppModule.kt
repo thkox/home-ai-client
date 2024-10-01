@@ -27,11 +27,12 @@ import com.thkox.homeai.domain.usecase.GetUserDocumentDetailsUseCase
 import com.thkox.homeai.domain.usecase.RecognizeSpeechUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.UpdateConversationTitleUseCase
-import com.thkox.homeai.domain.usecase.UpdateMyProfileUseCase
 import com.thkox.homeai.domain.usecase.UploadDocumentUseCase
+import com.thkox.homeai.domain.usecase.user.ChangePasswordUseCase
 import com.thkox.homeai.domain.usecase.user.GetUserDetailsUseCase
 import com.thkox.homeai.domain.usecase.user.LoginUseCase
 import com.thkox.homeai.domain.usecase.user.RegisterUseCase
+import com.thkox.homeai.domain.usecase.user.UpdateMyProfileUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -200,6 +201,12 @@ object AppModule {
     @Singleton
     fun providesUpdateMyProfileUseCase(authRepository: AuthRepository): UpdateMyProfileUseCase {
         return UpdateMyProfileUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesChangePasswordUseCase(authRepository: AuthRepository): ChangePasswordUseCase {
+        return ChangePasswordUseCase(authRepository)
     }
 
     @Provides

@@ -1,6 +1,6 @@
 package com.thkox.homeai.presentation.models
 
-data class UserUiModel(
+data class UserUIModel(
     val userId: String,
     val firstName: String,
     val lastName: String,

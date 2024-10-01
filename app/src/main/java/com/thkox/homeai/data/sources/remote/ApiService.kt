@@ -1,5 +1,6 @@
 package com.thkox.homeai.data.sources.remote
 
+import com.thkox.homeai.data.models.ChangePassword
 import com.thkox.homeai.data.models.ContinueConversationRequest
 import com.thkox.homeai.data.models.ConversationDto
 import com.thkox.homeai.data.models.DocumentDto
@@ -7,6 +8,7 @@ import com.thkox.homeai.data.models.MessageDto
 import com.thkox.homeai.data.models.TokenDto
 import com.thkox.homeai.data.models.UserCreateRequest
 import com.thkox.homeai.data.models.UserResponseDto
+import com.thkox.homeai.data.models.UserUpdateProfile
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -39,10 +41,15 @@ interface ApiService {
         @Body userCreateRequest: UserCreateRequest
     ): Response<UserResponseDto>
 
-    @PUT("/users/me")
+    @PUT("/users/me/profile")
     suspend fun updateMyProfile(
-        @Body userCreateRequest: UserCreateRequest
+        @Body userUpdateProfile: UserUpdateProfile
     ): Response<UserResponseDto>
+
+    @PUT("/users/me/password")
+    suspend fun changeMyPassword(
+        @Body changePassword: ChangePassword
+    ): Response<Unit>
 
     @GET("/users/me/details")
     suspend fun getUserDetails(): Response<UserResponseDto>
@@ -50,9 +57,27 @@ interface ApiService {
     @POST("/conversations/")
     suspend fun startConversation(): Response<ConversationDto>
 
-    @POST("/conversations/{conversationId}/continue")
+    @GET("/conversations/{conversation_id}/details")
+    suspend fun getConversationDetails(
+        @Path("conversation_id") conversationId: String
+    ): Response<ConversationDto>
+
+    @GET("/conversations/me")
+    suspend fun getUserConversations(): Response<List<ConversationDto>>
+
+    @DELETE("/conversations/{conversation_id}")
+    suspend fun deleteConversation(
+        @Path("conversation_id") conversationId: String
+    ): Response<Unit>
+
+    @GET("/conversations/{conversation_id}/messages")
+    suspend fun getConversationMessages(
+        @Path("conversation_id") conversationId: String
+    ): Response<List<MessageDto>>
+
+    @POST("/conversations/{conversation_id}/continue")
     suspend fun continueConversation(
-        @Path("conversationId") conversationId: String,
+        @Path("conversation_id") conversationId: String,
         @Body request: ContinueConversationRequest
     ): Response<MessageDto>
 
@@ -62,32 +87,16 @@ interface ApiService {
         @Part files: List<MultipartBody.Part>
     ): Response<List<DocumentDto>>
 
-    @DELETE("/documents/{id}")
-    suspend fun deleteDocument(@Path("id") documentId: String): Response<Unit>
+    @GET("/documents/{document_id}/details")
+    suspend fun getDocumentDetails(
+        @Path("document_id") documentId: String
+    ): Response<DocumentDto>
 
     @GET("/documents/me")
     suspend fun getUserDocuments(): Response<List<DocumentDto>>
 
-    @DELETE("/conversations/{conversationId}")
-    suspend fun deleteConversation(
-        @Path("conversationId") conversationId: String
+    @DELETE("/documents/{document_id}")
+    suspend fun deleteDocument(
+        @Path("document_id") documentId: String
     ): Response<Unit>
-
-    @GET("/conversations/me")
-    suspend fun getUserConversations(): Response<List<ConversationDto>>
-
-    @GET("/conversations/{conversationId}/messages")
-    suspend fun getConversationMessages(
-        @Path("conversationId") conversationId: String
-    ): Response<List<MessageDto>>
-
-    @GET("/conversations/{conversationId}/details")
-    suspend fun getConversationDetails(
-        @Path("conversationId") conversationId: String
-    ): Response<ConversationDto>
-
-    @GET("/documents/{documentId}/details")
-    suspend fun getDocumentDetails(
-        @Path("documentId") documentId: String
-    ): Response<DocumentDto>
 }
