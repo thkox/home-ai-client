@@ -46,7 +46,6 @@ import com.thkox.homeai.presentation.viewModel.welcome.auth.RegisterViewModel
 fun RegisterScreen(
     navigateToLogin: () -> Unit,
     navigateToTutorial: () -> Unit,
-    sharedPreferencesManager: SharedPreferencesManager,
     modifier: Modifier = Modifier,
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
@@ -74,7 +73,6 @@ fun RegisterScreen(
         fieldErrors = fieldErrors,
         navigateToLogin = navigateToLogin,
         navigateToTutorial = navigateToTutorial,
-        sharedPreferencesManager = sharedPreferencesManager,
         modifier = modifier
     )
 }
@@ -96,7 +94,6 @@ fun RegisterContent(
     fieldErrors: Map<String, String>,
     navigateToLogin: () -> Unit,
     navigateToTutorial: () -> Unit,
-    sharedPreferencesManager: SharedPreferencesManager,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -104,7 +101,6 @@ fun RegisterContent(
             WelcomeTopAppBar(
                 text = "Register",
                 onClickBackIcon = {
-                    sharedPreferencesManager.saveBaseUrl("")
                     navigateToLogin()
                 }
             )
@@ -267,13 +263,7 @@ private fun RegisterScreenDarkPreview() {
             signUpState = null,
             navigateToLogin = {},
             fieldErrors = emptyMap(),
-            navigateToTutorial = {},
-            sharedPreferencesManager = SharedPreferencesManager(
-                LocalContext.current.getSharedPreferences(
-                    "app_prefs",
-                    Context.MODE_PRIVATE
-                )
-            )
+            navigateToTutorial = {}
         )
     }
 }
@@ -301,13 +291,7 @@ private fun RegisterScreenLightPreview() {
             signUpState = null,
             navigateToLogin = {},
             navigateToTutorial = {},
-            fieldErrors = emptyMap(),
-            sharedPreferencesManager = SharedPreferencesManager(
-                LocalContext.current.getSharedPreferences(
-                    "app_prefs",
-                    Context.MODE_PRIVATE
-                )
-            )
+            fieldErrors = emptyMap()
         )
     }
 }

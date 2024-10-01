@@ -50,7 +50,6 @@ fun LoginScreen(
     navigateToRegister: () -> Unit,
     navigateToEnterServerAddress: () -> Unit,
     navigateToMain: () -> Unit,
-    sharedPreferencesManager: SharedPreferencesManager,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
@@ -68,7 +67,6 @@ fun LoginScreen(
         navigateToRegister = navigateToRegister,
         navigateToEnterServerAddress = navigateToEnterServerAddress,
         navigateToMain = navigateToMain,
-        sharedPreferencesManager = sharedPreferencesManager,
         modifier = modifier
     )
 }
@@ -84,7 +82,6 @@ fun LoginContent(
     navigateToRegister: () -> Unit,
     navigateToEnterServerAddress: () -> Unit,
     navigateToMain: () -> Unit,
-    sharedPreferencesManager: SharedPreferencesManager,
     modifier: Modifier = Modifier
 ) {
     var errorMessage by remember { mutableStateOf("") }
@@ -94,7 +91,6 @@ fun LoginContent(
             WelcomeTopAppBar(
                 text = "Login",
                 onClickBackIcon = {
-                    sharedPreferencesManager.saveBaseUrl("")
                     navigateToEnterServerAddress()
                 }
             )
@@ -205,12 +201,6 @@ private fun LoginScreenDarkPreview() {
             navigateToRegister = {},
             navigateToEnterServerAddress = {},
             navigateToMain = {},
-            sharedPreferencesManager = SharedPreferencesManager(
-                LocalContext.current.getSharedPreferences(
-                    "app_prefs",
-                    android.content.Context.MODE_PRIVATE
-                )
-            )
         )
     }
 }
@@ -232,13 +222,7 @@ private fun LoginScreenLightPreview() {
             loginState = null,
             navigateToRegister = {},
             navigateToEnterServerAddress = {},
-            navigateToMain = {},
-            sharedPreferencesManager = SharedPreferencesManager(
-                LocalContext.current.getSharedPreferences(
-                    "app_prefs",
-                    android.content.Context.MODE_PRIVATE
-                )
-            )
+            navigateToMain = {}
         )
     }
 }
