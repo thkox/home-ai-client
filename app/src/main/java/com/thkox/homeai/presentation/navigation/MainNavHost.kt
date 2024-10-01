@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.thkox.homeai.data.sources.local.SharedPreferencesManager
+import com.thkox.homeai.presentation.ui.activities.main.screens.AboutScreen
 import com.thkox.homeai.presentation.ui.activities.main.screens.MainScreen
 import com.thkox.homeai.presentation.ui.activities.main.screens.ProfileScreen
 import com.thkox.homeai.presentation.ui.activities.welcome.WelcomeActivity
@@ -31,8 +32,8 @@ fun MainNavHost(
             )
         }
         composable("about") {
-            ProfileScreen(
-                navigateToMain = { navController.popBackStack() }
+            AboutScreen (
+                navigateToMain = { navController.popBackStack()}
             )
         }
     }

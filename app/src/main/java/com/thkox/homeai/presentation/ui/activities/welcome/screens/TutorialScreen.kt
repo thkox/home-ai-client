@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
+import com.thkox.homeai.R
 import com.thkox.homeai.presentation.models.TutorialPage
 import com.thkox.homeai.presentation.ui.components.TutorialCard
 import com.thkox.homeai.presentation.ui.components.WelcomeTopAppBar
@@ -53,18 +55,18 @@ fun TutorialContent(
     val pagerState = rememberPagerState()
     val pages = listOf(
         TutorialPage(
-            "Ask me anything!",
-            "You can ask the Home AI any question you want using the text field or your microphone.",
+            stringResource(R.string.ask_me_anything),
+            stringResource(R.string.you_can_ask_the_home_ai_any_question_you_want_using_the_text_field_or_your_microphone),
             Icons.Default.Textsms
         ),
         TutorialPage(
-            "I can answer questions about your documents!",
-            "Upload and select the documents that you want me to analyze using the attach file button.",
+            stringResource(R.string.i_can_answer_questions_about_your_documents),
+            stringResource(R.string.upload_and_select_the_documents_that_you_want_me_to_analyze_using_the_attach_file_button),
             Icons.Default.DocumentScanner
         ),
         TutorialPage(
-            "See your conversation history!",
-            "At anytime you can see the conversation history, in the left menu side bar!",
+            stringResource(R.string.see_your_conversation_history),
+            stringResource(R.string.at_anytime_you_can_see_the_conversation_history_in_the_left_menu_side_bar),
             Icons.Default.Menu
         )
     )

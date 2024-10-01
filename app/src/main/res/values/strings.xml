@@ -13,4 +13,10 @@
     <string name="profile_settings">Profile Settings</string>
     <string name="logout">Logout</string>
     <string name="about">About</string>
+    <string name="ask_me_anything">Ask me anything!</string>
+    <string name="you_can_ask_the_home_ai_any_question_you_want_using_the_text_field_or_your_microphone">You can ask the Home AI any question you want using the text field or your microphone.</string>
+    <string name="i_can_answer_questions_about_your_documents">I can answer questions about your documents!</string>
+    <string name="upload_and_select_the_documents_that_you_want_me_to_analyze_using_the_attach_file_button">Upload and select the documents that you want me to analyze using the attach file button.</string>
+    <string name="see_your_conversation_history">See your conversation history!</string>
+    <string name="at_anytime_you_can_see_the_conversation_history_in_the_left_menu_side_bar">At anytime you can see the conversation history, in the left menu side bar!</string>
 </resources>
