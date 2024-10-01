@@ -10,4 +10,5 @@
     <string name="new_conversation">New Conversation</string>
     <string name="past_conversations">Past Conversations</string>
     <string name="delete">Delete</string>
+    <string name="profile_settings">Profile Settings</string>
 </resources>

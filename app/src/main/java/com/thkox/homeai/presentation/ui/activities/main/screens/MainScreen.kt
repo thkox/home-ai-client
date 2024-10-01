@@ -80,7 +80,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MainScreen(
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
+    navigateToProfileSettings: () -> Unit,
+    navigateToAbout: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
     var text by remember { mutableStateOf("") }
@@ -207,6 +209,7 @@ fun MainScreen(
         onDeleteConversation = { conversationId ->
             viewModel.deleteConversation(conversationId)
         },
+        onProfileSettingsClick = navigateToProfileSettings,
         mainContent = {
             MainContent(
                 messages = state.messages,
@@ -283,6 +286,7 @@ fun MenuNavigationDrawer(
     drawerState: DrawerState,
     conversations: List<ConversationUIModel>,
     onNewConversationClick: () -> Unit,
+    onProfileSettingsClick: () -> Unit,
     onConversationClick: (String) -> Unit,
     mainContent: @Composable () -> Unit,
     currentConversationId: String?,
@@ -393,12 +397,12 @@ fun MenuNavigationDrawer(
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = stringResource(R.string.settings)
+                            contentDescription = stringResource(R.string.profile_settings)
                         )
                     },
-                    label = { Text(text = "Settings") },
+                    label = { Text(text = "Profile Settings") },
                     selected = false,
-                    onClick = { onNewConversationClick() }
+                    onClick = { onProfileSettingsClick() }
                 )
             }
         }
@@ -438,7 +442,8 @@ private fun MenuNavigationDrawerDarkPreview() {
                 )
             },
             currentConversationId = null,
-            onDeleteConversation = {}
+            onDeleteConversation = {},
+            onProfileSettingsClick = {}
         )
     }
 }
@@ -474,7 +479,8 @@ private fun MenuNavigationDrawerLightPreview() {
                 )
             },
             currentConversationId = null,
-            onDeleteConversation = {}
+            onDeleteConversation = {},
+            onProfileSettingsClick = {}
         )
     }
 }
