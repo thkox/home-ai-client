@@ -25,7 +25,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -82,7 +85,8 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
     navigateToProfileSettings: () -> Unit,
-    navigateToAbout: () -> Unit
+    navigateToAbout: () -> Unit,
+    navigateToWelcome: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
     var text by remember { mutableStateOf("") }
@@ -162,7 +166,6 @@ fun MainScreen(
         )
     }
 
-    // Permissions
     val microphonePermissionState =
         rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
 
@@ -214,6 +217,8 @@ fun MainScreen(
             viewModel.deleteConversation(conversationId)
         },
         onProfileSettingsClick = navigateToProfileSettings,
+        onLogoutClick = navigateToWelcome,
+        onAboutClick = navigateToAbout,
         mainContent = {
             MainContent(
                 messages = state.messages,
@@ -296,6 +301,8 @@ fun MenuNavigationDrawer(
     userErrorMessage: String = "",
     onNewConversationClick: () -> Unit,
     onProfileSettingsClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    onAboutClick: () -> Unit,
     onConversationClick: (String) -> Unit,
     mainContent: @Composable () -> Unit,
     currentConversationId: String?,
@@ -440,6 +447,28 @@ fun MenuNavigationDrawer(
                     selected = false,
                     onClick = { onProfileSettingsClick() }
                 )
+                NavigationDrawerItem(
+                    icon = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Logout,
+                            contentDescription = stringResource(R.string.logout)
+                        )
+                    },
+                    label = { Text(text = "Logout") },
+                    selected = false,
+                    onClick = { onLogoutClick() }
+                )
+                NavigationDrawerItem(
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = stringResource(R.string.about)
+                        )
+                    },
+                    label = { Text(text = "About") },
+                    selected = false,
+                    onClick = { onAboutClick() }
+                )
             }
         }
     ) {
@@ -481,7 +510,9 @@ private fun MenuNavigationDrawerDarkPreview() {
             onDeleteConversation = {},
             onProfileSettingsClick = {},
             firstName = "John",
-            lastName = "Doe"
+            lastName = "Doe",
+            onLogoutClick = {},
+            onAboutClick = {}
         )
     }
 }
@@ -520,7 +551,9 @@ private fun MenuNavigationDrawerLightPreview() {
             onDeleteConversation = {},
             onProfileSettingsClick = {},
             firstName = "John",
-            lastName = "Doe"
+            lastName = "Doe",
+            onLogoutClick = {},
+            onAboutClick = {}
         )
     }
 }

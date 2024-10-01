@@ -21,8 +21,7 @@ class WelcomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Check if the user is already logged in
-        if (sharedPreferencesManager.getToken() != null) {
+        if (sharedPreferencesManager.getToken() != "") {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         } else {
