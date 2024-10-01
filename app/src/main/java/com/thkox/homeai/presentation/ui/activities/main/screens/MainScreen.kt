@@ -343,131 +343,143 @@ fun MenuNavigationDrawer(
                     )
                 ),
             ) {
-                Row(
-                    modifier = Modifier.padding(5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Image(
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .size(52.dp)
-                            .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                            .clip(CircleShape)
-                            .background(Color.White)
-                            .align(Alignment.Top),
-                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null,
-                    )
-                    Text("Home AI", modifier = Modifier.padding(16.dp))
-                }
-
-                HorizontalDivider()
-
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (firstName != null && lastName != null) {
-                        Text(
-                            text = "Hello, $firstName $lastName!",
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
-                    }
-                    if (userErrorMessage.isNotEmpty()) {
-                        Text(
-                            text = userErrorMessage,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
-                    }
-                }
-
-                HorizontalDivider()
-
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AddConversationComposable(
-                        modifier = Modifier.padding(10.dp),
-                        onClick = onNewConversationClick
-                    )
-                }
-                HorizontalDivider()
-                if (sortedConversations.isNotEmpty()) {
-                    Text(
-                        text = stringResource(R.string.past_conversations),
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-                LazyColumn {
-                    items(sortedConversations) { conversation ->
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier.padding(5.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
                         ) {
-                            NavigationDrawerItem(
-                                label = {
-                                    Text(
-                                        text = conversation.title
-                                    )
-                                },
-                                selected = conversation.id == currentConversationId,
-                                onClick = { onConversationClick(conversation.id) },
-                                modifier = Modifier.weight(1f)
+                            Image(
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .size(52.dp)
+                                    .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                                    .clip(CircleShape)
+                                    .background(Color.White)
+                                    .align(Alignment.Top),
+                                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                                contentScale = ContentScale.Crop,
+                                contentDescription = null,
                             )
-                            IconButton(onClick = {
-                                conversationToDelete = conversation.id
-                                showDialog = true
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = stringResource(R.string.delete)
+                            Text("Home AI", modifier = Modifier.padding(16.dp))
+                        }
+
+                        HorizontalDivider()
+
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (firstName != null && lastName != null) {
+                                Text(
+                                    text = "Hello, $firstName $lastName!",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                                )
+                            }
+                            if (userErrorMessage.isNotEmpty()) {
+                                Text(
+                                    text = userErrorMessage,
+                                    color = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.height(5.dp))
+
+                        HorizontalDivider()
+
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            AddConversationComposable(
+                                modifier = Modifier.padding(10.dp),
+                                onClick = onNewConversationClick
+                            )
+                        }
+                        HorizontalDivider()
+
+                        if (sortedConversations.isNotEmpty()) {
+                            Text(
+                                text = stringResource(R.string.past_conversations),
+                                modifier = Modifier.padding(10.dp)
+                            )
+                        }
+                        LazyColumn {
+                            items(sortedConversations) { conversation ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    NavigationDrawerItem(
+                                        label = {
+                                            Text(
+                                                text = conversation.title
+                                            )
+                                        },
+                                        selected = conversation.id == currentConversationId,
+                                        onClick = { onConversationClick(conversation.id) },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    IconButton(onClick = {
+                                        conversationToDelete = conversation.id
+                                        showDialog = true
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = stringResource(R.string.delete)
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(5.dp))
+                            }
+                        }
+                    }
+                    Column {
+                        HorizontalDivider()
+                        NavigationDrawerItem(
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = stringResource(R.string.profile_settings)
+                                )
+                            },
+                            label = { Text(text = "Profile Settings") },
+                            selected = false,
+                            onClick = { onProfileSettingsClick() }
+                        )
+                        NavigationDrawerItem(
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Logout,
+                                    contentDescription = stringResource(R.string.logout)
+                                )
+                            },
+                            label = { Text(text = "Logout") },
+                            selected = false,
+                            onClick = { onLogoutClick() }
+                        )
+                        NavigationDrawerItem(
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Default.Info,
+                                    contentDescription = stringResource(R.string.about)
+                                )
+                            },
+                            label = { Text(text = "About") },
+                            selected = false,
+                            onClick = { onAboutClick() }
+                        )
                     }
                 }
-                HorizontalDivider()
-                NavigationDrawerItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = stringResource(R.string.profile_settings)
-                        )
-                    },
-                    label = { Text(text = "Profile Settings") },
-                    selected = false,
-                    onClick = { onProfileSettingsClick() }
-                )
-                NavigationDrawerItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Logout,
-                            contentDescription = stringResource(R.string.logout)
-                        )
-                    },
-                    label = { Text(text = "Logout") },
-                    selected = false,
-                    onClick = { onLogoutClick() }
-                )
-                NavigationDrawerItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Info,
-                            contentDescription = stringResource(R.string.about)
-                        )
-                    },
-                    label = { Text(text = "About") },
-                    selected = false,
-                    onClick = { onAboutClick() }
-                )
             }
         }
     ) {
