@@ -1,9 +1,7 @@
 package com.thkox.homeai.presentation.ui.activities.welcome.screens
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -12,13 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DocumentScanner
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Textsms
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
@@ -58,9 +52,21 @@ fun TutorialContent(
 ) {
     val pagerState = rememberPagerState()
     val pages = listOf(
-        TutorialPage("Ask me anything!", "You can ask the Home AI any question you want using the text field or your microphone.", Icons.Default.Textsms),
-        TutorialPage("I can answer questions about your documents!", "Upload and select the documents that you want me to analyze using the attach file button.", Icons.Default.DocumentScanner),
-        TutorialPage("See your conversation history!", "At anytime you can see the conversation history, in the left menu side bar!", Icons.Default.Menu)
+        TutorialPage(
+            "Ask me anything!",
+            "You can ask the Home AI any question you want using the text field or your microphone.",
+            Icons.Default.Textsms
+        ),
+        TutorialPage(
+            "I can answer questions about your documents!",
+            "Upload and select the documents that you want me to analyze using the attach file button.",
+            Icons.Default.DocumentScanner
+        ),
+        TutorialPage(
+            "See your conversation history!",
+            "At anytime you can see the conversation history, in the left menu side bar!",
+            Icons.Default.Menu
+        )
     )
     val coroutineScope = rememberCoroutineScope()
 

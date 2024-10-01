@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.provider.Settings
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -78,7 +79,6 @@ import com.thkox.homeai.presentation.ui.components.Message
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import com.thkox.homeai.presentation.viewModel.main.MainViewModel
 import kotlinx.coroutines.launch
-import androidx.activity.compose.BackHandler
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
