@@ -32,8 +32,8 @@ fun MainNavHost(
             )
         }
         composable("about") {
-            AboutScreen (
-                navigateToMain = { navController.popBackStack()}
+            AboutScreen(
+                navigateToMain = { navController.popBackStack() }
             )
         }
     }

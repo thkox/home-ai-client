@@ -13,7 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.thkox.homeai.presentation.ui.components.MainTopAppBar
-import com.thkox.homeai.presentation.ui.components.WelcomeTopAppBar
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 
 @Composable
