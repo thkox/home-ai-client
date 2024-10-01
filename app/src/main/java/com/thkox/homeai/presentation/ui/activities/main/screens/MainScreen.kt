@@ -153,8 +153,7 @@ fun MainScreen(
             title = { Text(text = "Delete Document") },
             text = {
                 Text(
-                    text = "Do you want to delete the document ${documentName}? " +
-                            "After deletion, any conversation that you had with that file will lose access to it."
+                    text = "Do you want to delete the document ${documentName}?"
                 )
             },
             confirmButton = {
@@ -350,7 +349,7 @@ fun MenuNavigationDrawer(
                         topEnd = 50.dp,
                         bottomEnd = 50.dp
                     )
-                ),
+                )
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
