@@ -29,7 +29,7 @@ fun WelcomeNavHost(
             LoginScreen(
                 navigateToRegister = { navController.navigate("register") },
                 navigateToEnterServerAddress = {
-                    sharedPreferencesManager.saveBaseUrl("")
+                    sharedPreferencesManager.deleteBaseUrl()
                     navController.navigate("enterServerAddress")
                 },
                 navigateToMain = {

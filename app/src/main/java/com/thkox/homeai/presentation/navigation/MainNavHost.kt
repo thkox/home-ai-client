@@ -38,10 +38,13 @@ fun MainNavHost(
     }
 }
 
-fun navigateToWelcome(navController: NavHostController, sharedPreferencesManager: SharedPreferencesManager) {
+fun navigateToWelcome(
+    navController: NavHostController,
+    sharedPreferencesManager: SharedPreferencesManager
+) {
     val context = navController.context
-    sharedPreferencesManager.saveToken("")
-    sharedPreferencesManager.saveBaseUrl("")
+    sharedPreferencesManager.deleteToken()
+    sharedPreferencesManager.deleteBaseUrl()
     context.startActivity(Intent(context, WelcomeActivity::class.java))
     (context as? Activity)?.finish()
 }

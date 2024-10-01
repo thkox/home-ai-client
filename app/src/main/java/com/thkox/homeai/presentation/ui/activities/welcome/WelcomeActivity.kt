@@ -21,7 +21,7 @@ class WelcomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (sharedPreferencesManager.getToken() != "") {
+        if (sharedPreferencesManager.getToken() != null) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         } else {
