@@ -331,7 +331,6 @@ class MainViewModel @Inject constructor(
                         )
                         _state.value = _state.value.copy(
                             messages = _state.value.messages + aiMessageObj,
-                            uploadedDocumentIds = emptyList(),
                             conversationErrorMessage = null
                         )
                         _currentConversationId = sendMessageUseCase.conversationId
