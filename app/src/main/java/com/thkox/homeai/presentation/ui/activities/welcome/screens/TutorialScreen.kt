@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.PrivacyTip
+import androidx.compose.material.icons.filled.PrivateConnectivity
 import androidx.compose.material.icons.filled.Textsms
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
@@ -54,19 +56,24 @@ fun TutorialContent(
     val pagerState = rememberPagerState()
     val pages = listOf(
         TutorialPage(
-            stringResource(R.string.ask_me_anything),
-            stringResource(R.string.you_can_ask_the_home_ai_any_question_you_want_using_the_text_field_or_your_microphone),
-            Icons.Default.Textsms
+            title = stringResource(R.string.ask_me_anything),
+            text = stringResource(R.string.you_can_ask_the_home_ai_any_question_you_want_using_the_text_field_or_your_microphone),
+            icon = Icons.Default.Textsms
         ),
         TutorialPage(
-            stringResource(R.string.i_can_answer_questions_about_your_documents),
-            stringResource(R.string.upload_and_select_the_documents_that_you_want_me_to_analyze_using_the_attach_file_button),
-            Icons.Default.DocumentScanner
+            title = stringResource(R.string.i_can_answer_questions_about_your_documents),
+            text = stringResource(R.string.upload_and_select_the_documents_that_you_want_me_to_analyze_using_the_attach_file_button),
+            icon = Icons.Default.DocumentScanner
         ),
         TutorialPage(
-            stringResource(R.string.see_your_conversation_history),
-            stringResource(R.string.at_anytime_you_can_see_the_conversation_history_in_the_left_menu_side_bar),
-            Icons.Default.Menu
+            title = stringResource(R.string.see_your_conversation_history),
+            text = stringResource(R.string.at_anytime_you_can_see_the_conversation_history_in_the_left_menu_side_bar),
+            icon = Icons.Default.Menu
+        ),
+        TutorialPage(
+            title = stringResource(R.string.private_conversations),
+            text = stringResource(R.string.your_conversations_are_private_the_data_is_stored_locally_on_your_home_computer),
+            icon = Icons.Default.PrivacyTip
         )
     )
     val coroutineScope = rememberCoroutineScope()

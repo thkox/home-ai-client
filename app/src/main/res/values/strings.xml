@@ -52,4 +52,6 @@
     <string name="tutorial">Tutorial</string>
     <string name="start">Start</string>
     <string name="here_are_some_tips_to_get_you_started">Here are some tips to get you started:</string>
+    <string name="private_conversations">Private Conversations</string>
+    <string name="your_conversations_are_private_the_data_is_stored_locally_on_your_home_computer">Your conversations are private.\n The data is stored locally on your home computer.</string>
 </resources>
