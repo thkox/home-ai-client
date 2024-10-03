@@ -49,7 +49,7 @@ fun AboutContent(
     val githubUrl = "https://github.com/$githubHandle"
 
     val annotatedString = buildAnnotatedString {
-        append("Created by ")
+        append(stringResource(R.string.created_by))
         pushStringAnnotation(tag = "URL", annotation = githubUrl)
         withStyle(
             style = SpanStyle(
@@ -86,7 +86,7 @@ fun AboutContent(
             }
             item {
                 Text(
-                    text = "Home AI is a privacy-focused application designed to provide users with personalized interactions using Large Language Models (LLMs) directly from their mobile devices. By leveraging the computing power of a local computer, Home AI ensures your data stays secure and private, without relying on cloud-based services.",
+                    text = stringResource(R.string.home_ai_is_a_privacy_focused_application_designed_to_provide_users_with_personalized_interactions_using_large_language_models_llms_directly_from_their_mobile_devices_by_leveraging_the_computing_power_of_a_local_computer_home_ai_ensures_your_data_stays_secure_and_private_without_relying_on_cloud_based_services),
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 8.dp)
@@ -94,7 +94,7 @@ fun AboutContent(
             }
             item {
                 Text(
-                    text = "With Home AI, you can ask questions, receive tailored responses, and even add your own files to create a more customized experience. The app seamlessly connects your Android device with a backend running on a local server, ensuring fast and secure communication.",
+                    text = stringResource(R.string.with_home_ai_you_can_ask_questions_receive_tailored_responses_and_even_add_your_own_files_to_create_a_more_customized_experience_the_app_seamlessly_connects_your_android_device_with_a_backend_running_on_a_local_server_ensuring_fast_and_secure_communication),
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 8.dp)
@@ -102,7 +102,7 @@ fun AboutContent(
             }
             item {
                 Text(
-                    text = "Key Features:",
+                    text = stringResource(R.string.key_features),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
@@ -118,9 +118,9 @@ fun AboutContent(
                                 color = MaterialTheme.colorScheme.tertiary
                             )
                         ) {
-                            append("Private Conversations:")
+                            append(stringResource(R.string.private_conversations_annotation))
                         }
-                        append(" All interactions take place locally on your own infrastructure, ensuring maximum privacy.")
+                        append(stringResource(R.string.all_interactions_take_place_locally_on_your_own_infrastructure_ensuring_maximum_privacy))
                     },
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -136,9 +136,9 @@ fun AboutContent(
                                 color = MaterialTheme.colorScheme.tertiary
                             )
                         ) {
-                            append("Multiple Input Methods:")
+                            append(stringResource(R.string.multiple_input_methods))
                         }
-                        append(" You can interact with Home AI using either voice commands through the microphone or text via the keyboard.")
+                        append(stringResource(R.string.you_can_interact_with_home_ai_using_either_voice_commands_through_the_microphone_or_text_via_the_keyboard))
                     },
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -154,9 +154,9 @@ fun AboutContent(
                                 color = MaterialTheme.colorScheme.tertiary
                             )
                         ) {
-                            append("Personalization:")
+                            append(stringResource(R.string.personalization))
                         }
-                        append(" Upload your own files to receive responses tailored to your specific needs.")
+                        append(stringResource(R.string.upload_your_own_files_to_receive_responses_tailored_to_your_specific_needs))
                     },
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -172,9 +172,9 @@ fun AboutContent(
                                 color = MaterialTheme.colorScheme.tertiary
                             )
                         ) {
-                            append("User Management:")
+                            append(stringResource(R.string.user_management))
                         }
-                        append(" Create an account, log in, and update your profile details anytime. You can also view, continue, or delete previous conversations.")
+                        append(stringResource(R.string.create_an_account_log_in_and_update_your_profile_details_anytime_you_can_also_view_continue_or_delete_previous_conversations))
                     },
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -190,9 +190,9 @@ fun AboutContent(
                                 color = MaterialTheme.colorScheme.tertiary
                             )
                         ) {
-                            append("Seamless Connectivity:")
+                            append(stringResource(R.string.seamless_connectivity))
                         }
-                        append(" The backend is powered by FastAPI, Postgres, ChromaDB, and integrates advanced LLM tools via Ollama and Langchain for intelligent responses.")
+                        append(stringResource(R.string.the_backend_is_powered_by_fastapi_postgres_chromadb_and_integrates_advanced_llm_tools_via_ollama_and_langchain_for_intelligent_responses))
                     },
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -203,9 +203,9 @@ fun AboutContent(
                 Text(
                     buildAnnotatedString {
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Complete Control:")
+                            append(stringResource(R.string.complete_control))
                         }
-                        append(" Modify or delete your data whenever you want, ensuring your information is always under your control.")
+                        append(stringResource(R.string.modify_or_delete_your_data_whenever_you_want_ensuring_your_information_is_always_under_your_control))
                     },
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -214,7 +214,7 @@ fun AboutContent(
             }
             item {
                 Text(
-                    text = "Home AI brings the power of LLMs to your fingertips, all while prioritizing your data privacy and security.",
+                    text = stringResource(R.string.home_ai_brings_the_power_of_llms_to_your_fingertips_all_while_prioritizing_your_data_privacy_and_security),
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 8.dp)
