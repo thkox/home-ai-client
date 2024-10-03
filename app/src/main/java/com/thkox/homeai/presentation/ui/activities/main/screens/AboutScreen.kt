@@ -202,7 +202,12 @@ fun AboutContent(
             item {
                 Text(
                     buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                        ) {
                             append(stringResource(R.string.complete_control))
                         }
                         append(stringResource(R.string.modify_or_delete_your_data_whenever_you_want_ensuring_your_information_is_always_under_your_control))
