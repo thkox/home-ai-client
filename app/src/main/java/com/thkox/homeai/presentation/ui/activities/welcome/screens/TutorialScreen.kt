@@ -13,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PrivacyTip
-import androidx.compose.material.icons.filled.PrivateConnectivity
 import androidx.compose.material.icons.filled.Textsms
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
@@ -99,9 +98,11 @@ fun TutorialContent(
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = if (pagerState.currentPage == pagerState.pageCount - 1) stringResource(
-                        R.string.start
-                    ) else stringResource(R.string.next))
+                    Text(
+                        text = if (pagerState.currentPage == pagerState.pageCount - 1) stringResource(
+                            R.string.start
+                        ) else stringResource(R.string.next)
+                    )
                 }
             }
         }

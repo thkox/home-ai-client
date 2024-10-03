@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,8 +34,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -77,6 +84,24 @@ fun EnterServerAddressContent(
 ) {
     var isError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
+
+    val uriHandler = LocalUriHandler.current
+    val githubHandle = "thkox"
+    val githubUrl = "https://github.com/$githubHandle"
+
+    val annotatedString = buildAnnotatedString {
+        append("Created by ")
+        pushStringAnnotation(tag = "URL", annotation = githubUrl)
+        withStyle(
+            style = SpanStyle(
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline
+            )
+        ) {
+            append(githubHandle)
+        }
+        pop()
+    }
 
     Scaffold(
         bottomBar = {
@@ -169,7 +194,29 @@ fun EnterServerAddressContent(
                     )
                 }
             }
-
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = annotatedString,
+                    modifier = Modifier.clickable {
+                        annotatedString
+                            .getStringAnnotations(
+                                tag = "URL",
+                                start = 0,
+                                end = annotatedString.length
+                            )
+                            .firstOrNull()
+                            ?.let { annotation ->
+                                uriHandler.openUri(annotation.item)
+                            }
+                    },
+                    style = TextStyle(color = MaterialTheme.colorScheme.onBackground)
+                )
+            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

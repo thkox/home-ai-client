@@ -153,7 +153,10 @@ fun MainScreen(
             title = { Text(text = stringResource(R.string.delete_document)) },
             text = {
                 Text(
-                    text = stringResource(R.string.do_you_want_to_delete_the_document, documentName ?: "")
+                    text = stringResource(
+                        R.string.do_you_want_to_delete_the_document,
+                        documentName ?: ""
+                    )
                 )
             },
             confirmButton = {
@@ -375,7 +378,10 @@ fun MenuNavigationDrawer(
                                 contentScale = ContentScale.Crop,
                                 contentDescription = null,
                             )
-                            Text(stringResource(R.string.home_ai), modifier = Modifier.padding(16.dp))
+                            Text(
+                                stringResource(R.string.home_ai),
+                                modifier = Modifier.padding(16.dp)
+                            )
                         }
 
                         HorizontalDivider()

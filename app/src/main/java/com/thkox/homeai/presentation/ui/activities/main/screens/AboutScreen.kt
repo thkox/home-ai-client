@@ -1,16 +1,25 @@
 package com.thkox.homeai.presentation.ui.activities.main.screens
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,11 +38,30 @@ fun AboutScreen(
     )
 }
 
+
 @Composable
 fun AboutContent(
     modifier: Modifier = Modifier,
     navigateToMain: (() -> Unit)? = null
 ) {
+    val uriHandler = LocalUriHandler.current
+    val githubHandle = "thkox"
+    val githubUrl = "https://github.com/$githubHandle"
+
+    val annotatedString = buildAnnotatedString {
+        append("Created by ")
+        pushStringAnnotation(tag = "URL", annotation = githubUrl)
+        withStyle(
+            style = SpanStyle(
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline
+            )
+        ) {
+            append(githubHandle)
+        }
+        pop()
+    }
+
     Scaffold(
         topBar = {
             MainTopAppBar(
@@ -44,7 +72,9 @@ fun AboutContent(
         }
     ) { paddingValues ->
         LazyColumn(
-            modifier = modifier.padding(paddingValues).padding(16.dp)
+            modifier = modifier
+                .padding(paddingValues)
+                .padding(16.dp)
         ) {
             item {
                 Text(
@@ -81,12 +111,102 @@ fun AboutContent(
             }
             item {
                 Text(
-                    text = "- Private Conversations: All interactions take place locally on your own infrastructure, ensuring maximum privacy.\n" +
-                            "- Multiple Input Methods: You can interact with Home AI using either voice commands through the microphone or text via the keyboard.\n" +
-                            "- Personalization: Upload your own files to receive responses tailored to your specific needs.\n" +
-                            "- User Management: Create an account, log in, and update your profile details anytime. You can also view, continue, or delete previous conversations.\n" +
-                            "- Seamless Connectivity: The backend is powered by FastAPI, Postgres, ChromaDB, and integrates advanced LLM tools via Ollama and Langchain for intelligent responses.\n" +
-                            "- Complete Control: Modify or delete your data whenever you want, ensuring your information is always under your control.",
+                    buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                        ) {
+                            append("Private Conversations:")
+                        }
+                        append(" All interactions take place locally on your own infrastructure, ensuring maximum privacy.")
+                    },
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+            item {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                        ) {
+                            append("Multiple Input Methods:")
+                        }
+                        append(" You can interact with Home AI using either voice commands through the microphone or text via the keyboard.")
+                    },
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+            item {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                        ) {
+                            append("Personalization:")
+                        }
+                        append(" Upload your own files to receive responses tailored to your specific needs.")
+                    },
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+            item {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                        ) {
+                            append("User Management:")
+                        }
+                        append(" Create an account, log in, and update your profile details anytime. You can also view, continue, or delete previous conversations.")
+                    },
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+            item {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                        ) {
+                            append("Seamless Connectivity:")
+                        }
+                        append(" The backend is powered by FastAPI, Postgres, ChromaDB, and integrates advanced LLM tools via Ollama and Langchain for intelligent responses.")
+                    },
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+            item {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Complete Control:")
+                        }
+                        append(" Modify or delete your data whenever you want, ensuring your information is always under your control.")
+                    },
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(top = 8.dp)
@@ -100,8 +220,34 @@ fun AboutContent(
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = annotatedString,
+                        modifier = Modifier.clickable {
+                            annotatedString
+                                .getStringAnnotations(
+                                    tag = "URL",
+                                    start = 0,
+                                    end = annotatedString.length
+                                )
+                                .firstOrNull()
+                                ?.let { annotation ->
+                                    uriHandler.openUri(annotation.item)
+                                }
+                        },
+                        style = TextStyle(color = MaterialTheme.colorScheme.onBackground)
+                    )
+                }
+            }
         }
     }
+
 }
 
 @Preview(
