@@ -6,6 +6,6 @@ data class DocumentDto(
     val id: String,
     @SerializedName("file_name") val fileName: String,
     @SerializedName("upload_time") val uploadTime: String,
-    val size: Float,
+    val size: Int,
     val checksum: String
 )

@@ -29,19 +29,18 @@ fun WelcomeNavHost(
             LoginScreen(
                 navigateToRegister = { navController.navigate("register") },
                 navigateToEnterServerAddress = {
+                    sharedPreferencesManager.deleteBaseUrl()
                     navController.navigate("enterServerAddress")
                 },
                 navigateToMain = {
                     navigateToMain(navController)
-                },
-                sharedPreferencesManager = sharedPreferencesManager
+                }
             )
         }
         composable("register") {
             RegisterScreen(
-                navigateToLogin = { navController.navigate("login") },
+                navigateToLogin = { navController.popBackStack() },
                 navigateToTutorial = { navController.navigate("tutorial") },
-                sharedPreferencesManager = sharedPreferencesManager
             )
         }
         composable("tutorial") {

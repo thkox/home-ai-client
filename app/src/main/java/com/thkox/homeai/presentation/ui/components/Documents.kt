@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -122,8 +123,12 @@ fun DocumentsBottomSheet(
     onSelectDocument: (String) -> Unit,
     onDeselectDocument: (String) -> Unit,
     isLoading: Boolean,
-    onDeleteDocument: (String) -> Unit
+    onDeleteDocument: (String) -> Unit,
+    documentErrorMessage: String?
 ) {
+
+    val sortedDocuments = userDocuments.sortedByDescending { it.uploadTime }
+
     ModalBottomSheet(
         onDismissRequest = onDismissRequest
     ) {
@@ -137,15 +142,28 @@ fun DocumentsBottomSheet(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
+            if (documentErrorMessage != null) {
+                Text(
+                    text = documentErrorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+            }
+
             UploadDocumentButton(onClick = onUploadDocument)
-            Text(
-                text = "or select from existing documents:",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(8.dp)
-            )
+            if (sortedDocuments.isNotEmpty()) {
+                Text(
+                    text = "or select from existing documents:",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
             LazyColumn {
-                items(userDocuments.size) { index ->
-                    val document = userDocuments[index]
+                items(sortedDocuments.size) { index ->
+                    val document = sortedDocuments[index]
                     val isChecked =
                         uploadedDocumentIds.contains(document.id) || selectedDocumentIds.contains(
                             document.id
@@ -174,11 +192,11 @@ fun DocumentsBottomSheet(
     }
 }
 
-fun formatFileSize(bytes: Float): String {
+fun formatFileSize(bytes: Int): String {
     return when {
-        bytes < 1024 -> String.format("%.2f bytes", bytes)
-        bytes < 1024 * 1024 -> String.format("%.2f KB", bytes / 1024)
-        else -> String.format("%.2f MB", bytes / (1024 * 1024))
+        bytes < 1024 -> String.format("%.2f bytes", bytes.toFloat())
+        bytes < 1024 * 1024 -> String.format("%.2f KB", bytes.toFloat() / 1024)
+        else -> String.format("%.2f MB", bytes.toFloat() / (1024 * 1024))
     }
 }
 

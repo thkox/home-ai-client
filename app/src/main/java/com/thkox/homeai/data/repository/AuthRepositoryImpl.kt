@@ -1,15 +1,18 @@
 package com.thkox.homeai.data.repository
 
+import com.thkox.homeai.data.models.ChangePassword
 import com.thkox.homeai.data.models.UserCreateRequest
-import com.thkox.homeai.data.models.UserResponseDto
+import com.thkox.homeai.data.models.UserUpdateProfile
 import com.thkox.homeai.data.sources.remote.ApiService
 import com.thkox.homeai.data.sources.remote.RetrofitHolder
+import com.thkox.homeai.domain.models.PasswordChange
 import com.thkox.homeai.domain.models.Token
 import com.thkox.homeai.domain.models.User
+import com.thkox.homeai.domain.models.UserProfileUpdate
 import com.thkox.homeai.domain.models.UserRegistration
 import com.thkox.homeai.domain.repository.AuthRepository
 import com.thkox.homeai.domain.repository.TokenRepository
-import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.domain.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -21,7 +24,7 @@ class AuthRepositoryImpl(
     private val apiService: ApiService
         get() = retrofitHolder.getRetrofit().create(ApiService::class.java)
 
-    override suspend fun login(email: String, password: String): Resource<Token> {
+    override suspend fun login(email: String, password: String): Result<Token> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = apiService.login(email, password)
@@ -29,18 +32,18 @@ class AuthRepositoryImpl(
                     val tokenDto = response.body()
                     tokenDto?.let {
                         tokenRepository.saveToken(it.accessToken)
-                        Resource.Success(Token(it.accessToken, it.tokenType))
-                    } ?: Resource.Error("Invalid response")
+                        Result.Success(Token(it.accessToken, it.tokenType))
+                    } ?: Result.Error("Invalid response")
                 } else {
-                    Resource.Error("Login failed: ${response.errorBody()?.string()}")
+                    Result.Error("Login failed: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
-                Resource.Error("Exception: ${e.localizedMessage}")
+                Result.Error("Exception: ${e.localizedMessage}")
             }
         }
     }
 
-    override suspend fun register(userRegistration: UserRegistration): Resource<User> {
+    override suspend fun register(userRegistration: UserRegistration): Result<User> {
         return withContext(Dispatchers.IO) {
             try {
                 val request = UserCreateRequest(
@@ -53,7 +56,7 @@ class AuthRepositoryImpl(
                 if (response.isSuccessful) {
                     val userDto = response.body()
                     userDto?.let {
-                        Resource.Success(
+                        Result.Success(
                             User(
                                 userId = it.userId,
                                 firstName = it.firstName,
@@ -63,24 +66,24 @@ class AuthRepositoryImpl(
                                 role = it.role
                             )
                         )
-                    } ?: Resource.Error("Invalid response")
+                    } ?: Result.Error("Invalid response")
                 } else {
-                    Resource.Error("Registration failed: ${response.errorBody()?.string()}")
+                    Result.Error("Registration failed: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
-                Resource.Error("Exception: ${e.localizedMessage}")
+                Result.Error("Exception: ${e.localizedMessage}")
             }
         }
     }
 
-    override suspend fun getUserDetails(): Resource<User> {
+    override suspend fun getUserDetails(): Result<User> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = apiService.getUserDetails()
                 if (response.isSuccessful) {
                     val userDto = response.body()
                     userDto?.let {
-                        Resource.Success(
+                        Result.Success(
                             User(
                                 userId = it.userId,
                                 firstName = it.firstName,
@@ -90,34 +93,66 @@ class AuthRepositoryImpl(
                                 role = it.role
                             )
                         )
-                    } ?: Resource.Error("Invalid response")
+                    } ?: Result.Error("Invalid response")
                 } else {
-                    Resource.Error(
+                    Result.Error(
                         "Failed to fetch user details: ${
                             response.errorBody()?.string()
                         }"
                     )
                 }
             } catch (e: Exception) {
-                Resource.Error("Exception: ${e.localizedMessage}")
+                Result.Error("Exception: ${e.localizedMessage}")
             }
         }
     }
 
-    override suspend fun updateMyProfile(userCreateRequest: UserCreateRequest): Resource<UserResponseDto> {
+    override suspend fun updateProfile(profileUpdate: UserProfileUpdate): Result<User> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = apiService.updateMyProfile(userCreateRequest)
+                val request = UserUpdateProfile(
+                    firstName = profileUpdate.firstName,
+                    lastName = profileUpdate.lastName,
+                    email = profileUpdate.email
+                )
+                val response = apiService.updateMyProfile(request)
                 if (response.isSuccessful) {
-                    val userResponseDto = response.body()
-                    userResponseDto?.let {
-                        Resource.Success(it)
-                    } ?: Resource.Error("Invalid response")
+                    val userDto = response.body()
+                    userDto?.let {
+                        val user = User(
+                            userId = it.userId,
+                            firstName = it.firstName,
+                            lastName = it.lastName,
+                            email = it.email,
+                            enabled = it.enabled,
+                            role = it.role
+                        )
+                        Result.Success(user)
+                    } ?: Result.Error("Invalid response")
                 } else {
-                    Resource.Error("Update profile failed: ${response.errorBody()?.string()}")
+                    Result.Error("Update profile failed: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
-                Resource.Error("Exception: ${e.localizedMessage}")
+                Result.Error("Exception: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    override suspend fun changePassword(passwordChange: PasswordChange): Result<Unit> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val request = ChangePassword(
+                    oldPassword = passwordChange.oldPassword,
+                    newPassword = passwordChange.newPassword
+                )
+                val response = apiService.changeMyPassword(request)
+                if (response.isSuccessful) {
+                    Result.Success(Unit)
+                } else {
+                    Result.Error("Change password failed: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                Result.Error("Exception: ${e.localizedMessage}")
             }
         }
     }

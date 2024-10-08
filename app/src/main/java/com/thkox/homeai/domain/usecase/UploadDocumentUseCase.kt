@@ -8,7 +8,7 @@ import android.util.Log
 import com.thkox.homeai.data.models.DocumentDto
 import com.thkox.homeai.domain.models.Document
 import com.thkox.homeai.domain.repository.DocumentRepository
-import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.domain.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class UploadDocumentUseCase @Inject constructor(
     private val documentRepository: DocumentRepository
 ) {
-    suspend operator fun invoke(context: Context, uri: Uri): Resource<List<Document>> {
+    suspend operator fun invoke(context: Context, uri: Uri): Result<List<Document>> {
         return withContext(Dispatchers.IO) {
             try {
                 val contentResolver: ContentResolver = context.contentResolver
@@ -54,17 +54,17 @@ class UploadDocumentUseCase @Inject constructor(
                     if (response.isSuccessful) {
                         val documentDtos = response.body()
                         val documents = documentDtos?.map { it.toDomainModel() } ?: emptyList()
-                        Resource.Success(documents)
+                        Result.Success(documents)
                     } else {
-                        Resource.Error("Failed to upload document: ${response.message()}")
+                        Result.Error("Failed to upload document: ${response.message()}")
                     }
                 } else {
-                    Resource.Error("Failed to open file input stream")
+                    Result.Error("Failed to open file input stream")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.e("UploadDocument", "Error uploading document", e)
-                Resource.Error("An error occurred: ${e.localizedMessage}")
+                Result.Error("An error occurred: ${e.localizedMessage}")
             }
         }
     }

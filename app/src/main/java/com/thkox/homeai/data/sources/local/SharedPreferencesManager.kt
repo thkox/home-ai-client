@@ -25,4 +25,12 @@ class SharedPreferencesManager @Inject constructor(
     fun saveBaseUrl(baseUrl: String) {
         sharedPreferences.edit().putString("base_url", baseUrl).apply()
     }
+
+    fun deleteToken() {
+        sharedPreferences.edit().remove("jwt_token").apply()
+    }
+
+    fun deleteBaseUrl() {
+        sharedPreferences.edit().remove("base_url").apply()
+    }
 }

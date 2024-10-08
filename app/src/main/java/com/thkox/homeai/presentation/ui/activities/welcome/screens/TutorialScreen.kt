@@ -1,18 +1,19 @@
 package com.thkox.homeai.presentation.ui.activities.welcome.screens
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DocumentScanner
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.PrivacyTip
+import androidx.compose.material.icons.filled.Textsms
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,6 +32,9 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
+import com.thkox.homeai.R
+import com.thkox.homeai.presentation.models.TutorialPage
+import com.thkox.homeai.presentation.ui.components.TutorialCard
 import com.thkox.homeai.presentation.ui.components.WelcomeTopAppBar
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import kotlinx.coroutines.launch
@@ -47,15 +52,35 @@ fun TutorialContent(
     modifier: Modifier = Modifier,
     onLastPageAction: () -> Unit
 ) {
-    val context = LocalContext.current
     val pagerState = rememberPagerState()
-    val pages = listOf("Page 1", "Page 2", "Page 3")
+    val pages = listOf(
+        TutorialPage(
+            title = stringResource(R.string.ask_me_anything),
+            text = stringResource(R.string.you_can_ask_the_home_ai_any_question_you_want_using_the_text_field_or_your_microphone),
+            icon = Icons.Default.Textsms
+        ),
+        TutorialPage(
+            title = stringResource(R.string.i_can_answer_questions_about_your_documents),
+            text = stringResource(R.string.upload_and_select_the_documents_that_you_want_me_to_analyze_using_the_attach_file_button),
+            icon = Icons.Default.DocumentScanner
+        ),
+        TutorialPage(
+            title = stringResource(R.string.see_your_conversation_history),
+            text = stringResource(R.string.at_anytime_you_can_see_the_conversation_history_in_the_left_menu_side_bar),
+            icon = Icons.Default.Menu
+        ),
+        TutorialPage(
+            title = stringResource(R.string.private_conversations),
+            text = stringResource(R.string.your_conversations_are_private_the_data_is_stored_locally_on_your_home_computer),
+            icon = Icons.Default.PrivacyTip
+        )
+    )
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
             WelcomeTopAppBar(
-                text = "Tutorial",
+                text = stringResource(R.string.tutorial),
                 showBackButton = false
             )
         },
@@ -73,7 +98,11 @@ fun TutorialContent(
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = if (pagerState.currentPage == pagerState.pageCount - 1) "Start" else "Next")
+                    Text(
+                        text = if (pagerState.currentPage == pagerState.pageCount - 1) stringResource(
+                            R.string.start
+                        ) else stringResource(R.string.next)
+                    )
                 }
             }
         }
@@ -86,30 +115,23 @@ fun TutorialContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Text(
+                text = stringResource(R.string.here_are_some_tips_to_get_you_started),
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             HorizontalPager(
                 count = pages.size,
                 state = pagerState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f),
-                contentPadding = PaddingValues(horizontal = 32.dp),
-                itemSpacing = 16.dp
+                    .height(300.dp),
+                contentPadding = PaddingValues(horizontal = 25.dp),
+                itemSpacing = 8.dp
             ) { page ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = RoundedCornerShape(16.dp)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = pages[page],
-                        fontSize = 24.sp,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
+                TutorialCard(page = pages[page])
             }
 
             Spacer(modifier = Modifier.height(16.dp))

@@ -1,7 +1,10 @@
 package com.thkox.homeai.presentation.ui.activities.main.screens
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.provider.Settings
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -23,7 +26,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -57,9 +62,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import com.thkox.homeai.R
 import com.thkox.homeai.presentation.models.ConversationUIModel
 import com.thkox.homeai.presentation.models.MessageUIModel
@@ -72,23 +80,18 @@ import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import com.thkox.homeai.presentation.viewModel.main.MainViewModel
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MainScreen(
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
+    navigateToProfileSettings: () -> Unit,
+    navigateToAbout: () -> Unit,
+    navigateToWelcome: () -> Unit
 ) {
-    val messages by viewModel.messages.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val isAiResponding by viewModel.isAiResponding.collectAsState()
-    val conversationTitle by viewModel.conversationTitle.collectAsState()
-    val isDrawerOpen by viewModel.isDrawerOpen.collectAsState()
-    val conversations by viewModel.conversations.collectAsState()
-    val userDocuments by viewModel.userDocuments.collectAsState()
-    val selectedDocumentIds by viewModel.selectedDocumentIds.collectAsState()
-    val uploadedDocumentIds by viewModel.uploadedDocumentIds.collectAsState()
+    val state by viewModel.state.collectAsState()
     var text by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
     var showDocumentsBottomSheet by remember { mutableStateOf(false) }
-    val isLoadingDocument by viewModel.isLoadingDocument.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var documentToDelete by remember { mutableStateOf<String?>(null) }
     var documentName by remember { mutableStateOf<String?>(null) }
@@ -104,10 +107,10 @@ fun MainScreen(
     }
 
     val drawerState =
-        rememberDrawerState(if (isDrawerOpen) DrawerValue.Open else DrawerValue.Closed)
+        rememberDrawerState(if (state.isDrawerOpen) DrawerValue.Open else DrawerValue.Closed)
 
-    LaunchedEffect(isDrawerOpen) {
-        if (isDrawerOpen) {
+    LaunchedEffect(state.isDrawerOpen) {
+        if (state.isDrawerOpen) {
             drawerState.open()
         } else {
             drawerState.close()
@@ -125,6 +128,19 @@ fun MainScreen(
         viewModel.loadConversations()
     }
 
+    LaunchedEffect(state.isRecording, state.speechText) {
+        if (!state.isRecording && !state.speechText.isNullOrEmpty()) {
+            text = state.speechText ?: ""
+        }
+    }
+
+    BackHandler(enabled = drawerState.isOpen) {
+        coroutineScope.launch {
+            drawerState.close()
+            viewModel.closeDrawer()
+        }
+    }
+
     if (showDialog && documentToDelete != null) {
         LaunchedEffect(documentToDelete) {
             viewModel.getDocumentDetails(documentToDelete!!) { document ->
@@ -134,11 +150,13 @@ fun MainScreen(
 
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text(text = "Delete Document") },
+            title = { Text(text = stringResource(R.string.delete_document)) },
             text = {
                 Text(
-                    text = "Do you want to delete the document ${documentName}? " +
-                            "After deletion any conversation that you had with that file it will lose access to it."
+                    text = stringResource(
+                        R.string.do_you_want_to_delete_the_document,
+                        documentName ?: ""
+                    )
                 )
             },
             confirmButton = {
@@ -146,12 +164,45 @@ fun MainScreen(
                     viewModel.deleteDocument(documentToDelete!!)
                     showDialog = false
                 }) {
-                    Text("Yes")
+                    Text(stringResource(R.string.yes))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text("No")
+                    Text(stringResource(R.string.no))
+                }
+            }
+        )
+    }
+
+    val microphonePermissionState =
+        rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
+
+    var showPermissionDeniedDialog by remember { mutableStateOf(false) }
+
+    if (showPermissionDeniedDialog) {
+        AlertDialog(
+            onDismissRequest = { showPermissionDeniedDialog = false },
+            title = { Text(text = stringResource(R.string.microphone_permission_required)) },
+            text = {
+                Text(
+                    text = stringResource(R.string.this_app_needs_access_to_your_microphone_to_record_audio_please_grant_the_permission_in_app_settings)
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showPermissionDeniedDialog = false
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri = Uri.fromParts("package", context.packageName, null)
+                    intent.data = uri
+                    context.startActivity(intent)
+                }) {
+                    Text(stringResource(R.string.open_settings))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPermissionDeniedDialog = false }) {
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -159,7 +210,10 @@ fun MainScreen(
 
     MenuNavigationDrawer(
         drawerState = drawerState,
-        conversations = conversations,
+        firstName = state.firstName,
+        lastName = state.lastName,
+        conversations = state.conversations,
+        userErrorMessage = state.userErrorMessage ?: "",
         onNewConversationClick = {
             viewModel.currentConversationId = null
             viewModel.startNewConversation()
@@ -171,11 +225,14 @@ fun MainScreen(
         onDeleteConversation = { conversationId ->
             viewModel.deleteConversation(conversationId)
         },
+        onProfileSettingsClick = navigateToProfileSettings,
+        onLogoutClick = navigateToWelcome,
+        onAboutClick = navigateToAbout,
         mainContent = {
             MainContent(
-                messages = messages,
-                isLoading = isLoading,
-                isAiResponding = isAiResponding,
+                messages = state.messages,
+                isLoading = state.isLoading,
+                isAiResponding = state.isAiResponding,
                 text = text,
                 onTextChange = { newText -> text = newText },
                 onSendClick = {
@@ -183,7 +240,24 @@ fun MainScreen(
                     text = ""
                 },
                 onMicClick = {
-                    // Handle mic click
+                    when {
+                        microphonePermissionState.hasPermission -> {
+                            if (state.isRecording) {
+                                viewModel.stopSpeechRecognition(sendMessage = false)
+                            } else {
+                                viewModel.startSpeechRecognition()
+                            }
+                        }
+
+                        microphonePermissionState.shouldShowRationale || !microphonePermissionState.permissionRequested -> {
+                            microphonePermissionState.launchPermissionRequest()
+                        }
+
+                        else -> {
+                            // Permission denied permanently
+                            showPermissionDeniedDialog = true
+                        }
+                    }
                 },
                 onAttachFilesClick = {
                     showDocumentsBottomSheet = true
@@ -193,7 +267,15 @@ fun MainScreen(
                         viewModel.openDrawer()
                     }
                 },
-                conversationTitle = conversationTitle
+                conversationTitle = state.conversationTitle,
+                conversationErrorMessage = state.conversationErrorMessage,
+                isRecording = state.isRecording,
+                onTextFieldClick = {
+                    if (state.isRecording) {
+                        viewModel.stopSpeechRecognition(sendMessage = false)
+                        text = state.speechText ?: ""
+                    }
+                }
             )
 
             if (showDocumentsBottomSheet) {
@@ -201,17 +283,18 @@ fun MainScreen(
                     onDismissRequest = {
                         showDocumentsBottomSheet = false
                     },
-                    userDocuments = userDocuments,
-                    selectedDocumentIds = selectedDocumentIds,
-                    uploadedDocumentIds = uploadedDocumentIds,
+                    userDocuments = state.userDocuments,
+                    selectedDocumentIds = state.selectedDocumentIds,
+                    uploadedDocumentIds = state.uploadedDocumentIds,
                     onUploadDocument = { launcher.launch("*/*") },
                     onSelectDocument = { documentId -> viewModel.selectDocument(documentId) },
                     onDeselectDocument = { documentId -> viewModel.deselectDocument(documentId) },
-                    isLoading = isLoadingDocument,
+                    isLoading = state.isLoadingDocument,
                     onDeleteDocument = { documentId ->
                         documentToDelete = documentId
                         showDialog = true
-                    }
+                    },
+                    documentErrorMessage = state.documentErrorMessage
                 )
             }
         }
@@ -221,8 +304,14 @@ fun MainScreen(
 @Composable
 fun MenuNavigationDrawer(
     drawerState: DrawerState,
+    firstName: String?,
+    lastName: String?,
     conversations: List<ConversationUIModel>,
+    userErrorMessage: String = "",
     onNewConversationClick: () -> Unit,
+    onProfileSettingsClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    onAboutClick: () -> Unit,
     onConversationClick: (String) -> Unit,
     mainContent: @Composable () -> Unit,
     currentConversationId: String?,
@@ -231,23 +320,24 @@ fun MenuNavigationDrawer(
     val sortedConversations = conversations.sortedByDescending { it.startTime }
     var showDialog by remember { mutableStateOf(false) }
     var conversationToDelete by remember { mutableStateOf<String?>(null) }
+    val coroutineScope = rememberCoroutineScope()
 
     if (showDialog && conversationToDelete != null) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            title = { Text(text = "Delete Conversation") },
-            text = { Text(text = "Are you sure you want to delete this conversation?") },
+            title = { Text(text = stringResource(R.string.delete_conversation)) },
+            text = { Text(text = stringResource(R.string.are_you_sure_you_want_to_delete_this_conversation)) },
             confirmButton = {
                 TextButton(onClick = {
                     onDeleteConversation(conversationToDelete!!)
                     showDialog = false
                 }) {
-                    Text("Yes")
+                    Text(stringResource(R.string.yes))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text("No")
+                    Text(stringResource(R.string.no))
                 }
             }
         )
@@ -262,84 +352,148 @@ fun MenuNavigationDrawer(
                         topEnd = 50.dp,
                         bottomEnd = 50.dp
                     )
-                ),
-            ) {
-                Row(
-                    modifier = Modifier.padding(5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .size(52.dp)
-                            .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                            .clip(CircleShape)
-                            .background(Color.White)
-                            .align(Alignment.Top),
-                        painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null,
-                    )
-                    Text("Home AI", modifier = Modifier.padding(16.dp))
-                }
-
-                HorizontalDivider()
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AddConversationComposable(
-                        modifier = Modifier.padding(10.dp),
-                        onClick = onNewConversationClick
-                    )
-                }
-                HorizontalDivider()
-                Text(
-                    text = stringResource(R.string.past_conversations),
-                    modifier = Modifier.padding(10.dp)
                 )
-                LazyColumn {
-                    items(sortedConversations) { conversation ->
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier.padding(5.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
                         ) {
-                            NavigationDrawerItem(
-                                label = {
-                                    Text(
-                                        text = conversation.title
-                                    )
-                                },
-                                selected = conversation.id == currentConversationId,
-                                onClick = { onConversationClick(conversation.id) },
-                                modifier = Modifier.weight(1f)
+                            Image(
+                                modifier = Modifier
+                                    .padding(5.dp)
+                                    .size(52.dp)
+                                    .border(3.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                                    .clip(CircleShape)
+                                    .background(Color.White)
+                                    .align(Alignment.Top),
+                                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                                contentScale = ContentScale.Crop,
+                                contentDescription = null,
                             )
-                            IconButton(onClick = {
-                                conversationToDelete = conversation.id
-                                showDialog = true
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = stringResource(R.string.delete)
+                            Text(
+                                stringResource(R.string.home_ai),
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+
+                        HorizontalDivider()
+
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (firstName != null && lastName != null) {
+                                Text(
+                                    text = stringResource(R.string.hello, firstName, lastName),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                                )
+                            }
+                            if (userErrorMessage.isNotEmpty()) {
+                                Text(
+                                    text = userErrorMessage,
+                                    color = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.height(5.dp))
+
+                        HorizontalDivider()
+
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            AddConversationComposable(
+                                modifier = Modifier.padding(10.dp),
+                                onClick = onNewConversationClick
+                            )
+                        }
+                        HorizontalDivider()
+
+                        if (sortedConversations.isNotEmpty()) {
+                            Text(
+                                text = stringResource(R.string.past_conversations),
+                                modifier = Modifier.padding(10.dp)
+                            )
+                        }
+                        LazyColumn {
+                            items(sortedConversations) { conversation ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    NavigationDrawerItem(
+                                        label = {
+                                            Text(
+                                                text = conversation.title
+                                            )
+                                        },
+                                        selected = conversation.id == currentConversationId,
+                                        onClick = { onConversationClick(conversation.id) },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    IconButton(onClick = {
+                                        conversationToDelete = conversation.id
+                                        showDialog = true
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = stringResource(R.string.delete)
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(5.dp))
+                            }
+                        }
+                    }
+                    Column {
+                        HorizontalDivider()
+                        NavigationDrawerItem(
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = stringResource(R.string.profile_settings)
+                                )
+                            },
+                            label = { Text(text = stringResource(R.string.profile_settings)) },
+                            selected = false,
+                            onClick = { onProfileSettingsClick() }
+                        )
+                        NavigationDrawerItem(
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Logout,
+                                    contentDescription = stringResource(R.string.logout)
+                                )
+                            },
+                            label = { Text(stringResource(R.string.logout)) },
+                            selected = false,
+                            onClick = { onLogoutClick() }
+                        )
+                        NavigationDrawerItem(
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Default.Info,
+                                    contentDescription = stringResource(R.string.about)
+                                )
+                            },
+                            label = { Text(stringResource(R.string.about)) },
+                            selected = false,
+                            onClick = { onAboutClick() }
+                        )
                     }
                 }
-                HorizontalDivider()
-                NavigationDrawerItem(
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = stringResource(R.string.settings)
-                        )
-                    },
-                    label = { Text(text = "Settings") },
-                    selected = false,
-                    onClick = { onNewConversationClick() }
-                )
             }
         }
     ) {
@@ -371,11 +525,19 @@ private fun MenuNavigationDrawerDarkPreview() {
                     onMicClick = {},
                     onAttachFilesClick = {},
                     isAiResponding = false,
-                    conversationTitle = "New Conversation"
+                    conversationTitle = "New Conversation",
+                    conversationErrorMessage = null,
+                    isRecording = false,
+                    onTextFieldClick = {}
                 )
             },
             currentConversationId = null,
-            onDeleteConversation = {}
+            onDeleteConversation = {},
+            onProfileSettingsClick = {},
+            firstName = "John",
+            lastName = "Doe",
+            onLogoutClick = {},
+            onAboutClick = {}
         )
     }
 }
@@ -404,11 +566,19 @@ private fun MenuNavigationDrawerLightPreview() {
                     onMicClick = {},
                     onAttachFilesClick = {},
                     isAiResponding = false,
-                    conversationTitle = "New Conversation"
+                    conversationTitle = "New Conversation",
+                    conversationErrorMessage = null,
+                    isRecording = false,
+                    onTextFieldClick = {}
                 )
             },
             currentConversationId = null,
-            onDeleteConversation = {}
+            onDeleteConversation = {},
+            onProfileSettingsClick = {},
+            firstName = "John",
+            lastName = "Doe",
+            onLogoutClick = {},
+            onAboutClick = {}
         )
     }
 }
@@ -426,6 +596,9 @@ fun MainContent(
     onMicClick: () -> Unit,
     onAttachFilesClick: () -> Unit,
     conversationTitle: String,
+    conversationErrorMessage: String?,
+    isRecording: Boolean,
+    onTextFieldClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
@@ -448,6 +621,16 @@ fun MainContent(
         },
         bottomBar = {
             Column {
+                if (conversationErrorMessage != null) {
+                    Text(
+                        text = conversationErrorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+                }
                 if (isLoading) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 }
@@ -460,7 +643,9 @@ fun MainContent(
                     text = text,
                     onTextChange = onTextChange,
                     onAttachFilesClick = { onAttachFilesClick() },
-                    isAiResponding = isAiResponding
+                    isAiResponding = isAiResponding,
+                    isRecording = isRecording,
+                    onTextFieldClick = onTextFieldClick
                 )
             }
         }
@@ -504,7 +689,10 @@ private fun MainScreenDarkPreview() {
             onMicClick = {},
             onAttachFilesClick = {},
             isAiResponding = false,
-            conversationTitle = "New Conversation"
+            conversationTitle = "New Conversation",
+            conversationErrorMessage = null,
+            isRecording = false,
+            onTextFieldClick = {}
         )
     }
 }
@@ -527,7 +715,10 @@ private fun MainScreenLightPreview() {
             onMicClick = {},
             onAttachFilesClick = {},
             isAiResponding = false,
-            conversationTitle = "New Conversation"
+            conversationTitle = "New Conversation",
+            conversationErrorMessage = null,
+            isRecording = false,
+            onTextFieldClick = {}
         )
     }
 }

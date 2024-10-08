@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.thkox.homeai.data.repository.AuthRepositoryImpl
 import com.thkox.homeai.data.repository.ConversationRepositoryImpl
 import com.thkox.homeai.data.repository.DocumentRepositoryImpl
+import com.thkox.homeai.data.repository.SpeechRecognitionRepositoryImpl
 import com.thkox.homeai.data.repository.TokenRepositoryImpl
 import com.thkox.homeai.data.sources.local.SharedPreferencesManager
 import com.thkox.homeai.data.sources.remote.ApiService
@@ -13,6 +14,7 @@ import com.thkox.homeai.data.sources.remote.RetrofitHolder
 import com.thkox.homeai.domain.repository.AuthRepository
 import com.thkox.homeai.domain.repository.ConversationRepository
 import com.thkox.homeai.domain.repository.DocumentRepository
+import com.thkox.homeai.domain.repository.SpeechRecognitionRepository
 import com.thkox.homeai.domain.repository.TokenRepository
 import com.thkox.homeai.domain.usecase.DeleteConversationUseCase
 import com.thkox.homeai.domain.usecase.DeleteDocumentUseCase
@@ -22,13 +24,15 @@ import com.thkox.homeai.domain.usecase.GetConversationMessagesUseCase
 import com.thkox.homeai.domain.usecase.GetDocumentDetailsUseCase
 import com.thkox.homeai.domain.usecase.GetUserConversationsUseCase
 import com.thkox.homeai.domain.usecase.GetUserDocumentDetailsUseCase
+import com.thkox.homeai.domain.usecase.RecognizeSpeechUseCase
 import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.UpdateConversationTitleUseCase
-import com.thkox.homeai.domain.usecase.UpdateMyProfileUseCase
 import com.thkox.homeai.domain.usecase.UploadDocumentUseCase
+import com.thkox.homeai.domain.usecase.user.ChangePasswordUseCase
 import com.thkox.homeai.domain.usecase.user.GetUserDetailsUseCase
 import com.thkox.homeai.domain.usecase.user.LoginUseCase
 import com.thkox.homeai.domain.usecase.user.RegisterUseCase
+import com.thkox.homeai.domain.usecase.user.UpdateMyProfileUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -77,9 +81,9 @@ object AppModule {
     fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
-            .connectTimeout(60, TimeUnit.SECONDS)  // Increase connection timeout
-            .readTimeout(240, TimeUnit.SECONDS)    // Increase read timeout
-            .writeTimeout(60, TimeUnit.SECONDS)    // Increase write timeout
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(240, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .build()
     }
 
@@ -117,6 +121,12 @@ object AppModule {
     @Singleton
     fun provideDocumentRepository(apiService: ApiService): DocumentRepository {
         return DocumentRepositoryImpl(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun providesSpeechRecognitionRepository(context: Context): SpeechRecognitionRepository {
+        return SpeechRecognitionRepositoryImpl(context)
     }
 
     @Provides
@@ -170,9 +180,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideUpdateConversationTitleUseCase(
-        getUserConversationsUseCase: GetUserConversationsUseCase
+        getConversationDetailsUseCase: GetConversationDetailsUseCase
     ): UpdateConversationTitleUseCase {
-        return UpdateConversationTitleUseCase(getUserConversationsUseCase)
+        return UpdateConversationTitleUseCase(getConversationDetailsUseCase)
     }
 
     @Provides
@@ -191,6 +201,12 @@ object AppModule {
     @Singleton
     fun providesUpdateMyProfileUseCase(authRepository: AuthRepository): UpdateMyProfileUseCase {
         return UpdateMyProfileUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun providesChangePasswordUseCase(authRepository: AuthRepository): ChangePasswordUseCase {
+        return ChangePasswordUseCase(authRepository)
     }
 
     @Provides
@@ -217,5 +233,9 @@ object AppModule {
         return DeleteDocumentUseCase(documentRepository)
     }
 
-
+    @Provides
+    @Singleton
+    fun providesRecognizeSpeechUseCase(speechRecognitionRepository: SpeechRecognitionRepository): RecognizeSpeechUseCase {
+        return RecognizeSpeechUseCase(speechRecognitionRepository)
+    }
 }

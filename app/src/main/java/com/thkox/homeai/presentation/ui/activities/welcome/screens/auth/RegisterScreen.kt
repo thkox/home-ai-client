@@ -1,6 +1,5 @@
 package com.thkox.homeai.presentation.ui.activities.welcome.screens.auth
 
-import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,13 +28,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.thkox.homeai.R
-import com.thkox.homeai.data.sources.local.SharedPreferencesManager
 import com.thkox.homeai.presentation.ui.components.ModernTextField
 import com.thkox.homeai.presentation.ui.components.WelcomeTopAppBar
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
@@ -46,7 +44,6 @@ import com.thkox.homeai.presentation.viewModel.welcome.auth.RegisterViewModel
 fun RegisterScreen(
     navigateToLogin: () -> Unit,
     navigateToTutorial: () -> Unit,
-    sharedPreferencesManager: SharedPreferencesManager,
     modifier: Modifier = Modifier,
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
@@ -74,7 +71,6 @@ fun RegisterScreen(
         fieldErrors = fieldErrors,
         navigateToLogin = navigateToLogin,
         navigateToTutorial = navigateToTutorial,
-        sharedPreferencesManager = sharedPreferencesManager,
         modifier = modifier
     )
 }
@@ -96,7 +92,6 @@ fun RegisterContent(
     fieldErrors: Map<String, String>,
     navigateToLogin: () -> Unit,
     navigateToTutorial: () -> Unit,
-    sharedPreferencesManager: SharedPreferencesManager,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -104,7 +99,6 @@ fun RegisterContent(
             WelcomeTopAppBar(
                 text = "Register",
                 onClickBackIcon = {
-                    sharedPreferencesManager.saveBaseUrl("")
                     navigateToLogin()
                 }
             )
@@ -115,7 +109,7 @@ fun RegisterContent(
                     onClick = onSignUpClicked,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Sign Up")
+                    Text(stringResource(R.string.register))
                 }
             }
         }
@@ -142,14 +136,14 @@ fun RegisterContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Please fill in the following details to create your account:",
+                text = stringResource(R.string.please_fill_in_the_following_details_to_create_your_account),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
             ModernTextField(
                 value = firstName,
                 onValueChange = onFirstNameChanged,
-                label = "First Name",
+                label = stringResource(R.string.first_name),
                 isError = fieldErrors.containsKey("firstName")
             )
             if (fieldErrors.containsKey("firstName")) {
@@ -163,7 +157,7 @@ fun RegisterContent(
             ModernTextField(
                 value = lastName,
                 onValueChange = onLastNameChanged,
-                label = "Last Name",
+                label = stringResource(R.string.last_name),
                 isError = fieldErrors.containsKey("lastName")
             )
             if (fieldErrors.containsKey("lastName")) {
@@ -177,7 +171,7 @@ fun RegisterContent(
             ModernTextField(
                 value = email,
                 onValueChange = onEmailChanged,
-                label = "Email",
+                label = stringResource(R.string.email),
                 isError = fieldErrors.containsKey("email")
             )
             if (fieldErrors.containsKey("email")) {
@@ -191,7 +185,7 @@ fun RegisterContent(
             ModernTextField(
                 value = password,
                 onValueChange = onPasswordChanged,
-                label = "Password",
+                label = stringResource(R.string.password),
                 isError = fieldErrors.containsKey("password"),
                 isPassword = true
             )
@@ -206,7 +200,7 @@ fun RegisterContent(
             ModernTextField(
                 value = verifyPassword,
                 onValueChange = onVerifyPasswordChanged,
-                label = "Verify Password",
+                label = stringResource(R.string.verify_password),
                 isError = fieldErrors.containsKey("verifyPassword"),
                 isPassword = true
             )
@@ -267,13 +261,7 @@ private fun RegisterScreenDarkPreview() {
             signUpState = null,
             navigateToLogin = {},
             fieldErrors = emptyMap(),
-            navigateToTutorial = {},
-            sharedPreferencesManager = SharedPreferencesManager(
-                LocalContext.current.getSharedPreferences(
-                    "app_prefs",
-                    Context.MODE_PRIVATE
-                )
-            )
+            navigateToTutorial = {}
         )
     }
 }
@@ -301,13 +289,7 @@ private fun RegisterScreenLightPreview() {
             signUpState = null,
             navigateToLogin = {},
             navigateToTutorial = {},
-            fieldErrors = emptyMap(),
-            sharedPreferencesManager = SharedPreferencesManager(
-                LocalContext.current.getSharedPreferences(
-                    "app_prefs",
-                    Context.MODE_PRIVATE
-                )
-            )
+            fieldErrors = emptyMap()
         )
     }
 }

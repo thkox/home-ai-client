@@ -72,32 +72,33 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // Hilt dependencies
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
 
     // Hilt Compose dependencies
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation(libs.androidx.hilt.navigation.compose)
 
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha13")
+    implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.material.icons.extended)
 
     // OkHttp and Retrofit
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation(libs.okhttp)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 
     // another gson library
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.gson)
 
     // navigation
-    implementation("androidx.navigation:navigation-compose:2.8.1")
+    implementation(libs.androidx.navigation.compose)
 
     // Pager
-    implementation("com.google.accompanist:accompanist-pager:0.19.0")
-    implementation("com.google.accompanist:accompanist-pager-indicators:0.19.0")
+    implementation(libs.accompanist.pager)
+    implementation(libs.accompanist.pager.indicators)
 
-
+    // Permissions
+    implementation(libs.accompanist.permissions)
 }
 
 // Allow references to generated code
