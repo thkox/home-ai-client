@@ -1,7 +1,7 @@
 package com.thkox.homeai.domain.usecase
 
 import com.thkox.homeai.domain.repository.ConversationRepository
-import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.domain.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -9,17 +9,17 @@ import javax.inject.Inject
 class DeleteConversationUseCase @Inject constructor(
     private val conversationRepository: ConversationRepository
 ) {
-    suspend fun invoke(conversationId: String): Resource<Unit> {
+    suspend fun invoke(conversationId: String): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = conversationRepository.deleteConversation(conversationId)
                 if (response.isSuccessful) {
-                    Resource.Success(Unit)
+                    Result.Success(Unit)
                 } else {
-                    Resource.Error("Failed to delete conversation: ${response.message()}")
+                    Result.Error("Failed to delete conversation: ${response.message()}")
                 }
             } catch (e: Exception) {
-                Resource.Error("An error occurred: ${e.localizedMessage}")
+                Result.Error("An error occurred: ${e.localizedMessage}")
             }
         }
     }

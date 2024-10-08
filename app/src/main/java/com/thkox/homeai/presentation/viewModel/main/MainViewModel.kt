@@ -16,7 +16,7 @@ import com.thkox.homeai.domain.usecase.SendMessageUseCase
 import com.thkox.homeai.domain.usecase.UpdateConversationTitleUseCase
 import com.thkox.homeai.domain.usecase.UploadDocumentUseCase
 import com.thkox.homeai.domain.usecase.user.GetUserDetailsUseCase
-import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.domain.utils.Result
 import com.thkox.homeai.presentation.models.ConversationUIModel
 import com.thkox.homeai.presentation.models.DocumentUIModel
 import com.thkox.homeai.presentation.models.MessageUIModel
@@ -66,7 +66,7 @@ class MainViewModel @Inject constructor(
     private fun loadUserDetails() {
         viewModelScope.launch {
             when (val result = getUserDetailsUseCase()) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     val user = result.data
                     _state.value = _state.value.copy(
                         firstName = user?.firstName,
@@ -75,13 +75,13 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         userErrorMessage = result.message
                     )
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
         }
     }
@@ -118,7 +118,7 @@ class MainViewModel @Inject constructor(
     fun loadUserDocuments() {
         viewModelScope.launch {
             when (val result = getUserDocumentsUseCase.invoke()) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     val documents = result.data?.map { document ->
                         DocumentUIModel(
                             id = document.id,
@@ -133,13 +133,13 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         documentErrorMessage = result.message
                     )
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
         }
     }
@@ -147,7 +147,7 @@ class MainViewModel @Inject constructor(
     fun loadConversationDetails(conversationId: String) {
         viewModelScope.launch {
             when (val result = getConversationDetailsUseCase.invoke(conversationId)) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     val conversation = result.data
                     _state.value = _state.value.copy(
                         selectedDocumentIds = conversation?.selectedDocumentIds ?: emptyList(),
@@ -155,13 +155,13 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         conversationErrorMessage = result.message
                     )
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
         }
     }
@@ -184,7 +184,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoadingDocument = true)
             when (val result = uploadDocumentUseCase(context, uri)) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     val documentIds = result.data?.map { it.id }
                     documentIds?.let { newIds ->
                         _state.value = _state.value.copy(
@@ -195,13 +195,13 @@ class MainViewModel @Inject constructor(
                     }
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         documentErrorMessage = result.message
                     )
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
             _state.value = _state.value.copy(isLoadingDocument = false)
         }
@@ -230,7 +230,7 @@ class MainViewModel @Inject constructor(
     fun loadConversations() {
         viewModelScope.launch {
             when (val result = getUserConversationsUseCase.invoke()) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     val conversations = result.data?.map { conversation ->
                         ConversationUIModel(
                             id = conversation.id,
@@ -244,13 +244,13 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         conversationErrorMessage = result.message
                     )
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
         }
     }
@@ -259,7 +259,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
             when (val result = getConversationMessagesUseCase.invoke(conversationId)) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     _currentConversationId = conversationId
                     val messages = result.data?.map { message ->
                         MessageUIModel(
@@ -277,13 +277,13 @@ class MainViewModel @Inject constructor(
                     closeDrawer()
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         conversationErrorMessage = result.message
                     )
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
             _state.value = _state.value.copy(isLoading = false)
         }
@@ -321,7 +321,7 @@ class MainViewModel @Inject constructor(
             sendMessageUseCase.setDocumentIds(_state.value.uploadedDocumentIds.toList())
 
             when (val result = sendMessageUseCase.invoke(messageText)) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     val aiMessage = result.data
                     aiMessage?.let {
                         val aiMessageObj = MessageUIModel(
@@ -339,13 +339,13 @@ class MainViewModel @Inject constructor(
                     }
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         conversationErrorMessage = result.message
                     )
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
 
             _state.value = _state.value.copy(
@@ -364,7 +364,7 @@ class MainViewModel @Inject constructor(
     private fun updateConversationTitle() {
         viewModelScope.launch {
             when (val result = updateConversationTitleUseCase(_currentConversationId!!)) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     val title = result.data
                     title?.let {
                         _state.value = _state.value.copy(
@@ -374,13 +374,13 @@ class MainViewModel @Inject constructor(
                     }
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         conversationErrorMessage = result.message
                     )
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
         }
     }
@@ -388,7 +388,7 @@ class MainViewModel @Inject constructor(
     fun deleteConversation(conversationId: String) {
         viewModelScope.launch {
             when (val result = deleteConversationUseCase.invoke(conversationId)) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     if (_currentConversationId == conversationId) {
                         startNewConversation()
                     }
@@ -398,13 +398,13 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         conversationErrorMessage = result.message
                     )
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
         }
     }
@@ -412,20 +412,20 @@ class MainViewModel @Inject constructor(
     fun deleteDocument(documentId: String) {
         viewModelScope.launch {
             when (val result = deleteDocumentUseCase.invoke(documentId)) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     loadUserDocuments()
                     _state.value = _state.value.copy(
                         documentErrorMessage = null
                     )
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         documentErrorMessage = result.message
                     )
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
         }
     }
@@ -433,7 +433,7 @@ class MainViewModel @Inject constructor(
     fun getDocumentDetails(documentId: String, onResult: (DocumentUIModel?) -> Unit) {
         viewModelScope.launch {
             when (val result = getDocumentDetailsUseCase.invoke(documentId)) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     val document = result.data?.let {
                         DocumentUIModel(
                             id = it.id,
@@ -445,14 +445,14 @@ class MainViewModel @Inject constructor(
                     onResult(document)
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         documentErrorMessage = result.message
                     )
                     onResult(null)
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
         }
     }

@@ -3,7 +3,7 @@ package com.thkox.homeai.domain.usecase
 import com.thkox.homeai.data.models.ContinueConversationRequest
 import com.thkox.homeai.domain.models.Message
 import com.thkox.homeai.domain.repository.ConversationRepository
-import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.domain.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
@@ -20,7 +20,7 @@ class SendMessageUseCase @Inject constructor(
     val conversationId: String?
         get() = _conversationId
 
-    suspend fun invoke(userMessage: String): Resource<Message?> {
+    suspend fun invoke(userMessage: String): Result<Message?> {
         return withContext(Dispatchers.IO) {
             try {
                 if (_conversationId == null) {
@@ -28,7 +28,7 @@ class SendMessageUseCase @Inject constructor(
                     if (startResponse.isSuccessful) {
                         _conversationId = startResponse.body()?.id
                     } else {
-                        return@withContext Resource.Error("Failed to start conversation")
+                        return@withContext Result.Error("Failed to start conversation")
                     }
                 }
 
@@ -45,12 +45,12 @@ class SendMessageUseCase @Inject constructor(
                             timestamp = getCurrentTimestamp()
                         )
                     }
-                    Resource.Success(aiMessage)
+                    Result.Success(aiMessage)
                 } else {
-                    Resource.Error("Failed to send message: ${continueResponse.message()}")
+                    Result.Error("Failed to send message: ${continueResponse.message()}")
                 }
             } catch (e: Exception) {
-                Resource.Error("An error occurred: ${e.localizedMessage}")
+                Result.Error("An error occurred: ${e.localizedMessage}")
             }
         }
     }

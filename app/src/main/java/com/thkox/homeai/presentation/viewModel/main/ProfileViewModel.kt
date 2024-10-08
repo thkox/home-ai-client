@@ -7,7 +7,7 @@ import com.thkox.homeai.domain.models.UserProfileUpdate
 import com.thkox.homeai.domain.usecase.user.ChangePasswordUseCase
 import com.thkox.homeai.domain.usecase.user.GetUserDetailsUseCase
 import com.thkox.homeai.domain.usecase.user.UpdateMyProfileUseCase
-import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.domain.utils.Result
 import com.thkox.homeai.presentation.models.UserUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -33,7 +33,7 @@ class ProfileViewModel @Inject constructor(
     private fun loadUserProfile() {
         viewModelScope.launch {
             when (val result = getUserDetailsUseCase()) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     val user = result.data!!
                     _state.value = _state.value.copy(
                         userProfile = UserUIModel(
@@ -49,13 +49,13 @@ class ProfileViewModel @Inject constructor(
                     )
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         profileUpdateError = result.message
                     )
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
         }
     }
@@ -65,7 +65,7 @@ class ProfileViewModel @Inject constructor(
             _state.value = _state.value.copy(isUpdatingProfile = true)
             val profileUpdate = UserProfileUpdate(firstName, lastName, email)
             when (val result = updateProfileUseCase(profileUpdate)) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     val user = result.data!!
                     _state.value = _state.value.copy(
                         userProfile = UserUIModel(
@@ -83,13 +83,13 @@ class ProfileViewModel @Inject constructor(
                     clearProfileUpdateSuccessMessage()
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         profileUpdateError = result.message
                     )
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
             _state.value = _state.value.copy(isUpdatingProfile = false)
         }
@@ -100,7 +100,7 @@ class ProfileViewModel @Inject constructor(
             _state.value = _state.value.copy(isChangingPassword = true)
             val passwordChange = PasswordChange(oldPassword, newPassword)
             when (val result = changePasswordUseCase(passwordChange)) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     _state.value = _state.value.copy(
                         changePasswordError = null,
                         passwordChangeSuccess = "Password changed successfully!"
@@ -108,13 +108,13 @@ class ProfileViewModel @Inject constructor(
                     clearPasswordChangeSuccessMessage()
                 }
 
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(
                         changePasswordError = result.message
                     )
                 }
 
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
             _state.value = _state.value.copy(isChangingPassword = false)
         }

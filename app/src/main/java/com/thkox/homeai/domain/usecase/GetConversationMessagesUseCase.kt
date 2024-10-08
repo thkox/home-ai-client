@@ -2,7 +2,7 @@ package com.thkox.homeai.domain.usecase
 
 import com.thkox.homeai.domain.models.Message
 import com.thkox.homeai.domain.repository.ConversationRepository
-import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.domain.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class GetConversationMessagesUseCase @Inject constructor(
     private val conversationRepository: ConversationRepository
 ) {
-    suspend fun invoke(conversationId: String): Resource<List<Message>> {
+    suspend fun invoke(conversationId: String): Result<List<Message>> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = conversationRepository.getConversationMessages(conversationId)
@@ -26,12 +26,12 @@ class GetConversationMessagesUseCase @Inject constructor(
                             timestamp = formattedTimestamp
                         )
                     } ?: emptyList()
-                    Resource.Success(messages)
+                    Result.Success(messages)
                 } else {
-                    Resource.Error("Failed to get conversation messages: ${response.message()}")
+                    Result.Error("Failed to get conversation messages: ${response.message()}")
                 }
             } catch (e: Exception) {
-                Resource.Error("An error occurred: ${e.localizedMessage}")
+                Result.Error("An error occurred: ${e.localizedMessage}")
             }
         }
     }

@@ -46,7 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.thkox.homeai.R
-import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.domain.utils.Result
 import com.thkox.homeai.presentation.ui.theme.HomeAITheme
 import com.thkox.homeai.presentation.viewModel.welcome.EnterServerAddressViewModel
 
@@ -60,7 +60,7 @@ fun EnterServerAddressScreen(
     val enterServerAddressState by viewModel.enterServerAddressState.observeAsState()
 
     LaunchedEffect(enterServerAddressState) {
-        if (enterServerAddressState is Resource.Success) {
+        if (enterServerAddressState is Result.Success) {
             navigateTo()
         }
     }
@@ -79,7 +79,7 @@ fun EnterServerAddressContent(
     serverAddress: String,
     onServerAddressChanged: (String) -> Unit,
     onValidateServerAddress: () -> Unit,
-    enterServerAddressState: Resource<Unit>?,
+    enterServerAddressState: Result<Unit>?,
     modifier: Modifier = Modifier
 ) {
     var isError by remember { mutableStateOf(false) }
@@ -177,14 +177,14 @@ fun EnterServerAddressContent(
                     },
                     label = { Text(stringResource(R.string.e_g_http_192_168_5_90_8000)) },
                     modifier = Modifier.fillMaxWidth(),
-                    isError = isError || enterServerAddressState is Resource.Error,
+                    isError = isError || enterServerAddressState is Result.Error,
                     singleLine = true
                 )
-                if (isError || enterServerAddressState is Resource.Error) {
+                if (isError || enterServerAddressState is Result.Error) {
                     val displayMessage = if (isError) {
                         errorMessage
                     } else {
-                        (enterServerAddressState as? Resource.Error)?.message ?: ""
+                        (enterServerAddressState as? Result.Error)?.message ?: ""
                     }
                     Text(
                         text = displayMessage,
@@ -223,7 +223,7 @@ fun EnterServerAddressContent(
                     .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
-                if (enterServerAddressState is Resource.Loading) {
+                if (enterServerAddressState is Result.Loading) {
                     CircularProgressIndicator()
                 }
             }

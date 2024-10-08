@@ -3,7 +3,7 @@ package com.thkox.homeai.domain.usecase
 import com.thkox.homeai.data.models.DocumentDto
 import com.thkox.homeai.domain.models.Document
 import com.thkox.homeai.domain.repository.DocumentRepository
-import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.domain.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -11,19 +11,19 @@ import javax.inject.Inject
 class GetUserDocumentDetailsUseCase @Inject constructor(
     private val documentRepository: DocumentRepository
 ) {
-    suspend operator fun invoke(documentId: String): Resource<Document?> {
+    suspend operator fun invoke(documentId: String): Result<Document?> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = documentRepository.getDocumentDetails(documentId)
                 if (response.isSuccessful) {
                     val documentDto = response.body()
                     val document = documentDto?.toDomainModel()
-                    Resource.Success(document)
+                    Result.Success(document)
                 } else {
-                    Resource.Error("Failed to get user document details: ${response.message()}")
+                    Result.Error("Failed to get user document details: ${response.message()}")
                 }
             } catch (e: Exception) {
-                Resource.Error("An error occurred: ${e.localizedMessage}")
+                Result.Error("An error occurred: ${e.localizedMessage}")
             }
         }
     }

@@ -12,7 +12,7 @@ import com.thkox.homeai.domain.models.UserProfileUpdate
 import com.thkox.homeai.domain.models.UserRegistration
 import com.thkox.homeai.domain.repository.AuthRepository
 import com.thkox.homeai.domain.repository.TokenRepository
-import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.domain.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -24,7 +24,7 @@ class AuthRepositoryImpl(
     private val apiService: ApiService
         get() = retrofitHolder.getRetrofit().create(ApiService::class.java)
 
-    override suspend fun login(email: String, password: String): Resource<Token> {
+    override suspend fun login(email: String, password: String): Result<Token> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = apiService.login(email, password)
@@ -32,18 +32,18 @@ class AuthRepositoryImpl(
                     val tokenDto = response.body()
                     tokenDto?.let {
                         tokenRepository.saveToken(it.accessToken)
-                        Resource.Success(Token(it.accessToken, it.tokenType))
-                    } ?: Resource.Error("Invalid response")
+                        Result.Success(Token(it.accessToken, it.tokenType))
+                    } ?: Result.Error("Invalid response")
                 } else {
-                    Resource.Error("Login failed: ${response.errorBody()?.string()}")
+                    Result.Error("Login failed: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
-                Resource.Error("Exception: ${e.localizedMessage}")
+                Result.Error("Exception: ${e.localizedMessage}")
             }
         }
     }
 
-    override suspend fun register(userRegistration: UserRegistration): Resource<User> {
+    override suspend fun register(userRegistration: UserRegistration): Result<User> {
         return withContext(Dispatchers.IO) {
             try {
                 val request = UserCreateRequest(
@@ -56,7 +56,7 @@ class AuthRepositoryImpl(
                 if (response.isSuccessful) {
                     val userDto = response.body()
                     userDto?.let {
-                        Resource.Success(
+                        Result.Success(
                             User(
                                 userId = it.userId,
                                 firstName = it.firstName,
@@ -66,24 +66,24 @@ class AuthRepositoryImpl(
                                 role = it.role
                             )
                         )
-                    } ?: Resource.Error("Invalid response")
+                    } ?: Result.Error("Invalid response")
                 } else {
-                    Resource.Error("Registration failed: ${response.errorBody()?.string()}")
+                    Result.Error("Registration failed: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
-                Resource.Error("Exception: ${e.localizedMessage}")
+                Result.Error("Exception: ${e.localizedMessage}")
             }
         }
     }
 
-    override suspend fun getUserDetails(): Resource<User> {
+    override suspend fun getUserDetails(): Result<User> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = apiService.getUserDetails()
                 if (response.isSuccessful) {
                     val userDto = response.body()
                     userDto?.let {
-                        Resource.Success(
+                        Result.Success(
                             User(
                                 userId = it.userId,
                                 firstName = it.firstName,
@@ -93,21 +93,21 @@ class AuthRepositoryImpl(
                                 role = it.role
                             )
                         )
-                    } ?: Resource.Error("Invalid response")
+                    } ?: Result.Error("Invalid response")
                 } else {
-                    Resource.Error(
+                    Result.Error(
                         "Failed to fetch user details: ${
                             response.errorBody()?.string()
                         }"
                     )
                 }
             } catch (e: Exception) {
-                Resource.Error("Exception: ${e.localizedMessage}")
+                Result.Error("Exception: ${e.localizedMessage}")
             }
         }
     }
 
-    override suspend fun updateProfile(profileUpdate: UserProfileUpdate): Resource<User> {
+    override suspend fun updateProfile(profileUpdate: UserProfileUpdate): Result<User> {
         return withContext(Dispatchers.IO) {
             try {
                 val request = UserUpdateProfile(
@@ -127,18 +127,18 @@ class AuthRepositoryImpl(
                             enabled = it.enabled,
                             role = it.role
                         )
-                        Resource.Success(user)
-                    } ?: Resource.Error("Invalid response")
+                        Result.Success(user)
+                    } ?: Result.Error("Invalid response")
                 } else {
-                    Resource.Error("Update profile failed: ${response.errorBody()?.string()}")
+                    Result.Error("Update profile failed: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
-                Resource.Error("Exception: ${e.localizedMessage}")
+                Result.Error("Exception: ${e.localizedMessage}")
             }
         }
     }
 
-    override suspend fun changePassword(passwordChange: PasswordChange): Resource<Unit> {
+    override suspend fun changePassword(passwordChange: PasswordChange): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
                 val request = ChangePassword(
@@ -147,12 +147,12 @@ class AuthRepositoryImpl(
                 )
                 val response = apiService.changeMyPassword(request)
                 if (response.isSuccessful) {
-                    Resource.Success(Unit)
+                    Result.Success(Unit)
                 } else {
-                    Resource.Error("Change password failed: ${response.errorBody()?.string()}")
+                    Result.Error("Change password failed: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
-                Resource.Error("Exception: ${e.localizedMessage}")
+                Result.Error("Exception: ${e.localizedMessage}")
             }
         }
     }

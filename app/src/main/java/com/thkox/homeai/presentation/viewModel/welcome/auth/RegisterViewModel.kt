@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thkox.homeai.domain.usecase.user.RegisterUseCase
-import com.thkox.homeai.domain.utils.Resource
+import com.thkox.homeai.domain.utils.Result
 import com.thkox.homeai.presentation.models.UserUIModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -82,7 +82,7 @@ class RegisterViewModel @Inject constructor(
         viewModelScope.launch {
             _registerState.value = RegisterState.Loading
             val result = registerUseCase(userUiModel)
-            if (result is Resource.Success) {
+            if (result is Result.Success) {
                 _registerState.value = RegisterState.Success
             } else {
                 _registerState.value = RegisterState.Error(result.message ?: "Unknown error")
