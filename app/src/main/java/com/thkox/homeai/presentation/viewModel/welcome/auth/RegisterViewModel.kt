@@ -70,13 +70,13 @@ class RegisterViewModel @Inject constructor(
         }
 
         val userUiModel = UserUIModel(
-            userId = "", // Assuming userId is not needed for registration
+            userId = "",
             firstName = currentFirstName,
             lastName = currentLastName,
             email = currentEmail,
             password = currentPassword,
-            enabled = true, // Assuming default value
-            role = "user" // Assuming default role
+            enabled = true,
+            role = "user"
         )
 
         viewModelScope.launch {

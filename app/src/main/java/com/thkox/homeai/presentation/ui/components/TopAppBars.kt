@@ -69,10 +69,10 @@ fun MainTopAppBar(
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,  // Background color
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary, // Color for navigation icon
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,  // Color for title text
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimary  // Color for action icons
+            containerColor = MaterialTheme.colorScheme.primary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
         )
     )
 }
@@ -134,9 +134,9 @@ fun WelcomeTopAppBar(
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,  // Background color
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary, // Color for navigation icon
-            titleContentColor = MaterialTheme.colorScheme.onPrimary  // Color for title text
+            containerColor = MaterialTheme.colorScheme.primary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary
         )
     )
 }

@@ -44,7 +44,7 @@ class MainViewModel @Inject constructor(
     private val getDocumentDetailsUseCase: GetDocumentDetailsUseCase,
     private val getConversationDetailsUseCase: GetConversationDetailsUseCase,
     private val recognizeSpeechUseCase: RecognizeSpeechUseCase,
-    private val getUserDetailsUseCase: GetUserDetailsUseCase // Injected here
+    private val getUserDetailsUseCase: GetUserDetailsUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MainState())
@@ -93,7 +93,6 @@ class MainViewModel @Inject constructor(
             recognizeSpeechUseCase.startListening().collect { result ->
                 _state.value = _state.value.copy(speechText = result)
             }
-            // After the flow completes
             val finalText = _state.value.speechText
             if (!finalText.isNullOrBlank()) {
                 sendMessage(finalText)

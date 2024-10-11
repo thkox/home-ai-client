@@ -257,12 +257,29 @@ fun ConversationInputFieldLightPreview() {
     var text by remember { mutableStateOf("") }
     HomeAITheme {
         ConversationInputBar(
-            onSendClick = {
-                // TODO: Implement send functionality
-            },
-            onMicClick = {
-                // TODO: Implement mic recording functionality
-            },
+            onSendClick = {},
+            onMicClick = {},
+            text = text,
+            onTextChange = { newText -> text = newText },
+            onAttachFilesClick = {},
+            isAiResponding = false,
+            isRecording = false,
+            onTextFieldClick = {}
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+fun ConversationInputFieldDarkPreview() {
+    var text by remember { mutableStateOf("") }
+    HomeAITheme {
+        ConversationInputBar(
+            onSendClick = {},
+            onMicClick = {},
             text = text,
             onTextChange = { newText -> text = newText },
             onAttachFilesClick = {},
