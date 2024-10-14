@@ -1,6 +1,11 @@
 # Home AI
 
+<p align="center">
+  <img src="./images/app_logo-cropped.png" alt="app logo" width="150" height="150">
+</p>
+
 **Home AI** is an Android application that allows users to interact with Large Language Models (LLMs) locally, ensuring data privacy and security by avoiding cloud services. This repository contains the Android client code, which communicates with the [Home AI server](https://github.com/thkox/home-ai-server/) to process user queries and files.
+
 
 ## Features
 
