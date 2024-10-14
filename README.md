@@ -1,4 +1,4 @@
-# Home AI
+# Home AI Client
 
 <p align="center">
   <img src="./images/app_logo-cropped.png" alt="app logo" width="150" height="150">
