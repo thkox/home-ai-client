@@ -52,7 +52,7 @@ This project is developed as part of a Bachelor's thesis for the 2024 academic y
 
 Both the **thesis** and the **video presentation** explaining the project in detail are available within this repository:
 - [Thesis](./docs/Thesis.pdf)
-- [Video Presentation](./videos/Presentation.mp4)
+- [Video Presentation](./video/Presentation.mp4)
 
 ## Future Enhancements
 
