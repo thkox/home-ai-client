@@ -6,6 +6,10 @@
 
 **Home AI Client** is an Android application that allows users to interact with Large Language Models (LLMs) locally, ensuring data privacy and security by avoiding cloud services. This repository contains the Android client code, which communicates with the [Home AI server](https://github.com/thkox/home-ai-server/) to process user queries and files.
 
+## Project Overview
+
+This project is developed as part of a Bachelor's thesis for the 2024 academic year. The goal is to build a client application that interacts with a local server running LLMs, ensuring data processing is done locally to preserve privacy. Both the **thesis** and a **video presentation** of the project are available in this repository.
+
 
 ## Features
 
@@ -44,8 +48,18 @@
 - **File Upload**: Upload text documents (PDF, DOCX, CSV, etc.) to enhance LLM responses.
 - **Voice Input**: Tap the microphone icon to send voice commands that will be transcribed to text.
 
+## Thesis and Video Presentation
+
+Both the **thesis** and the **video presentation** explaining the project in detail are available within this repository:
+- [Thesis Report](./docs/Thesis.pdf)
+- [Video Presentation](./videos/Presentation.mp4)
+
 ## Future Enhancements
 
 - Support for multi-modal responses (images, videos).
 - Enhanced document processing capabilities.
 - Personalization options based on user preferences.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
